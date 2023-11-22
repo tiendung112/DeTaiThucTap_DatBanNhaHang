@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  datbannhahang:
+    image: ${DOCKER_REGISTRY-}datbannhahang
+    build:
+      context: .
+      dockerfile: DatBanNhaHang\Dockerfile
