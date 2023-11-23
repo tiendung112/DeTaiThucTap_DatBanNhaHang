@@ -5,6 +5,6 @@ namespace DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn
     public class Request_ThemLoaiMonAn
     {
         public string tenLoaiMonAn {  get; set; }
-        public IEnumerable<Request_ThemMonAn>? MonAn { get; set; }
+        
     }
 }

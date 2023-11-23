@@ -9,6 +9,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
         {
             return new MonAnDTOs
             {
+                MonAnID =monAn.id,
                 LoaiMonAnID = monAn.LoaiMonAnID,
                 TenMon = monAn.TenMon,
                 GiaTien = monAn.GiaTien,

@@ -23,7 +23,7 @@ namespace DatBanNhaHang.Controllers
             return Ok(await services.HienThiBan(id, 0, 0));
         }
         [HttpGet]
-        [Route("/api/Ban/HienThiBan/")]
+        [Route("/api/Ban/HienThiBan")]
         public async Task<IActionResult> HienThiBan(int pageSize, int pageNumber)
         {
             return Ok(await services.HienThiBan(0, pageSize, pageNumber));
@@ -66,7 +66,7 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPut]
-        [Route("/api/Ban/SuaBan{id}")]
+        [Route("/api/Ban/SuaBan/{id}")]
         //[Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> SuaBan([FromRoute] int id, [FromBody] Request_SuaBan request)
         {
@@ -79,7 +79,7 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpDelete]
-        [Route("/api/Ban/XoaBan{id}")]
+        [Route("/api/Ban/XoaBan/{id}")]
         //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaBan([FromRoute] int id)
         {
