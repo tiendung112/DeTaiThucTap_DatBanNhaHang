@@ -55,10 +55,7 @@ namespace DatBanNhaHang.Controllers
         [Route("api/LoaiBan/HienThiLoaiBan")]
         public async Task<IActionResult> HienThiLoaiBan()
         {
-            var result = await services.HienThiLoaiBan();
-            if (result != null)
-                return Ok(result);
-            return BadRequest(result);
+            return Ok("ok");
         }
     }
 }

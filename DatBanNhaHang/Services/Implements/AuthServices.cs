@@ -27,6 +27,7 @@ using DatBanNhaHang.Payloads.DTOs.NguoiDung;
 using DatBanNhaHang.Payloads.Converters.NguoiDung;
 using Azure;
 using DatBanNhaHang.Entities.NguoiDung;
+using DatBanNhaHang.Handler.Pagination;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -385,10 +386,11 @@ namespace DatBanNhaHang.Services.Implements
 
         }
         #endregion
-        public async Task<IEnumerable<UserDTO>> GetAlls(int pageSize, int pageNumber)
+        public async Task<PageResult<UserDTO>> GetAlls(int pageSize, int pageNumber)
         {
-            var list = await contextDB.User.Skip((pageNumber - 1) * pageSize).Take(pageSize).Select(x => _userConverter.EntityToDTO(x)).ToListAsync();
-            return list;
+            var list = contextDB.User.Select(x => _userConverter.EntityToDTO(x));
+            var result =Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
+            return result;
         }
         #region Xử lý việc thay đổi quyền hạn của người dùng và xoá tài khoản chưa active
         public async Task<string> ThayDoiQuyenHan(Request_ThayDoiQuyen request)

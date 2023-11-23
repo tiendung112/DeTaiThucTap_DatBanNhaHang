@@ -1,5 +1,6 @@
 ﻿using DatBanNhaHang.Entities.NguoiDung;
 using DatBanNhaHang.Handler.Email;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NguoiDung;
 using DatBanNhaHang.Payloads.Requests.NguoiDung;
 using DatBanNhaHang.Payloads.Responses;
@@ -13,7 +14,7 @@ namespace DatBanNhaHang.Services.IServices
         ResponseObject<TokenDTO> RenewAccessToken(TokenDTO request);
         Task<ResponseObject<TokenDTO>> Login(Request_Login request);
         Task<ResponseObject<UserDTO>> RegisterRequest(Request_Register request);
-        Task<IEnumerable<UserDTO>> GetAlls(int pageSize, int pageNumber);
+        Task<PageResult<UserDTO>> GetAlls(int pageSize, int pageNumber);
         Task<ResponseObject<UserDTO>> ChangePassword(int UserID, Request_ChangePassword request);
         string SendEmail(EmailTo emailTo);
         Task<string> ForgotPassword(Request_ForgotPassword request);

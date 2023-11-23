@@ -60,12 +60,7 @@ namespace DatBanNhaHang.Controllers
         [Authorize(Roles = "ADMIN , MOD")]
         public async Task<IActionResult> HienThiTrangThaiBan()
         {
-            var result = await services.HienThiTrangThaiBan();
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
+            return Ok("ok");
         }
     }
 }

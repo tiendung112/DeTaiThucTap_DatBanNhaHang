@@ -10,6 +10,6 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<TrangThaiBanDTOs>> ThemTrangThaiBan(Request_ThemTrangThaiBan request);
         Task<ResponseObject<TrangThaiBanDTOs>> SuaTrangThaiBan(Request_SuaTrangThaiBan request);
         Task<ResponseObject<TrangThaiBanDTOs>> XoaTrangThaiBan(Request_XoaTrangThaiBan request);
-        Task<IQueryable<TrangThaiBanDTOs>> HienThiTrangThaiBan();
+        Task<IQueryable<TrangThaiBanDTOs>> HienThiTrangThaiBan(int pageSize, int pageNumber);
     }
 }

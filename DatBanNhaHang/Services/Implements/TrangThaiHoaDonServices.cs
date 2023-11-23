@@ -17,7 +17,7 @@ namespace DatBanNhaHang.Services.Implements
             converters = new TrangThaiHoaDonConverters();
             response = new ResponseObject<TrangThaiHoaDonDTOs>();
         }
-        public  async Task<IQueryable<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon()
+        public  async Task<IQueryable<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int pageSize, int pageNumber)
         {
             return contextDB.TrangThaiHoaDon.Select(x=>converters.EntityToDTOs(x));
         }

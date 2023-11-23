@@ -2,7 +2,6 @@
 {
     public class Request_SuaDauBep
     {
-        public int ID { get; set; }
         public string? HoTen { get; set; }
 
         public IFormFile? AnhDauBepURl { get; set; }

@@ -1,5 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.KhachHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.MonAn;
@@ -28,63 +28,14 @@ namespace DatBanNhaHang.Controllers
         [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> HienThiKhachHang(int pageSize, int pageNumber)
         {
-            if (pageSize != 0&& pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiKhachHang(pagintation);
-
-                var PTLstDb = PageResult<KhachHangDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<KhachHangDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(services.HienThiKhachHang(pagintation));
-            }
+            return Ok("ok");
         }
         [HttpGet]
         [Route("/api/KhachHang/TimKiemKhachHang")]
         [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> TimKiemKhachHang([FromBody] Request_TimKiemKhachHang request,int pageSize, int pageNumber)
         {
-            if (pageSize != 0&& pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.TimKiemKhachHang(request,pagintation);
-                if (lstDB == null)
-                {
-                    return BadRequest("Không tìm thấy khách hàng");
-                }
-                var PTLstDb = PageResult<KhachHangDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<KhachHangDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                var lstDB = await services.TimKiemKhachHang(request, pagintation);
-                if (lstDB == null)
-                {
-                    return BadRequest("Không tìm thấy khách hàng");
-                }
-
-                return Ok(lstDB);
-            }
+            return Ok("ok");
         }
 
         [HttpPost]

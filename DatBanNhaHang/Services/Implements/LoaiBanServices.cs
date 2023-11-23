@@ -17,7 +17,7 @@ namespace DatBanNhaHang.Services.Implements
             converters = new LoaiBanConverters();
             response = new ResponseObject<LoaiBanDTOs>();
         }
-        public async Task<IQueryable<LoaiBanDTOs>> HienThiLoaiBan()
+        public async Task<IQueryable<LoaiBanDTOs>> HienThiLoaiBan(int pageSize, int pageNumber)
         {
             return contextDB.LoaiBan.Select(x => converters.EntityToDTOs(x));
         }

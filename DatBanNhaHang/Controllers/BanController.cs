@@ -1,9 +1,6 @@
-﻿using DatBanNhaHang.Pagination;
-using DatBanNhaHang.Payloads.DTOs.NhaHang;
-using DatBanNhaHang.Payloads.Requests.NhaHang.Ban;
+﻿using DatBanNhaHang.Payloads.Requests.NhaHang.Ban;
 using DatBanNhaHang.Services.Implements;
 using DatBanNhaHang.Services.IServices;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatBanNhaHang.Controllers
@@ -18,118 +15,40 @@ namespace DatBanNhaHang.Controllers
             services = new BanServices();
         }
 
+        #region hiển thị , tìm kiếm bàn
         [HttpGet]
-        [Route("/api/Ban/HienThiBan")]
-        public async Task<IActionResult> HienThiBan(int pageSize, int pageNumber)
+        [Route("/api/Ban/HienThiBan/{id}")]
+        public async Task<IActionResult> HienThiBan([FromRoute] int id, int pageSize, int pageNumber)
         {
-            if (pageSize != 0 && pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiBan(pagintation);
-
-                var PTLstDb = PageResult<BanDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<BanDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(services.HienThiBan(pagintation));
-            }
+            return Ok(await services.HienThiBan(id, pageSize, pageNumber));
         }
 
 
         [HttpGet]
         [Route("/api/Ban/HienThiBanTheoTrangThai")]
-        public async Task<IActionResult> HienThiBanTheoTrangThai(int ttID, int pageSize, int pageNumber)
+        public async Task<IActionResult> HienThiBanTheoTrangThai(int pageSize, int pageNumber)
         {
-            if (pageSize != 0 && pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiBanTheoTrangThai(ttID,pagintation);
-
-                var PTLstDb = PageResult<BanDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<BanDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return  Ok(services.HienThiBanTheoTrangThai(ttID, pagintation));
-            }
+            return Ok(await services.HienThiBanTheoTrangThai(pageSize, pageNumber));
         }
 
         [HttpGet]
         [Route("/api/Ban/HienThiBanTheoViTri")]
-        public async Task<IActionResult> HienThiBanTheoViTri ( int pageSize, int pageNumber)
+        public async Task<IActionResult> HienThiBanTheoViTri(int pageSize, int pageNumber)
         {
-            if (pageSize != 0 && pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiBanTheoViTri( pagintation);
-
-                var PTLstDb = PageResult<BanDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<BanDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(services.HienThiBanTheoViTri(pagintation));
-            }
+            return Ok(await services.HienThiBanTheoViTri(pageSize, pageNumber));
         }
 
         [HttpGet]
-        [Route("/api/Ban/HienThiBanTheoLoaiBan")]
-        public async Task<IActionResult> HienThiBanTheoLoaiBan(int LB, int pageSize, int pageNumber)
+        [Route("/api/Ban/HienThiBanTheoLoaiBan/{lbid}")]
+        public async Task<IActionResult> HienThiBanTheoLoaiBan([FromRoute] int lbid, int pageSize, int pageNumber)
         {
-            if (pageSize != 0 && pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiBanTheoLoaiBan(LB, pagintation);
-
-                var PTLstDb = PageResult<BanDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<BanDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(services.HienThiBanTheoLoaiBan(LB, pagintation));
-            }
+            return Ok(await services.HienThiBanTheoLoaiBan(lbid, pageSize, pageNumber));
         }
-
+        #endregion
+        #region thêm sửa xoá bàn 
         [HttpPost]
         [Route("/api/Ban/ThemBan")]
-        [Authorize(Roles = "ADMIN,MOD")]
+        //[Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> ThemBan([FromBody] Request_ThemBan request)
         {
             var result = await services.ThemBan(request);
@@ -142,11 +61,11 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPut]
-        [Route("/api/Ban/SuaBan")]
-        [Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> SuaBan([FromBody] Request_SuaBan request)
+        [Route("/api/Ban/SuaBan{id}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> SuaBan([FromRoute] int id, [FromBody] Request_SuaBan request)
         {
-            var result = await services.SuaBan(request);
+            var result = await services.SuaBan(id, request);
             if (result == null)
             {
                 return BadRequest(result);
@@ -155,16 +74,17 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpDelete]
-        [Route("/api/Ban/XoaBan")]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> XoaBan([FromBody] Request_XoaBan request)
+        [Route("/api/Ban/XoaBan{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> XoaBan([FromRoute] int id)
         {
-            var result = await services.XoaBan(request);
+            var result = await services.XoaBan(id);
             if (result == null)
             {
                 return BadRequest(result);
             }
             return Ok(result);
         }
+        #endregion
     }
 }

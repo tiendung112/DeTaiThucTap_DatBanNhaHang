@@ -18,7 +18,7 @@ namespace DatBanNhaHang.Services.Implements
             response = new ResponseObject<ChiTietHoaDonDTOs>();
             converters  = new ChiTietHoaDonConverters();
         }
-        public async Task<IQueryable<ChiTietHoaDonDTOs>> HienThiChiTietHoaDon()
+        public async Task<IQueryable<ChiTietHoaDonDTOs>> HienThiChiTietHoaDon(int pageSize, int pageNumber)
         {
             return contextDB.ChiTietHoaDon.Select(y => converters.EntityToDTOs(y));
         }

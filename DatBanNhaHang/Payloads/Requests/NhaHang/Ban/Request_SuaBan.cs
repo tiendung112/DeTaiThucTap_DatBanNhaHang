@@ -2,7 +2,6 @@
 {
     public class Request_SuaBan
     {
-        public int BanID { get; set; }
         public string? ViTri { get; set; }
         public int? SoBan { get; set; }
         public int? SoNguoiToiDa { get; set; }

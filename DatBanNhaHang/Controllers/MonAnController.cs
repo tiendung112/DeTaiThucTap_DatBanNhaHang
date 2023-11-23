@@ -1,5 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn;
 using DatBanNhaHang.Payloads.Requests.NhaHang.MonAn;
@@ -64,54 +64,14 @@ namespace DatBanNhaHang.Controllers
         [Route("/api/MonAn/HienThiMonAn")]
         public async Task<IActionResult> HienThiMonAn(int pageSize, int pageNumber)
         {
-            if (pageSize != 0&& pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiMonAn(pagintation);
-
-                var PTLstDb = PageResult<MonAnDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<MonAnDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(services.HienThiMonAn(pagintation));
-            }
+            return Ok("ok");
         }
 
         [HttpGet]
         [Route("/api/MonAn/TimKiemMonAn")]
         public async Task<IActionResult> TimKiemMonAn([FromBody] Request_TimKiemMonAn request,int pageSize, int pageNumber)
         {
-            if (pageSize != 0&& pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.TimKiemMonAn(request,pagintation);
-
-                var PTLstDb = PageResult<MonAnDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<MonAnDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(services.TimKiemMonAn(request, pagintation));
-            }
+            return Ok("ok");
         }
     }
 }

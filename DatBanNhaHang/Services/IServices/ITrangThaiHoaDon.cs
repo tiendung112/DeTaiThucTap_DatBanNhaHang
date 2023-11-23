@@ -9,7 +9,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<TrangThaiHoaDonDTOs>> ThemTrangThaiHoaDon(Request_ThemTrangThaiHoaDon request);
         Task<ResponseObject<TrangThaiHoaDonDTOs>> SuaTrangThaiHoaDon(Request_SuaTrangThaiHoaDon request);
         Task<ResponseObject<TrangThaiHoaDonDTOs>> XoaTrangThaiHoaDon(Request_XoaTrangThaiHoaDon request);
-        Task<IQueryable<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon( );
+        Task<IQueryable<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int pageSize, int pageNumber);
 
 
     }

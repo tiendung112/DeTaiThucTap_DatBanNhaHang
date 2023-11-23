@@ -1,7 +1,7 @@
 ﻿using Azure;
 using DatBanNhaHang.Entities.NhaHang;
 using DatBanNhaHang.Handler.Image;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn;
@@ -24,7 +24,7 @@ namespace DatBanNhaHang.Services.Implements
             converters = new LoaiMonAnConverters();
             res = new ResponseObject<LoaiMonAnDTOs> ();
         }
-        public async Task<IQueryable<LoaiMonAnDTOs>> HienThiLoaiMonAn(Pagintation pagintation)
+        public async Task<IQueryable<LoaiMonAnDTOs>> HienThiLoaiMonAn(int pageSize, int pageNumber)
         {
             var lstLMA = contextDB.LoaiMonAn.Select(x => converters.entityTODTOs(x));
             return lstLMA;
