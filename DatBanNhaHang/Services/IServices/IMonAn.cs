@@ -9,9 +9,9 @@ namespace DatBanNhaHang.Services.IServices
     public interface IMonAn 
     {
         Task<ResponseObject<MonAnDTOs>> ThemMonAn(Request_ThemMonAn request);
-        Task<ResponseObject<MonAnDTOs>> SuaMonAn(Request_SuaMonAn request);
-        Task<ResponseObject<MonAnDTOs>> XoaMonAn(Request_XoaMonAn request);
-        Task<IQueryable<MonAnDTOs>> TimKiemMonAn(Request_TimKiemMonAn request, int pageSize, int pageNumber );
-        Task<IQueryable<MonAnDTOs>> HienThiMonAn(int pageSize, int pageNumber );
+        Task<ResponseObject<MonAnDTOs>> SuaMonAn(int id ,Request_SuaMonAn request);
+        Task<ResponseObject<MonAnDTOs>> XoaMonAn(int id);
+        Task<PageResult<MonAnDTOs>> TimKiemMonAn(string tenMonAn , int pageSize, int pageNumber );
+        Task<PageResult<MonAnDTOs>> HienThiMonAn(int id , int pageSize, int pageNumber );
     }
 }
