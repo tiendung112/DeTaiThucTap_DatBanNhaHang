@@ -1,4 +1,4 @@
-﻿using DatBanNhaHang.Pagination;
+﻿using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn;
 using DatBanNhaHang.Payloads.Responses;
@@ -12,7 +12,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<LoaiMonAnDTOs>> ThemLoaiMonAnKemMonAn(Request_ThemLoaiMonAn request);
         Task<ResponseObject<LoaiMonAnDTOs>> SuaLoaiMonAn(Request_SuaLoaiMonAn request);
         Task<ResponseObject<LoaiMonAnDTOs>> XoaLoaiMonAn(Request_XoaLoaiMonAn request);
-        Task<IQueryable<LoaiMonAnDTOs>> HienThiLoaiMonAn (Pagintation pagintation);
+        Task<IQueryable<LoaiMonAnDTOs>> HienThiLoaiMonAn (int pageSize, int pageNumber);
 
     }
 }

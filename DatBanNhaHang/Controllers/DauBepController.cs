@@ -1,5 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NguoiDung;
 using DatBanNhaHang.Payloads.Requests.NhaHang.DauBep;
@@ -16,23 +16,20 @@ namespace DatBanNhaHang.Controllers
     [ApiController]
     public class DauBepController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly IDauBep _dauBepService;
+        private readonly IDauBep services;
         private readonly DauBep db;
-        public DauBepController(IConfiguration configuration, IDauBep dauBepService)
+        public DauBepController(  IDauBep dauBepService)
         {
-            _configuration = configuration;
-            _dauBepService = dauBepService;
+            services = dauBepService;
             db = new DauBep();
         }
-
 
         [HttpPost]
         [Route("/api/DauBep/ThemDauBep")]
         //[Authorize(Roles ="ADMIN,MOD")]
         public async Task<IActionResult> ThemDauBep([FromForm] Request_ThemDauBep request)
         {
-            var result = await _dauBepService.ThemDauBep(request);
+            var result = await services.ThemDauBep(request);
             if (result == null)
             {
                 return BadRequest(result);
@@ -41,11 +38,12 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPut]
-        [Route("/api/DauBep/SuaDauBep")]
-        [Authorize(Roles = "ADMIN , MOD")]
-        public async Task<IActionResult> SuaDauBep([FromForm] Request_SuaDauBep request)
+        [Route("/api/DauBep/SuaDauBep/{id}")]
+        //[Authorize(Roles = "ADMIN , MOD")]
+        public async Task<IActionResult> SuaDauBep(int id ,[FromForm] Request_SuaDauBep request)
         {
-            var result =await _dauBepService.SuaDauBep(request);
+            var result =await services.SuaDauBep(id,request);
+            
             if (result == null)
             {
                 return BadRequest(result);
@@ -57,40 +55,25 @@ namespace DatBanNhaHang.Controllers
         [Authorize(Roles ="ADMIN , MOD")]
         public async Task<IActionResult> XoaDauBep([FromBody] Request_XoaDauBep request)
         {
-            var result = await _dauBepService.XoaDauBep(request);
+            var result = await services.XoaDauBep(request);
             if (result == null)
             {
                 return BadRequest(result);
             }
             return Ok(result);
         }
-
         [HttpGet]
-        [Route("/api/DauBep/LayDanhSachDauBep")]
-        public async Task<IActionResult> LayDSDauBep(int pageSize, int pageNumber)
+        [Route("/api/DauBep/HienThiDanhSachDauBep")]
+        public async Task<IActionResult> LayDSDauBep( int pageSize, int pageNumber)
         {
-            if(pageSize != 0 && pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await _dauBepService.GetDSDauBep(pagintation);
-
-                var PTLstDb = PageResult<DauBepDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<DauBepDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();
-                return Ok(_dauBepService.GetDSDauBep(pagintation));
-            }
-           
+            int id = 0;
+            return Ok(await services.GetDSDauBep(id, pageSize, pageNumber));
+        }
+        [HttpGet]
+        [Route("/api/DauBep/HienThiDanhSachDauBep/{id}")]
+        public async Task<IActionResult> LayDSDauBepTheoID([FromRoute]int id, int pageSize, int pageNumber)
+        {
+            return Ok(await services.GetDSDauBep(id, pageSize, pageNumber));
         }
     }
 }

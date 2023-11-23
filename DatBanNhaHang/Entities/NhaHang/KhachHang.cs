@@ -10,5 +10,6 @@ namespace DatBanNhaHang.Entities.NhaHang
         public string? DiaChi { get; set; }
         public string? SDT { get; set; }
         public IList<HoaDon>? hoaDon { get; set; }
+
     }
 }

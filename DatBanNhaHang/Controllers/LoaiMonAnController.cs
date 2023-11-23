@@ -1,5 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn;
 using DatBanNhaHang.Services.Implements;
@@ -81,27 +81,7 @@ namespace DatBanNhaHang.Controllers
         
         public async Task<IActionResult> HienThiLoaiMonAn(int pageSize , int pageNumber) 
         {
-            if (pageSize != 0&& pageNumber != 0)
-            {
-                Pagintation pagintation = new Pagintation()
-                {
-                    PageSize = pageSize,
-                    PageNumber = pageNumber
-                };
-
-                var lstDB = await services.HienThiLoaiMonAn(pagintation);
-
-                var PTLstDb = PageResult<LoaiMonAnDTOs>.toPageResult(pagintation, lstDB);
-                pagintation.TotalCount = lstDB.Count();
-
-                var res = new PageResult<LoaiMonAnDTOs>(pagintation, PTLstDb);
-                return Ok(res);
-            }
-            else
-            {
-                Pagintation pagintation = new Pagintation();    
-                return Ok(services.HienThiLoaiMonAn(pagintation));
-            }
+            return Ok("ok");
         }
 
     }

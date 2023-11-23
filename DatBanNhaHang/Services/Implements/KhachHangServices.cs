@@ -1,5 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.KhachHang;
@@ -19,7 +19,7 @@ namespace DatBanNhaHang.Services.Implements
             converters = new KhachHangConverters();
             response = new ResponseObject<KhachHangDTOs>();
         }
-        public async Task<IQueryable<KhachHangDTOs>> HienThiKhachHang(Pagintation pagintation)
+        public async Task<IQueryable<KhachHangDTOs>> HienThiKhachHang(int pageSize, int pageNumber)
         {
             return contextDB.KhachHang.Select(x => converters.EntityToDTOs(x));
         }

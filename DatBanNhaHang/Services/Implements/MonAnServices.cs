@@ -1,6 +1,6 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
 using DatBanNhaHang.Handler.Image;
-using DatBanNhaHang.Pagination;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.MonAn;
@@ -8,6 +8,7 @@ using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.VisualStudio.Services.WebApi;
+using System.Drawing.Printing;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -21,7 +22,7 @@ namespace DatBanNhaHang.Services.Implements
             converters = new MonAnConverters();
         }
 
-        public  async Task<IQueryable<MonAnDTOs>> HienThiMonAn(Pagintation pagintation)
+        public  async Task<IQueryable<MonAnDTOs>> HienThiMonAn(int pageSize, int pageNumber)
         {
             return contextDB.MonAn.Select(x => converters.EntityToDTOs(x));
         }
@@ -157,10 +158,9 @@ namespace DatBanNhaHang.Services.Implements
                     return response.ResponseError(StatusCodes.Status500InternalServerError, ex.Message, null);
                 }
             }
-        
         }
 
-        public async Task<IQueryable<MonAnDTOs>> TimKiemMonAn(Request_TimKiemMonAn request, Pagintation pagintation)
+        public async Task<IQueryable<MonAnDTOs>> TimKiemMonAn(Request_TimKiemMonAn request,int pageSize, int pageNumber)
         {
             return contextDB.MonAn.Where(x => ChuanHoaChuoi(x.TenMon) == ChuanHoaChuoi(request.TenMon))
                 .Select(y => converters.EntityToDTOs(y));
