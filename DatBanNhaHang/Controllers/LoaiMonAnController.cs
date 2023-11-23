@@ -36,7 +36,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpPost]
         [Route("/api/LoaiMonAn/ThemLoaiMonAnKemMonAn")]
-        public async Task<IActionResult> ThemLoaiMonAnKemMonAn([FromBody] Request_ThemLoaiMonAn request)
+        public async Task<IActionResult> ThemLoaiMonAnKemMonAn([FromBody] Request_ThemLoaiMonAnKemMonAn request)
         {
             var result = await services.ThemLoaiMonAnKemMonAn(request);
             if (result == null)

@@ -48,7 +48,7 @@ namespace DatBanNhaHang.Services.Implements
             return res.ResponseSuccess("Thêm loại món ăn thành công", converters.entityTODTOs(nma));
         }
         //thêm loại món ăn kèm món ăn
-        public async Task<ResponseObject<LoaiMonAnDTOs>> ThemLoaiMonAnKemMonAn(Request_ThemLoaiMonAn request)
+        public async Task<ResponseObject<LoaiMonAnDTOs>> ThemLoaiMonAnKemMonAn(Request_ThemLoaiMonAnKemMonAn request)
         {
             LoaiMonAn nma = new LoaiMonAn
             {
@@ -72,7 +72,7 @@ namespace DatBanNhaHang.Services.Implements
                 List<MonAn> lst = new List<MonAn>();
                 foreach (var item in monAn)
                 {
-                    int imageSize = 2 * 1024 * 768;
+                    //int imageSize = 2 * 1024 * 768;
                     try
                     {
                         MonAn dt = new MonAn();

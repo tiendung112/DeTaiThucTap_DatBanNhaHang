@@ -44,7 +44,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("/api/TrangThaiBan/XoaTrangThaiBan/{id}")]
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaTrangThaiBan([FromRoute] int id )
         {
             var result = await services.XoaTrangThaiBan(id);

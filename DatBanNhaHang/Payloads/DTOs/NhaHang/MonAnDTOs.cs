@@ -4,6 +4,7 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
 {
     public class MonAnDTOs
     {
+        public int MonAnID { get; set; }
         public int LoaiMonAnID { get; set; }
         public string? TenMon { get; set; }
         public string? MoTa { get; set; }
