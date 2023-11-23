@@ -52,7 +52,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpDelete]
         [Route("/api/DauBep/XoaDauBep/{id}")]
-        [Authorize(Roles ="ADMIN , MOD")]
+        //[Authorize(Roles ="ADMIN , MOD")]
         public async Task<IActionResult> XoaDauBep([FromRoute]int id )
         {
             var result = await services.XoaDauBep(id);
@@ -64,16 +64,16 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpGet]
         [Route("/api/DauBep/HienThiDanhSachDauBep")]
-        public async Task<IActionResult> LayDSDauBep([FromRoute] int pageSize, int pageNumber)
+        public async Task<IActionResult> LayDSDauBep( int pageSize, int pageNumber)
         {
             int id = 0;
             return Ok(await services.GetDSDauBep(id, pageSize, pageNumber));
         }
         [HttpGet]
         [Route("/api/DauBep/HienThiDanhSachDauBep/{id}")]
-        public async Task<IActionResult> LayDSDauBepTheoID([FromRoute]int id, int pageSize, int pageNumber)
+        public async Task<IActionResult> LayDSDauBepTheoID([FromRoute]int id)
         {
-            return Ok(await services.GetDSDauBep(id, pageSize, pageNumber));
+            return Ok(await services.GetDSDauBep(id, 0, 0));
         }
     }
 }

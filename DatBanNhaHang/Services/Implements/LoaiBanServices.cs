@@ -1,4 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiBan;
@@ -17,14 +18,16 @@ namespace DatBanNhaHang.Services.Implements
             converters = new LoaiBanConverters();
             response = new ResponseObject<LoaiBanDTOs>();
         }
-        public async Task<IQueryable<LoaiBanDTOs>> HienThiLoaiBan(int pageSize, int pageNumber)
+        public async Task<PageResult<LoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber)
         {
-            return contextDB.LoaiBan.Select(x => converters.EntityToDTOs(x));
+            var lst =id==0? contextDB.LoaiBan.Select(x => converters.EntityToDTOs(x)): contextDB.LoaiBan.Where(y=>y.id==id).Select(x => converters.EntityToDTOs(x));
+            var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
+            return result;
         }
 
-        public async Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(Request_SuaLoaiBan request)
+        public async Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(int id,Request_SuaLoaiBan request)
         {
-            var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == request.LoaiBanID);
+            var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == id);
             if (lb == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có loại bàn cần sửa ", null);
@@ -50,13 +53,13 @@ namespace DatBanNhaHang.Services.Implements
             return response.ResponseSuccess("Thêm loại bàn thành công ", converters.EntityToDTOs(loaiBan));
         }
 
-        public async Task<ResponseObject<LoaiBanDTOs>> XoaLoaiBan(Request_XoaLoaiBan request)
+        public async Task<ResponseObject<LoaiBanDTOs>> XoaLoaiBan(int id)
         {
             using (var trans = contextDB.Database.BeginTransaction())
             {
                 try
                 {
-                    var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == request.LoaiBanID);
+                    var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == id);
                     if (lb == null)
                     {
                         return response.ResponseError(StatusCodes.Status404NotFound, "Không có loại bàn cần xoá ", null);

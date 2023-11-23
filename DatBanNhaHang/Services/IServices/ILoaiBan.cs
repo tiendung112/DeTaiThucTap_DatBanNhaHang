@@ -1,4 +1,5 @@
-﻿using DatBanNhaHang.Payloads.DTOs.NhaHang;
+﻿using DatBanNhaHang.Handler.Pagination;
+using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiBan;
 using DatBanNhaHang.Payloads.Responses;
 
@@ -7,9 +8,9 @@ namespace DatBanNhaHang.Services.IServices
     public interface ILoaiBan
     {
         Task<ResponseObject<LoaiBanDTOs>> ThemLoaiBan(Request_ThemLoaiBan request);
-        Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(Request_SuaLoaiBan request);
-        Task<ResponseObject<LoaiBanDTOs>> XoaLoaiBan(Request_XoaLoaiBan request);
-        Task<IQueryable<LoaiBanDTOs>> HienThiLoaiBan(int pageSize, int pageNumber);
+        Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(int id,Request_SuaLoaiBan request);
+        Task<ResponseObject<LoaiBanDTOs>> XoaLoaiBan(int id );
+        Task<PageResult<LoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber);
 
     }
 }
