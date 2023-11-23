@@ -18,11 +18,16 @@ namespace DatBanNhaHang.Controllers
         #region hiển thị , tìm kiếm bàn
         [HttpGet]
         [Route("/api/Ban/HienThiBan/{id}")]
-        public async Task<IActionResult> HienThiBan([FromRoute] int id, int pageSize, int pageNumber)
+        public async Task<IActionResult> HienThiBan([FromRoute] int id)
         {
-            return Ok(await services.HienThiBan(id, pageSize, pageNumber));
+            return Ok(await services.HienThiBan(id, 0, 0));
         }
-
+        [HttpGet]
+        [Route("/api/Ban/HienThiBan/")]
+        public async Task<IActionResult> HienThiBan(int pageSize, int pageNumber)
+        {
+            return Ok(await services.HienThiBan(0, pageSize, pageNumber));
+        }
 
         [HttpGet]
         [Route("/api/Ban/HienThiBanTheoTrangThai")]
