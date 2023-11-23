@@ -1,13 +1,9 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Handler.Pagination;
-using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn;
 using DatBanNhaHang.Services.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
 
 namespace DatBanNhaHang.Controllers
 {
@@ -20,7 +16,7 @@ namespace DatBanNhaHang.Controllers
         private readonly LoaiMonAn lma;
         private readonly MonAn monAn;
 
-        public LoaiMonAnController( )
+        public LoaiMonAnController()
         {
             services = new LoaiMonAnServices();
             lma = new LoaiMonAn();
@@ -32,7 +28,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiMonAn([FromBody] Request_ThemLoaiMonAn request)
         {
             var result = await services.ThemLoaiMonAn(request);
-            if(result == null)
+            if (result == null)
             {
                 return BadRequest(result);
             }
@@ -51,11 +47,11 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPut]
-        [Route("/api/LoaiMonAn/SuaLoaiMonAn")]
-        [Authorize(Roles ="ADMIN,MOD")]
-        public async Task<IActionResult> SuaLoaiMonAn([FromBody] Request_SuaLoaiMonAn request)
+        [Route("/api/LoaiMonAn/SuaLoaiMonAn/{id}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> SuaLoaiMonAn([FromRoute] int id, [FromBody] Request_SuaLoaiMonAn request)
         {
-            var result = await services.SuaLoaiMonAn(request);
+            var result = await services.SuaLoaiMonAn(id, request);
             if (result == null)
             {
                 return BadRequest(result);
@@ -64,11 +60,11 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpDelete]
-        [Route("/api/LoaiMonAn/XoaLoaiMonAn")]
-        [Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> XoaLoaiMonAn([FromBody] Request_XoaLoaiMonAn request)
+        [Route("/api/LoaiMonAn/XoaLoaiMonAn/{id}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> XoaLoaiMonAn([FromRoute] int id)
         {
-            var result = await services.XoaLoaiMonAn(request);
+            var result = await services.XoaLoaiMonAn(id);
             if (result == null)
             {
                 return BadRequest(result);
@@ -78,11 +74,17 @@ namespace DatBanNhaHang.Controllers
 
         [HttpGet]
         [Route("/api/LoaiMonAn/HienThiLoaiMonAn")]
-        
-        public async Task<IActionResult> HienThiLoaiMonAn(int pageSize , int pageNumber) 
-        {
-            return Ok("ok");
-        }
 
+        public async Task<IActionResult> HienThiLoaiMonAn(int pageSize, int pageNumber)
+        {
+            return Ok(await services.HienThiLoaiMonAn(0, pageSize, pageNumber));
+        }
+        [HttpGet]
+        [Route("/api/LoaiMonAn/HienThiLoaiMonAn/{id}")]
+
+        public async Task<IActionResult> HienThiLoaiMonAn([FromRoute]int id)
+        {
+            return Ok(await services.HienThiLoaiMonAn(id, 0,0));
+        }
     }
 }

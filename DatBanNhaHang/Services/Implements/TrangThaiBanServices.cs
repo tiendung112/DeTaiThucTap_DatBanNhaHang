@@ -1,4 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.TrangThaiBan;
@@ -18,14 +19,31 @@ namespace DatBanNhaHang.Services.Implements
             converters = new TrangThaiBanConverters();
             response = new ResponseObject<TrangThaiBanDTOs>();
         }
-        public async Task<IQueryable<TrangThaiBanDTOs>> HienThiTrangThaiBan(int pageSize, int pageNumber)
+        #region hiển thị , tìm kiếm trạng thái bàn
+        public async Task<IQueryable<TrangThaiBanDTOs>> HienThiTrangThaiBan(int id )
         {
-            return contextDB.TrangThaiBan.Select(x => converters.EntityToDTOs(x));
+            return id==0? contextDB.TrangThaiBan.Select(x => converters.EntityToDTOs(x))
+                : contextDB.TrangThaiBan.Where(y=>y.id==id).Select(x => converters.EntityToDTOs(x));
+        }
+        #endregion
+
+        #region thêm , sửa , xoá trạng thái bàn
+
+        public async Task<ResponseObject<TrangThaiBanDTOs>> ThemTrangThaiBan(Request_ThemTrangThaiBan request)
+        {
+            if (string.IsNullOrWhiteSpace(request.TenTrangThai))
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "chưa điền đủ thông tin ", null);
+            }
+            TrangThaiBan ttb = new TrangThaiBan() { TenTrangThai = request.TenTrangThai };
+            contextDB.TrangThaiBan.Add(ttb);
+            await contextDB.SaveChangesAsync();
+            return response.ResponseSuccess("Thêm trạng thái bàn thành công ", converters.EntityToDTOs(ttb));
         }
 
-        public async Task<ResponseObject<TrangThaiBanDTOs>> SuaTrangThaiBan(Request_SuaTrangThaiBan request)
+        public async Task<ResponseObject<TrangThaiBanDTOs>> SuaTrangThaiBan(int id, Request_SuaTrangThaiBan request)
         {
-            var ttb = contextDB.TrangThaiBan.SingleOrDefault(x => x.id == request.TrangThaiBanID);
+            var ttb = contextDB.TrangThaiBan.SingleOrDefault(x => x.id == id);
             if (ttb == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có trạng thái bàn cần sửa ", null);
@@ -36,27 +54,13 @@ namespace DatBanNhaHang.Services.Implements
             return response.ResponseSuccess("Sửa trạng thái bàn thành công ", converters.EntityToDTOs(ttb));
         }
 
-        public async Task<ResponseObject<TrangThaiBanDTOs>> ThemTrangThaiBan(Request_ThemTrangThaiBan request)
+        public async Task<ResponseObject<TrangThaiBanDTOs>> XoaTrangThaiBan(int id)
         {
-            if(string.IsNullOrWhiteSpace(request.TenTrangThai))
-            {
-                return response.ResponseError(StatusCodes.Status404NotFound, "chưa điền đủ thông tin ", null);
-            }
-            TrangThaiBan ttb = new TrangThaiBan() { TenTrangThai = request.TenTrangThai };
-             contextDB.TrangThaiBan.Add(ttb);
-             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("Thêm trạng thái bàn thành công ", converters.EntityToDTOs(ttb));
-        }
-
-        public async Task<ResponseObject<TrangThaiBanDTOs>> XoaTrangThaiBan(Request_XoaTrangThaiBan request)
-        {
-          
-
             using (var trans = contextDB.Database.BeginTransaction())
             {
                 try
                 {
-                    var ttb = contextDB.TrangThaiBan.SingleOrDefault(x => x.id == request.TrangThaiBanID);
+                    var ttb = contextDB.TrangThaiBan.SingleOrDefault(x => x.id == id);
                     if (ttb == null)
                     {
                         return response.ResponseError(StatusCodes.Status404NotFound, "Không có trạng thái bàn cần sửa ", null);
@@ -85,5 +89,6 @@ namespace DatBanNhaHang.Services.Implements
                 }
             }
         }
+        #endregion
     }
 }

@@ -26,7 +26,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPost]
         [Route("/api/MonAn/ThemMonAn")]
-        public async Task<IActionResult> ThemMonAn([FromForm] Request_ThemMonAn request)
+        public async Task<IActionResult> ThemMonAn([FromBody] Request_ThemMonAn request)
         {
             var result = await services.ThemMonAn(request);
             if (result == null)
@@ -36,10 +36,10 @@ namespace DatBanNhaHang.Controllers
             return Ok(result);
         }
         [HttpPut]
-        [Route("/api/MonAn/SuaMonAn")]
-        public async Task<IActionResult> SuaMonAn([FromForm] Request_SuaMonAn request)
+        [Route("/api/MonAn/SuaMonAn/{id}")]
+        public async Task<IActionResult> SuaMonAn([FromRoute] int id , [FromBody] Request_SuaMonAn request)
         {
-            var result = await services.SuaMonAn(request);
+            var result = await services.SuaMonAn(id,request);
             if (result == null)
             {
                 return BadRequest(result);
@@ -47,10 +47,10 @@ namespace DatBanNhaHang.Controllers
             return Ok(result);
         }
         [HttpDelete]
-        [Route("/api/MonAn/XoaMonAn")]
-        public async Task<IActionResult> XoaMonAn([FromBody] Request_XoaMonAn request)
+        [Route("/api/MonAn/XoaMonAn/{id}")]
+        public async Task<IActionResult> XoaMonAn([FromRoute] int id )
         {
-            var result = await services.XoaMonAn(request);
+            var result = await services.XoaMonAn(id);
             if (result == null)
             {
                 return BadRequest(result);
@@ -58,20 +58,25 @@ namespace DatBanNhaHang.Controllers
             return Ok(result);
         }
 
-
-
         [HttpGet]
         [Route("/api/MonAn/HienThiMonAn")]
-        public async Task<IActionResult> HienThiMonAn(int pageSize, int pageNumber)
+        public async Task<IActionResult> HienThiMonAn( int pageSize, int pageNumber)
         {
-            return Ok("ok");
+            return Ok(await services.HienThiMonAn(0,pageSize,pageNumber));
         }
 
         [HttpGet]
-        [Route("/api/MonAn/TimKiemMonAn")]
-        public async Task<IActionResult> TimKiemMonAn([FromBody] Request_TimKiemMonAn request,int pageSize, int pageNumber)
+        [Route("/api/MonAn/HienThiMonAn/{id}")]
+        public async Task<IActionResult> HienThiMonAn(int id)
         {
-            return Ok("ok");
+            return Ok(await services.HienThiMonAn(id, 0,0 ));
+        }
+
+        [HttpGet]
+        [Route("/api/MonAn/TimKiemMonAn/{tenMonAn}")]
+        public async Task<IActionResult> TimKiemMonAn([FromRoute] string tenMonAn)
+        {
+            return Ok(await services.TimKiemMonAn(tenMonAn,0,0));
         }
     }
 }

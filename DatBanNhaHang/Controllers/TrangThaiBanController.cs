@@ -18,7 +18,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPost]
         [Route("/api/TrangThaiBan/ThemTrangThaiBan")]
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThemTrangThaiBan([FromBody] Request_ThemTrangThaiBan request)
         {
             var result = await services.ThemTrangThaiBan(request);
@@ -30,11 +30,11 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPut]
-        [Route("/api/TrangThaiBan/SuaTrangThaiBan")]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> SuaTrangThaiBan([FromBody] Request_SuaTrangThaiBan request)
+        [Route("/api/TrangThaiBan/SuaTrangThaiBan/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> SuaTrangThaiBan([FromRoute] int id, [FromBody] Request_SuaTrangThaiBan request)
         {
-            var result = await services.SuaTrangThaiBan(request);
+            var result = await services.SuaTrangThaiBan(id, request);
             if (result == null)
             {
                 return BadRequest(result);
@@ -43,11 +43,11 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpDelete]
-        [Route("/api/TrangThaiBan/XoaTrangThaiBan")]
+        [Route("/api/TrangThaiBan/XoaTrangThaiBan/{id}")]
         [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> XoaTrangThaiBan([FromBody] Request_XoaTrangThaiBan request)
+        public async Task<IActionResult> XoaTrangThaiBan([FromRoute] int id )
         {
-            var result = await services.XoaTrangThaiBan(request);
+            var result = await services.XoaTrangThaiBan(id);
             if (result == null)
             {
                 return BadRequest(result);
@@ -57,10 +57,18 @@ namespace DatBanNhaHang.Controllers
 
         [HttpGet]
         [Route("/api/TrangThaiBan/HienThiTrangThaiBan")]
-        [Authorize(Roles = "ADMIN , MOD")]
+        //[Authorize(Roles = "ADMIN , MOD")]
         public async Task<IActionResult> HienThiTrangThaiBan()
         {
-            return Ok("ok");
+            return Ok(await services.HienThiTrangThaiBan(0));
+        }
+
+        [HttpGet]
+        [Route("/api/TrangThaiBan/HienThiTrangThaiBan/{id}")]
+        //[Authorize(Roles = "ADMIN , MOD")]
+        public async Task<IActionResult> HienThiTrangThaiBan([FromRoute]int id)
+        {
+            return Ok(await services.HienThiTrangThaiBan(id));
         }
     }
 }
