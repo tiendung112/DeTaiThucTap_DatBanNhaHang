@@ -1,5 +1,4 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
-using DatBanNhaHang.Handler.Image;
 using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
@@ -44,7 +43,7 @@ namespace DatBanNhaHang.Services.Implements
             }
             else
             {
-                int imageSize = 2 * 1024 * 768;
+                // int imageSize = 2 * 1024 * 768;
                 try
                 {
                     DauBep db = new DauBep();
@@ -52,7 +51,8 @@ namespace DatBanNhaHang.Services.Implements
                     db.ngaySinh = request.ngaySinh;
                     db.SDT = request.SDT;
                     db.MoTa = request.MoTa;
-                    if (request.AnhDauBepURl != null)
+                    db.AnhDauBepURl = request.AnhDauBepURl;
+                    /*if (request.AnhDauBepURl != null)
                     {
                         if (!HandleImage.IsImage(request.AnhDauBepURl, imageSize))
                         {
@@ -63,7 +63,7 @@ namespace DatBanNhaHang.Services.Implements
                             var avatarFile = await HandleUploadImage.Upfile(request.AnhDauBepURl, "DatBanNhaHang/DauBep");
                             db.AnhDauBepURl = avatarFile == "" ? "https://cdn-icons-png.flaticon.com/512/562/562678.png" : avatarFile;
                         }
-                    }
+                    }*/
                     await contextDB.DauBep.AddAsync(db);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Thêm Đầu Bếp  thành công", converters.EntityToDTOs(db));
@@ -83,14 +83,14 @@ namespace DatBanNhaHang.Services.Implements
                 return response.ResponseError(403, "Không tồn tại đầu bếp này", null);
             else
             {
-                int imageSize = 2 * 1024 * 768;
+                //int imageSize = 2 * 1024 * 768;
                 try
                 {
                     daubep.HoTen = request.HoTen == null ? daubep.HoTen : request.HoTen;
                     daubep.ngaySinh = request.ngaySinh == null ? daubep.ngaySinh : request.ngaySinh;
                     daubep.SDT = request.SDT == null ? daubep.SDT : request.SDT;
                     daubep.MoTa = request.MoTa == null ? daubep.MoTa : request.MoTa;
-                    if (request.AnhDauBepURl != null)
+                    /*if (request.AnhDauBepURl != null)
                     {
                         if (!HandleImage.IsImage(request.AnhDauBepURl, imageSize))
                         {
@@ -101,7 +101,8 @@ namespace DatBanNhaHang.Services.Implements
                             var avatarFile = await HandleUploadImage.Upfile(request.AnhDauBepURl, "DatBanNhaHang/DauBep");
                             daubep.AnhDauBepURl = avatarFile == "" ? daubep.AnhDauBepURl : avatarFile;
                         }
-                    }
+                    }*/
+                    daubep.AnhDauBepURl = request.AnhDauBepURl == null ? daubep.AnhDauBepURl : request.AnhDauBepURl;
                     contextDB.DauBep.Update(daubep);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Sửa Đầu Bếp thành công", converters.EntityToDTOs(daubep));
@@ -115,9 +116,9 @@ namespace DatBanNhaHang.Services.Implements
 
             }
         }
-        public async Task<ResponseObject<DauBepDTOs>> XoaDauBep(Request_XoaDauBep request)
+        public async Task<ResponseObject<DauBepDTOs>> XoaDauBep(int id)
         {
-            var daubep = context.DauBep.FirstOrDefault(x => x.id == request.ID);
+            var daubep = context.DauBep.FirstOrDefault(x => x.id ==id);
             if (daubep != null)
             {
                 context.DauBep.Remove(daubep);
