@@ -9,7 +9,7 @@ namespace DatBanNhaHang.Services.IServices
     {
         Task<ResponseObject<DauBepDTOs>> ThemDauBep (Request_ThemDauBep  request);
         Task<ResponseObject<DauBepDTOs>> SuaDauBep(int id,Request_SuaDauBep request);
-        Task<ResponseObject<DauBepDTOs>> XoaDauBep(Request_XoaDauBep request);
+        Task<ResponseObject<DauBepDTOs>> XoaDauBep(int id);
         Task<PageResult<DauBepDTOs>> GetDSDauBep(int id , int pageSize, int pageNumber);
 
     }

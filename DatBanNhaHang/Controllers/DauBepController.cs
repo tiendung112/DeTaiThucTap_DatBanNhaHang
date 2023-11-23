@@ -27,7 +27,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPost]
         [Route("/api/DauBep/ThemDauBep")]
         //[Authorize(Roles ="ADMIN,MOD")]
-        public async Task<IActionResult> ThemDauBep([FromForm] Request_ThemDauBep request)
+        public async Task<IActionResult> ThemDauBep([FromBody] Request_ThemDauBep request)
         {
             var result = await services.ThemDauBep(request);
             if (result == null)
@@ -40,7 +40,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/DauBep/SuaDauBep/{id}")]
         //[Authorize(Roles = "ADMIN , MOD")]
-        public async Task<IActionResult> SuaDauBep(int id ,[FromForm] Request_SuaDauBep request)
+        public async Task<IActionResult> SuaDauBep(int id ,[FromBody] Request_SuaDauBep request)
         {
             var result =await services.SuaDauBep(id,request);
             
@@ -51,11 +51,11 @@ namespace DatBanNhaHang.Controllers
             return Ok(result);
         }
         [HttpDelete]
-        [Route("/api/DauBep/XoaDauBep")]
+        [Route("/api/DauBep/XoaDauBep/{id}")]
         [Authorize(Roles ="ADMIN , MOD")]
-        public async Task<IActionResult> XoaDauBep([FromBody] Request_XoaDauBep request)
+        public async Task<IActionResult> XoaDauBep([FromRoute]int id )
         {
-            var result = await services.XoaDauBep(request);
+            var result = await services.XoaDauBep(id);
             if (result == null)
             {
                 return BadRequest(result);
@@ -64,7 +64,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpGet]
         [Route("/api/DauBep/HienThiDanhSachDauBep")]
-        public async Task<IActionResult> LayDSDauBep( int pageSize, int pageNumber)
+        public async Task<IActionResult> LayDSDauBep([FromRoute] int pageSize, int pageNumber)
         {
             int id = 0;
             return Ok(await services.GetDSDauBep(id, pageSize, pageNumber));
