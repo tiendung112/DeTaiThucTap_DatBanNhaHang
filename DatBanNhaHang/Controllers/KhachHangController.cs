@@ -25,22 +25,39 @@ namespace DatBanNhaHang.Controllers
 
         [HttpGet]
         [Route("/api/KhachHang/HienThiKhachHang")]
-        [Authorize(Roles = "ADMIN,MOD")]
+        //[Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> HienThiKhachHang(int pageSize, int pageNumber)
         {
-            return Ok("ok");
+            return Ok(await services.HienThiKhachHang(0, pageSize, pageNumber));
         }
+
         [HttpGet]
-        [Route("/api/KhachHang/TimKiemKhachHang")]
-        [Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> TimKiemKhachHang([FromBody] Request_TimKiemKhachHang request,int pageSize, int pageNumber)
+        [Route("/api/KhachHang/HienThiKhachHang/{id}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> HienThiKhachHang([FromRoute]int id , int pageSize, int pageNumber)
         {
-            return Ok("ok");
+            return Ok(await services.HienThiKhachHang(id,0,0));
+        }
+
+        [HttpGet]
+        [Route("/api/KhachHang/TimKiemKhachHang/SDT:{SDT}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> TimKiemKhachHangSDT([FromRoute] string SDT)
+        {
+            return Ok(await services.TimKiemKhachHangSDT(SDT));
+        }
+
+        [HttpGet]
+        [Route("/api/KhachHang/TimKiemKhachHang/HoTen:{HoTen}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> TimKiemKhachHangHoTen([FromRoute] string HoTen, int pageSize, int pageNumber)
+        {
+            return Ok(await services.TimKiemKhachHangHoTen(HoTen,pageSize,pageNumber));
         }
 
         [HttpPost]
         [Route("/api/KhachHang/ThemKhachHang")]
-        [Authorize(Roles ="ADMIN,MOD")]
+        //[Authorize(Roles ="ADMIN,MOD")]
         public async Task<IActionResult> ThemKhachHang([FromBody] Request_ThemKhachHang request)
         {
             var result = await services.ThemKhachHang(request);
@@ -52,11 +69,11 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPut]
-        [Route("/api/KhachHang/SuaKhachHang")]
-        [Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> SuaKhachHang([FromBody] Request_SuaKhachHang request)
+        [Route("/api/KhachHang/SuaKhachHang/{id}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> SuaKhachHang([FromRoute]int id, [FromBody] Request_SuaKhachHang request)
         {
-            var result = await services.SuaKhachHang(request);
+            var result = await services.SuaKhachHang(id,request);
             if (result == null)
             {
                 return BadRequest(result);
@@ -64,11 +81,11 @@ namespace DatBanNhaHang.Controllers
             return Ok(result);
         }
         [HttpDelete]
-        [Route("/api/KhachHang/XoaKhachHang")]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> XoaKhachHang([FromBody] Request_XoaKhachHang request)
+        [Route("/api/KhachHang/XoaKhachHang/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> XoaKhachHang([FromRoute]int id  )
         {
-            var result = await services.XoaKhachHang(request);
+            var result = await services.XoaKhachHang(id);
             if (result == null)
             {
                 return BadRequest(result);
