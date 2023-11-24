@@ -1,16 +1,19 @@
-﻿using DatBanNhaHang.Entities.NhaHang;
+﻿using DatBanNhaHang.Context;
+using DatBanNhaHang.Entities.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 
 namespace DatBanNhaHang.Payloads.Converters.NhaHang
 {
     public class MonAnConverters
     {
+        private readonly AppDbContext context = new AppDbContext();
         public MonAnDTOs EntityToDTOs(MonAn monAn)
         {
             return new MonAnDTOs
             {
                 MonAnID =monAn.id,
                 LoaiMonAnID = monAn.LoaiMonAnID,
+                TenLoaiMonAn = context.LoaiMonAn.SingleOrDefault(x=>x.id==monAn.LoaiMonAnID).TenLoai,
                 TenMon = monAn.TenMon,
                 GiaTien = monAn.GiaTien,
                 MoTa= monAn.MoTa,

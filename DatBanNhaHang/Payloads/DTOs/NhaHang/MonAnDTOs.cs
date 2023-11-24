@@ -6,6 +6,7 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
     {
         public int MonAnID { get; set; }
         public int LoaiMonAnID { get; set; }
+        public string TenLoaiMonAn { get; set; }
         public string? TenMon { get; set; }
         public string? MoTa { get; set; }
         public double? GiaTien { get; set; }
