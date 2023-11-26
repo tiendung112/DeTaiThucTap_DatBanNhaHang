@@ -29,12 +29,6 @@ namespace DatBanNhaHang.Controllers
             return Ok(await services.HienThiBan(0, pageSize, pageNumber));
         }
 
-        [HttpGet]
-        [Route("/api/Ban/HienThiBanTheoTrangThai")]
-        public async Task<IActionResult> HienThiBanTheoTrangThai(int pageSize, int pageNumber)
-        {
-            return Ok(await services.HienThiBanTheoTrangThai(pageSize, pageNumber));
-        }
 
         [HttpGet]
         [Route("/api/Ban/HienThiBanTheoViTri")]

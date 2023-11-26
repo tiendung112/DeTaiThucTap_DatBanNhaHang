@@ -73,8 +73,8 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpGet]
-        [Route("/api/MonAn/TimKiemMonAn/{tenMonAn}")]
-        public async Task<IActionResult> TimKiemMonAn([FromRoute] string tenMonAn)
+        [Route("/api/MonAn/TimKiemMonAn/")]
+        public async Task<IActionResult> TimKiemMonAn( string tenMonAn)
         {
             return Ok(await services.TimKiemMonAn(tenMonAn,0,0));
         }

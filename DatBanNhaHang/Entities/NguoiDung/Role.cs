@@ -6,6 +6,6 @@ namespace DatBanNhaHang.Entities.NguoiDung
     public class Role : BaseEntity
     {
         public string RoleName { get; set; }
-        public IEnumerable<User> User { get; set; }
+        public IEnumerable<Admin> Admin { get; set; }
     }
 }

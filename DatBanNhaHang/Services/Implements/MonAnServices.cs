@@ -30,7 +30,9 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<MonAnDTOs>> TimKiemMonAn(string tenMonAn, int pageSize, int pageNumber)
         {
-            var lstMonAn= contextDB.MonAn.Where(x => ChuanHoaChuoi(x.TenMon) == ChuanHoaChuoi(tenMonAn))
+            var lstMonAn= contextDB.MonAn.AsEnumerable()
+                .Where(x => ChuanHoaChuoi(x.TenMon).Contains(ChuanHoaChuoi(tenMonAn)))
+                .AsQueryable()
                 .Select(y => converters.EntityToDTOs(y));
             var res =  Pagintation.GetPagedData(lstMonAn,pageSize, pageNumber);
             return res;

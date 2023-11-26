@@ -4,6 +4,7 @@ using DatBanNhaHang.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatBanNhaHang.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231125172211_nhaHang_v2")]
+    partial class nhaHang_v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,7 +87,7 @@ namespace DatBanNhaHang.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int?>("AdminID")
+                    b.Property<int?>("Adminid")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ExpiredTime")
@@ -94,12 +97,12 @@ namespace DatBanNhaHang.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserID")
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("AdminID");
+                    b.HasIndex("Adminid");
 
                     b.HasIndex("UserID");
 
@@ -155,6 +158,9 @@ namespace DatBanNhaHang.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Roleid")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -163,6 +169,8 @@ namespace DatBanNhaHang.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("id");
+
+                    b.HasIndex("Roleid");
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -178,7 +186,7 @@ namespace DatBanNhaHang.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int?>("AdminID")
+                    b.Property<int?>("Adminid")
                         .HasColumnType("int");
 
                     b.Property<bool>("DaXacNhan")
@@ -190,12 +198,12 @@ namespace DatBanNhaHang.Migrations
                     b.Property<DateTime?>("ThoiGianHetHan")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserID")
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("AdminID");
+                    b.HasIndex("Adminid");
 
                     b.HasIndex("UserID");
 
@@ -486,7 +494,7 @@ namespace DatBanNhaHang.Migrations
                         .HasForeignKey("ParentID");
 
                     b.HasOne("DatBanNhaHang.Entities.NguoiDung.Role", "Role")
-                        .WithMany("Admin")
+                        .WithMany()
                         .HasForeignKey("RoleID");
 
                     b.Navigation("Parent");
@@ -496,30 +504,37 @@ namespace DatBanNhaHang.Migrations
 
             modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.RefreshToken", b =>
                 {
-                    b.HasOne("DatBanNhaHang.Entities.NguoiDung.Admin", "Admin")
+                    b.HasOne("DatBanNhaHang.Entities.NguoiDung.Admin", null)
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("AdminID");
+                        .HasForeignKey("Adminid");
 
                     b.HasOne("DatBanNhaHang.Entities.NguoiDung.User", "User")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("UserID");
-
-                    b.Navigation("Admin");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.User", b =>
+                {
+                    b.HasOne("DatBanNhaHang.Entities.NguoiDung.Role", null)
+                        .WithMany("User")
+                        .HasForeignKey("Roleid");
+                });
+
             modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.XacNhanEmail", b =>
                 {
-                    b.HasOne("DatBanNhaHang.Entities.NguoiDung.Admin", "Admin")
+                    b.HasOne("DatBanNhaHang.Entities.NguoiDung.Admin", null)
                         .WithMany("emails")
-                        .HasForeignKey("AdminID");
+                        .HasForeignKey("Adminid");
 
                     b.HasOne("DatBanNhaHang.Entities.NguoiDung.User", "user")
                         .WithMany("xacNhanEmails")
-                        .HasForeignKey("UserID");
-
-                    b.Navigation("Admin");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("user");
                 });
@@ -614,7 +629,7 @@ namespace DatBanNhaHang.Migrations
 
             modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.Role", b =>
                 {
-                    b.Navigation("Admin");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.User", b =>

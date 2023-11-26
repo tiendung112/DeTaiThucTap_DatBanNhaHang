@@ -1,6 +1,6 @@
 ﻿using DatBanNhaHang.Entities.NguoiDung;
 using DatBanNhaHang.Payloads.DTOs.NguoiDung;
-using DatBanNhaHang.Payloads.Requests.NguoiDung;
+using DatBanNhaHang.Payloads.Requests.NguoiDung.User;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -34,14 +34,6 @@ namespace DatBanNhaHang.Services.Implements
             var result = Pagintation.GetPagedData(ban, pageSize, pageNumber);
             return result;
         }
-
-        public async Task<PageResult<BanDTOs>> HienThiBanTheoTrangThai(int pageSize, int pageNumber)
-        {
-            var ban = contextDB.Ban.OrderBy(y => y.TrangThaiBanID).Select(x => converters.EntityToDTOs(x));
-            var result = Pagintation.GetPagedData(ban, pageSize, pageNumber);
-            return result;
-        }
-
         public async Task<PageResult<BanDTOs>> HienThiBanTheoViTri(int pageSize, int pageNumber)
         {
             var lst = contextDB.Ban.OrderBy(y => y.ViTri).Select(x => converters.EntityToDTOs(x));
@@ -62,10 +54,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "chưa điền đầy đủ thông tin ", null);
             }
-            if (!contextDB.TrangThaiBan.Any(x => x.id == request.TrangThaiBanID))
-            {
-                return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái bàn này", null);
-            }
+            
             if (!contextDB.LoaiBan.Any(x => x.id == request.LoaiBanID))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
@@ -77,7 +66,7 @@ namespace DatBanNhaHang.Services.Implements
                 GiaTien = request.GiaTien,
                 LoaiBanID = request.LoaiBanID,
                 SoNguoiToiDa = request.SoNguoiToiDa,
-                TrangThaiBanID = request.TrangThaiBanID
+                
             };
             contextDB.Ban.Add(newBan);
             await contextDB.SaveChangesAsync();
@@ -89,10 +78,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
             }
-            if (!contextDB.Ban.Any(x => x.TrangThaiBanID == request.TrangThaiBanID))
-            {
-                return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái bàn này", null);
-            }
+           
             var ban = contextDB.Ban.SingleOrDefault(x => x.id == id);
             if (ban == null)
             {
@@ -103,7 +89,7 @@ namespace DatBanNhaHang.Services.Implements
             ban.SoNguoiToiDa = !request.SoNguoiToiDa.HasValue ? ban.SoNguoiToiDa : request.SoNguoiToiDa;
             ban.GiaTien = request.GiaTien.HasValue ? request.GiaTien : ban.GiaTien;
             ban.LoaiBanID = !request.LoaiBanID.HasValue ? ban.LoaiBanID : request.LoaiBanID;
-            ban.TrangThaiBanID = !request.TrangThaiBanID.HasValue ? ban.TrangThaiBanID : request.TrangThaiBanID;
+            
             contextDB.Update(ban);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Sửa bàn thành công", converters.EntityToDTOs(ban));

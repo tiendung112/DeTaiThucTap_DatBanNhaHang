@@ -4,7 +4,9 @@
     {
         public string Token { get; set; }
         public DateTime ExpiredTime { get; set; }
-        public int UserID { get; set; }
-        public User User { get; set; }
+        public int? UserID { get; set; }
+        public User? User { get; set; }
+        public int? AdminID { get; set; }
+        public Admin? Admin { get; set; }
     }
 }
