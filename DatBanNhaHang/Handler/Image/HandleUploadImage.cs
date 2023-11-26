@@ -5,9 +5,9 @@ namespace DatBanNhaHang.Handler.Image
 {
     public class HandleUploadImage
     {
-        static string cloudName = "dleakiid7";
-        static string apiKey = "337694681628724";
-        static string apiSecret = "Gx3gBG6eLlG_NZoMn3FuOX4KrpE";
+        static string cloudName = "defwlfzwl";
+        static string apiKey = "619677395578241";
+        static string apiSecret = "opfhYWKT1zDUbPWD4qGWBGH1gJg";
         static public Account account = new Account(cloudName, apiKey, apiSecret);
         static public Cloudinary _cloudinary = new Cloudinary(account);
         public static async Task<string> Upfile(IFormFile file,string duongdan)

@@ -2,7 +2,7 @@
 using DatBanNhaHang.Handler.Email;
 using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.DTOs.NguoiDung;
-using DatBanNhaHang.Payloads.Requests.NguoiDung;
+using DatBanNhaHang.Payloads.Requests.NguoiDung.User;
 using DatBanNhaHang.Payloads.Responses;
 
 namespace DatBanNhaHang.Services.IServices

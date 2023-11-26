@@ -22,7 +22,7 @@ using BCryptNet = BCrypt.Net.BCrypt;
 using SmtpClient = System.Net.Mail.SmtpClient;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Entities.NguoiDung;
-using DatBanNhaHang.Payloads.Requests.NguoiDung;
+using DatBanNhaHang.Payloads.Requests.NguoiDung.User;
 using DatBanNhaHang.Payloads.DTOs.NguoiDung;
 using DatBanNhaHang.Payloads.Converters.NguoiDung;
 using Azure;
@@ -36,13 +36,13 @@ namespace DatBanNhaHang.Services.Implements
         private readonly IConfiguration _configuration;
         private readonly ResponseObject<UserDTO> _responseObject;
         private readonly ResponseObject<TokenDTO> _responseObjectToken;
-        private readonly UserConverter _userConverter;
+        private readonly UserConverters _userConverter;
 
         public AuthServices(
             IConfiguration configuration,
             ResponseObject<UserDTO> responseObject,
             ResponseObject<TokenDTO> reponseObjectToken,
-            UserConverter userConverter
+            UserConverters userConverter
             )
         {
             _configuration = configuration;
@@ -55,8 +55,8 @@ namespace DatBanNhaHang.Services.Implements
         {
             if (string.IsNullOrWhiteSpace(request.UserName)
                || string.IsNullOrWhiteSpace(request.Password)
-               || string.IsNullOrWhiteSpace(request.FirstName)
-               || string.IsNullOrWhiteSpace(request.LastName)
+               /*|| string.IsNullOrWhiteSpace(request.FirstName)*/
+               || string.IsNullOrWhiteSpace(request.Name)
                || string.IsNullOrWhiteSpace(request.Email))
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Bạn cần truyền vào đầy đủ thông tin", null);
@@ -77,21 +77,22 @@ namespace DatBanNhaHang.Services.Implements
             }
             else
             {
-                int imageSize = 2 * 1024 * 768;
+                //int imageSize = 2 * 1024 * 768;
                 try
                 {
                     User user = new User();
                     user.UserName = request.UserName;
-                    user.FirstName = request.FirstName;
+                    user.Name = request.Name;
+                    //user.FirstName = request.FirstName;
                     user.Password = BCryptNet.HashPassword(request.Password);
-                    user.LastName = request.LastName;
+                    //user.LastName = request.LastName;
                     user.Email = request.Email;
                     user.DateOfBirth = request.DateOfBirth;
                     user.Gender = request.Gender;
-                    user.Roleid = 3;
+                    //user.Roleid = 3;
                     user.ngayTao = DateTime.Now;
-                    string imageUrl = "";
-                    if (request.AvatarUrl != null)
+                    user.AvatarUrl = request.AvatarUrl;
+                   /* if (request.AvatarUrl != null)
                     {
                         if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
                         {
@@ -102,10 +103,7 @@ namespace DatBanNhaHang.Services.Implements
                             var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
                             user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
                         }
-                    }
-
-                    await contextDB.User.AddAsync(user);
-                    await contextDB.User.AddAsync(user);
+                    }*/
                     await contextDB.User.AddAsync(user);
                     await contextDB.SaveChangesAsync();
 
@@ -168,8 +166,8 @@ namespace DatBanNhaHang.Services.Implements
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:SecretKey").Value!);
 
-            var decentralization = contextDB.Role.FirstOrDefault(x => x.id == user.Roleid);
-
+            //var decentralization = contextDB.Role.FirstOrDefault(x => x.id == user.Roleid);
+            //var decentralization = contextDB.Role.FirstOrDefault(x => x.id == user.Roleid);
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -178,8 +176,8 @@ namespace DatBanNhaHang.Services.Implements
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("Username", user.UserName),
                     new Claim("Avatar", user.AvatarUrl),
-                    new Claim("Roleid", user.Roleid.ToString()),
-                    new Claim(ClaimTypes.Role,decentralization?.RoleName ?? "")
+                    /*new Claim("Roleid", user.Roleid.ToString()),
+                    new Claim(ClaimTypes.Role,decentralization?.RoleName ?? "")*/
                 }),
                 Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
@@ -395,7 +393,7 @@ namespace DatBanNhaHang.Services.Implements
         #region Xử lý việc thay đổi quyền hạn của người dùng và xoá tài khoản chưa active
         public async Task<string> ThayDoiQuyenHan(Request_ThayDoiQuyen request)
         {
-            var NguoiDung = await contextDB.User.FirstOrDefaultAsync(x => x.id == request.UserID);
+            /*var NguoiDung = await contextDB.User.FirstOrDefaultAsync(x => x.id == request.UserID);
 
             if (NguoiDung == null)
             {
@@ -413,7 +411,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 return "Lỗi trong quá trình thay đổi quyền tài khoản";
-            }
+            }*/ return "Lỗi trong quá trình thay đổi quyền tài khoản";
         }
         public string RemoveTKNotActive()
         {

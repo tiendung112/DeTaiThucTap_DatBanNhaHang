@@ -70,9 +70,12 @@ namespace DatBanNhaHang.Services.Implements
         }
 
         public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
-    {
-            var kh= contextDB.KhachHang.Where(x =>ChuanHoaChuoi( x.HoTen) ==ChuanHoaChuoi(HoTen)).Select(y => converters.EntityToDTOs(y));
-            var result = Pagintation.GetPagedData(kh, pageSize, pageNumber);
+        {
+            var kh= contextDB.KhachHang.AsEnumerable()
+                .Where(x => ChuanHoaChuoi(x.HoTen).Contains(ChuanHoaChuoi(HoTen))).AsQueryable()
+                .Select(y => converters.EntityToDTOs(y));
+            
+            var result = Pagintation.GetPagedData<KhachHangDTOs>(kh, pageSize, pageNumber);
             return result;
         }
 

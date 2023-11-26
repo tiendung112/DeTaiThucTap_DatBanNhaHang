@@ -30,18 +30,18 @@ builder.Services.AddSwaggerGen(x =>
 });
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAuthServices, AuthServices>();
+builder.Services.AddScoped<IAdminServices,AdminServices>();
 builder.Services.AddScoped<IDauBep, DauBepServices>();
 builder.Services.AddScoped<ILoaiMonAn, LoaiMonAnServices>();
 builder.Services.AddScoped<IMonAn, MonAnServices>();
 builder.Services.AddScoped<IKhachHang, KhachHangServices>();
 builder.Services.AddScoped<ITrangThaiHoaDon, TrangThaiHoaDonServices>();
 builder.Services.AddScoped<ILoaiBan, LoaiBanServices>();
-builder.Services.AddScoped<ITrangThaiBan, TrangThaiBanServices>();
 builder.Services.AddScoped<IBan, BanServices>();
 
 builder.Services.AddSingleton<ResponseObject<UserDTO>>();
 builder.Services.AddSingleton<ResponseObject<TokenDTO>>();
-builder.Services.AddSingleton<UserConverter>();
+builder.Services.AddSingleton<UserConverters>();
 //builder.Services.AddDbContext<AppDbContext>(options => {
 //    options.UseSqlServer(builder.Configuration.GetConnectionString(SourseData.MyConnect()));
 //});

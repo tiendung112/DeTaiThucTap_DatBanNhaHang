@@ -1,4 +1,4 @@
-﻿namespace DatBanNhaHang.Payloads.Requests.NguoiDung
+﻿namespace DatBanNhaHang.Payloads.Requests.NguoiDung.User
 {
     public class Request_ThayDoiQuyen
     {

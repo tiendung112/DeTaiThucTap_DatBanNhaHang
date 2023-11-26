@@ -40,17 +40,17 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpGet]
-        [Route("/api/KhachHang/TimKiemKhachHang/SDT:{SDT}")]
+        [Route("/api/KhachHang/TimKiemKhachHangSDT")]
         //[Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> TimKiemKhachHangSDT([FromRoute] string SDT)
+        public async Task<IActionResult> TimKiemKhachHangSDT(string SDT)
         {
             return Ok(await services.TimKiemKhachHangSDT(SDT));
         }
 
         [HttpGet]
-        [Route("/api/KhachHang/TimKiemKhachHang/HoTen:{HoTen}")]
+        [Route("/api/KhachHang/TimKiemKhachHangHoTen")]
         //[Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> TimKiemKhachHangHoTen([FromRoute] string HoTen, int pageSize, int pageNumber)
+        public async Task<IActionResult> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
         {
             return Ok(await services.TimKiemKhachHangHoTen(HoTen,pageSize,pageNumber));
         }

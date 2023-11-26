@@ -1,8 +1,8 @@
 ﻿using DatBanNhaHang.Entities.NguoiDung;
 
-namespace DatBanNhaHang.Payloads.Requests.NguoiDung
+namespace DatBanNhaHang.Payloads.Requests.NguoiDung.Admin
 {
-    public class Request_UpdateInfor
+    public class Request_AdminUpdateInfor
     {
         public int UserID { get; set; }
         public string? FirstName { get; set; }

@@ -5,9 +5,8 @@ using DatBanNhaHang.Payloads.DTOs.NguoiDung;
 
 namespace DatBanNhaHang.Payloads.Converters.NguoiDung
 {
-    public class UserConverter
+    public class UserConverters
     {
-
 
         public UserDTO EntityToDTO(User user)
         {
@@ -17,10 +16,8 @@ namespace DatBanNhaHang.Payloads.Converters.NguoiDung
                 Email = user.Email,
                 AvatarUrl = user.AvatarUrl,
                 DateOfBirth = user.DateOfBirth,
-                FirstName = user.FirstName,
+                Name = user.Name,
                 Gender = user.Gender,
-                LastName = user.LastName
-
             };
         }
     }
