@@ -20,8 +20,6 @@ namespace DatBanNhaHang.Services.IServices
         Task<string> ForgotPassword(Request_ForgotPassword request);
         Task<ResponseObject<UserDTO>> CreateNewPassword(Request_ConfirmCreateNewPassword request);
         Task<string> XacNhanDangKyTaiKhoan(Request_ValidateRegister request);
-        string RemoveTKNotActive();
-        Task<string> ThayDoiQuyenHan(Request_ThayDoiQuyen request);
-        //Task<ResponseObject<UserDTO>> ThayDoiThongTin(Request_UpdateInfor request);
+        Task<ResponseObject<UserDTO>> ThayDoiThongTin(int id , Request_UpdateInfor request);
     }
 }

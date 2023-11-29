@@ -1,33 +1,23 @@
-﻿using DatBanNhaHang.Entities;
+﻿using DatBanNhaHang.Entities.NguoiDung;
 using DatBanNhaHang.Handler.Email;
 using DatBanNhaHang.Handler.Image;
+using DatBanNhaHang.Handler.Pagination;
+using DatBanNhaHang.Payloads.Converters.NguoiDung;
+using DatBanNhaHang.Payloads.DTOs.NguoiDung;
+using DatBanNhaHang.Payloads.Requests.NguoiDung.User;
 using DatBanNhaHang.Payloads.Responses;
+using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
-using AutoMapper;
-using Azure.Core;
-using CloudinaryDotNet;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Net.Mail;
 using BCryptNet = BCrypt.Net.BCrypt;
 using SmtpClient = System.Net.Mail.SmtpClient;
-using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
-using DatBanNhaHang.Entities.NguoiDung;
-using DatBanNhaHang.Payloads.Requests.NguoiDung.User;
-using DatBanNhaHang.Payloads.DTOs.NguoiDung;
-using DatBanNhaHang.Payloads.Converters.NguoiDung;
-using Azure;
-using DatBanNhaHang.Entities.NguoiDung;
-using DatBanNhaHang.Handler.Pagination;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -92,18 +82,18 @@ namespace DatBanNhaHang.Services.Implements
                     //user.Roleid = 3;
                     user.ngayTao = DateTime.Now;
                     user.AvatarUrl = request.AvatarUrl;
-                   /* if (request.AvatarUrl != null)
-                    {
-                        if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
-                        {
-                            return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                        }
-                        else
-                        {
-                            var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
-                            user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
-                        }
-                    }*/
+                    /* if (request.AvatarUrl != null)
+                     {
+                         if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
+                         {
+                             return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                         }
+                         else
+                         {
+                             var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
+                             user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
+                         }
+                     }*/
                     await contextDB.User.AddAsync(user);
                     await contextDB.SaveChangesAsync();
 
@@ -387,60 +377,40 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<PageResult<UserDTO>> GetAlls(int pageSize, int pageNumber)
         {
             var list = contextDB.User.Select(x => _userConverter.EntityToDTO(x));
-            var result =Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
+            var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
             return result;
         }
-        #region Xử lý việc thay đổi quyền hạn của người dùng và xoá tài khoản chưa active
-        public async Task<string> ThayDoiQuyenHan(Request_ThayDoiQuyen request)
+        public async Task<ResponseObject<UserDTO>> ThayDoiThongTin(int id, Request_UpdateInfor request)
         {
-            /*var NguoiDung = await contextDB.User.FirstOrDefaultAsync(x => x.id == request.UserID);
-
-            if (NguoiDung == null)
+            var user = contextDB.User.SingleOrDefault(x => x.id == id);
+            if (user == null)
             {
-                return "Tài khoản không tồn tại";
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
+            }
+            if (contextDB.User.Any(x => x.Email == request.Email && x.Email != user.Email))
+            {
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "đã tồn tại email này ", null);
+            }
+            user.Gender = request.Gender == null ? user.Gender : request.Gender;
+            user.DateOfBirth = request.DateOfBirth == null ? user.DateOfBirth : request.DateOfBirth;
+
+            int imageSize = 2 * 1024 * 786;
+            if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
+            {
+                return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+            }
+            else
+            {
+                var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, $"DatBanNhaHang/Account/{user.id}");
+                user.AvatarUrl = avatarFile == "" ? user.AvatarUrl : avatarFile;
             }
 
-            NguoiDung.Roleid = request.RoleID;
-            try
-            {
-                contextDB.User.Update(NguoiDung);
-                await contextDB.SaveChangesAsync();
-                return "Thay đổi quyền tài khoản thành công";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return "Lỗi trong quá trình thay đổi quyền tài khoản";
-            }*/ return "Lỗi trong quá trình thay đổi quyền tài khoản";
+            user.Email = request.Email==null ? user.Email : request.Email;
+
+            contextDB.User.Update(user);
+            await contextDB.SaveChangesAsync();
+            return _responseObject.ResponseSuccess("bạn đã thay đổi thông tin thành công ",_userConverter.EntityToDTO(user));
+
         }
-        public string RemoveTKNotActive()
-        {
-            var lstUSer = contextDB.User.Where(x => x.IsActive == false);
-            foreach (var t in lstUSer)
-            {
-                DateTime? next15P = t.ngayTao + TimeSpan.FromMinutes(15);
-                if (t.ngayTao < DateTime.Now)
-                {
-                    contextDB.Remove(t);
-                }
-            }
-            contextDB.SaveChanges();
-            return "đã xoá hết tài khoản chưa kích hoạt";
-        }
-        #endregion
-
-        //public async Task<ResponseObject<UserDTO>> ThayDoiThongTin(Request_UpdateInfor request)
-        //{
-        //    var user = contextDB.User.SingleOrDefault(x => x.id == request.UserID);
-        //    if(user == null) 
-        //    {
-        //        return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
-        //    }
-        //    if (contextDB.User.Any(x => x.Email == request.Email && x.Email != user.Email))
-        //    {
-        //        return _responseObject.ResponseError(StatusCodes.Status404NotFound, "đã tồn tại email này ", null);
-        //    }
-
-        //}
     }
 }

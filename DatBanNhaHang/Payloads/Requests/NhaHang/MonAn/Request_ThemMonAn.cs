@@ -6,8 +6,8 @@
         public string? TenMon { get; set; }
         public string? MoTa { get; set; }
         public double? GiaTien { get; set; }
-        public string? AnhMonAn1URL { get; set; }
-        public string? AnhMonAn2URL { get; set; }
-        public string? AnhMonAn3URL { get; set; }
+        public IFormFile? AnhMonAn1URL { get; set; }
+        public IFormFile? AnhMonAn2URL { get; set; }
+        public IFormFile? AnhMonAn3URL { get; set; }
     }
 }

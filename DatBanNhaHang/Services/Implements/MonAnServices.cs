@@ -32,8 +32,7 @@ namespace DatBanNhaHang.Services.Implements
         {
             var lstMonAn= contextDB.MonAn.AsEnumerable()
                 .Where(x => ChuanHoaChuoi(x.TenMon).Contains(ChuanHoaChuoi(tenMonAn)))
-                .AsQueryable()
-                .Select(y => converters.EntityToDTOs(y));
+                .Select(y => converters.EntityToDTOs(y)).AsQueryable();
             var res =  Pagintation.GetPagedData(lstMonAn,pageSize, pageNumber);
             return res;
         }
@@ -48,7 +47,7 @@ namespace DatBanNhaHang.Services.Implements
 
             else
             {
-                //int imageSize = 4344 * 5792;
+                int imageSize = 4344 * 5792;
                 try
                 {
                     MonAn ma = new MonAn();
@@ -56,10 +55,8 @@ namespace DatBanNhaHang.Services.Implements
                     ma.GiaTien = request.GiaTien;
                     ma.MoTa = request.MoTa;
                     ma.LoaiMonAnID = request.LoaiMonAnID;
-                    ma.AnhMonAn1URL = request.AnhMonAn1URL;
-                    ma.AnhMonAn2URL = request.AnhMonAn2URL;
-                    ma.AnhMonAn3URL = request.AnhMonAn3URL;
-                    /*if (request.AnhMonAn1URL != null )
+                 
+                    if (request.AnhMonAn1URL != null )
                     {
                         if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
                         {
@@ -94,7 +91,7 @@ namespace DatBanNhaHang.Services.Implements
                             var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn3URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
                             ma.AnhMonAn3URL = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
                         }
-                    }*/
+                    }
                     await contextDB.MonAn.AddAsync(ma);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Thêm Món Ăn thành công", converters.EntityToDTOs(ma));
@@ -119,7 +116,7 @@ namespace DatBanNhaHang.Services.Implements
                 {
                     return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại món ăn này ", null);
                 }
-                //int imageSize = 4344 * 5792;
+                int imageSize = 4344 * 5792;
                 try
                 {
 
@@ -127,46 +124,37 @@ namespace DatBanNhaHang.Services.Implements
                     ma.GiaTien = request.GiaTien ==null? ma.GiaTien :request.GiaTien;
                     ma.MoTa = request.MoTa==null? ma.MoTa : request.MoTa;
                     ma.LoaiMonAnID = request.LoaiMonAnID == null? ma.LoaiMonAnID :request.LoaiMonAnID;
-                    ma.AnhMonAn1URL =request.AnhMonAn1URL ==null? ma.AnhMonAn1URL :request.AnhMonAn1URL;
-                    ma.AnhMonAn2URL =request.AnhMonAn2URL ==null? ma.AnhMonAn2URL :request.AnhMonAn2URL;
-                    ma.AnhMonAn3URL =request.AnhMonAn3URL ==null? ma.AnhMonAn3URL :request.AnhMonAn3URL;
+                   
+                    if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
+                    {
+                        return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                    }
+                    else
+                    {
+                        var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn1URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
+                        ma.AnhMonAn1URL = avatarFile == "" ? ma.AnhMonAn1URL: avatarFile;
+                    }
                     
-                    /*if (request.AnhMonAn1URL != null)
+                    if (!HandleImage.IsImage(request.AnhMonAn2URL, imageSize))
                     {
-                        if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
-                        {
-                            return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                        }
-                        else
-                        {
-                            var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn1URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
-                            ma.AnhMonAn1URL = avatarFile == "" ? ma.AnhMonAn1URL: avatarFile;
-                        }
+                        return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
                     }
-                    if (request.AnhMonAn2URL != null)
+                    else
                     {
-                        if (!HandleImage.IsImage(request.AnhMonAn2URL, imageSize))
-                        {
-                            return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                        }
-                        else
-                        {
-                            var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn2URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
-                            ma.AnhMonAn2URL = avatarFile == "" ? ma.AnhMonAn2URL : avatarFile;
-                        }
+                        var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn2URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
+                        ma.AnhMonAn2URL = avatarFile == "" ? ma.AnhMonAn2URL : avatarFile;
                     }
-                    if (request.AnhMonAn3URL != null)
+                    
+                    if (!HandleImage.IsImage(request.AnhMonAn3URL, imageSize))
                     {
-                        if (!HandleImage.IsImage(request.AnhMonAn3URL, imageSize))
-                        {
-                            return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                        }
-                        else
-                        {
-                            var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn3URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
-                            ma.AnhMonAn3URL = avatarFile == "" ? ma.AnhMonAn3URL : avatarFile;
-                        }   
-                    }*/
+                        return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                    }
+                    else
+                    {
+                        var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn3URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
+                        ma.AnhMonAn3URL = avatarFile == "" ? ma.AnhMonAn3URL : avatarFile;
+                    }   
+                    
                     contextDB.MonAn.Update(ma);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Sửa Món Ăn thành công", converters.EntityToDTOs(ma));

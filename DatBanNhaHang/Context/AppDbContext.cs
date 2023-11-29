@@ -13,8 +13,6 @@ namespace DatBanNhaHang.Context
         public virtual DbSet<MonAn> MonAn { get; set; }
         public virtual DbSet<Ban> Ban { get; set; }
         public virtual DbSet<LoaiBan> LoaiBan { get; set; }
-        public virtual DbSet<TimeOrder> TimeOrder { get; set; }
-        //public virtual DbSet<TrangThaiBan> TrangThaiBan { get; set; }
         public virtual DbSet<HoaDon> HoaDon { get; set; }
         public virtual DbSet<ChiTietHoaDon> ChiTietHoaDon { get; set; }
         public virtual DbSet<TrangThaiHoaDon> TrangThaiHoaDon { get; set; }

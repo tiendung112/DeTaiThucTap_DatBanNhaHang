@@ -26,7 +26,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPost]
         [Route("/api/MonAn/ThemMonAn")]
-        public async Task<IActionResult> ThemMonAn([FromBody] Request_ThemMonAn request)
+        public async Task<IActionResult> ThemMonAn([FromForm] Request_ThemMonAn request)
         {
             var result = await services.ThemMonAn(request);
             if (result == null)
@@ -37,7 +37,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpPut]
         [Route("/api/MonAn/SuaMonAn/{id}")]
-        public async Task<IActionResult> SuaMonAn([FromRoute] int id , [FromBody] Request_SuaMonAn request)
+        public async Task<IActionResult> SuaMonAn([FromRoute] int id , [FromForm] Request_SuaMonAn request)
         {
             var result = await services.SuaMonAn(id,request);
             if (result == null)
