@@ -78,10 +78,8 @@ namespace DatBanNhaHang.Services.Implements
                         MonAn dt = new MonAn();
                         dt.LoaiMonAnID = loaiMonAnID;
                         dt.MoTa = item.MoTa;
-                        dt.AnhMonAn1URL = item.AnhMonAn1URL;
-                        dt.AnhMonAn2URL = item.AnhMonAn2URL;
-                        dt.AnhMonAn3URL  = item.AnhMonAn3URL;
-                        /*var anh1 = await HandleUploadImage.Upfile(item.AnhMonAn1URL, $"DatBanNhaHang/MonAn/{dt.id}");
+                        
+                        var anh1 = await HandleUploadImage.Upfile(item.AnhMonAn1URL, $"DatBanNhaHang/MonAn/{dt.id}");
                         dt.AnhMonAn1URL = anh1 == null ?
                             "https://media.istockphoto.com/Id/930858444/vi/anh/rau-%C4%91%E1%BA%B7t-tr%C3%AAn-beckground-c%C3%B4-l%E1%BA%ADp-m%C3%A0u-tr%E1%BA%AFng-rau-thi%E1%BA%BFt-l%E1%BA%ADp-m%C3%B4-h%C3%ACnh.jpg?s=1024x1024&w=is&k=20&c=_gtHwlq2vYCblU22Afs6WX6utAqQi6y-J06SXD4AW48="
                             : anh1;
@@ -92,7 +90,7 @@ namespace DatBanNhaHang.Services.Implements
                         var anh3 = await HandleUploadImage.Upfile(item.AnhMonAn3URL, $"DatBanNhaHang/MonAn/{dt.id}");
                         dt.AnhMonAn1URL = anh1 == null ?
                             "https://media.istockphoto.com/Id/930858444/vi/anh/rau-%C4%91%E1%BA%B7t-tr%C3%AAn-beckground-c%C3%B4-l%E1%BA%ADp-m%C3%A0u-tr%E1%BA%AFng-rau-thi%E1%BA%BFt-l%E1%BA%ADp-m%C3%B4-h%C3%ACnh.jpg?s=1024x1024&w=is&k=20&c=_gtHwlq2vYCblU22Afs6WX6utAqQi6y-J06SXD4AW48="
-                            : anh3;*/
+                            : anh3;
 
                         lst.Add(dt);
 

@@ -4,6 +4,7 @@ using DatBanNhaHang.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatBanNhaHang.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231129032148_nhahang_v5")]
+    partial class nhahang_v5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -434,6 +437,35 @@ namespace DatBanNhaHang.Migrations
                     b.ToTable("MonAn");
                 });
 
+            modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.TimeOrder", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("BanID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HoaDonID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("timeOrderIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("timeOrderOut")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("BanID");
+
+                    b.HasIndex("HoaDonID");
+
+                    b.ToTable("TimeOrder");
+                });
+
             modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.TrangThaiHoaDon", b =>
                 {
                     b.Property<int>("id")
@@ -553,6 +585,25 @@ namespace DatBanNhaHang.Migrations
                         .IsRequired();
 
                     b.Navigation("LoaiMonAn");
+                });
+
+            modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.TimeOrder", b =>
+                {
+                    b.HasOne("DatBanNhaHang.Entities.NhaHang.Ban", "Ban")
+                        .WithMany()
+                        .HasForeignKey("BanID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DatBanNhaHang.Entities.NhaHang.HoaDon", "HoaDon")
+                        .WithMany()
+                        .HasForeignKey("HoaDonID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ban");
+
+                    b.Navigation("HoaDon");
                 });
 
             modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.Admin", b =>

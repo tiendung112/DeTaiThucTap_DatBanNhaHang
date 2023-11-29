@@ -13,7 +13,7 @@ namespace DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements
             contextDB = new AppDbContext();
         }
 
-        public string ChuanHoaChuoi(string chuoi)
+        public string ChuanHoaChuoi(string? chuoi)
         {
             string boDauCach = chuoi.Trim().ToLower();//xoá dấu cách đầu cuối và viết thường all
             string xoaDau = new string(boDauCach.Normalize(NormalizationForm.FormD)

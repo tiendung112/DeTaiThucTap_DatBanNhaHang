@@ -93,29 +93,19 @@ namespace DatBanNhaHang.Controllers
         }
 
         [HttpPost]
-        
         [Route("/api/auth/XacNhanDangKyTaiKhoan")]
         public async Task<IActionResult> XacNhanDangKyTaiKhoan([FromBody] Request_ValidateRegister request)
         {
             return Ok(await _authService.XacNhanDangKyTaiKhoan(request));
         }
 
-        [HttpDelete]
-        [Route("/api/auth/XoaTKChuaKichHoat")]
-        [Authorize(Roles ="ADMIN,MOD")]
-        public IActionResult DeleteTK ()
-        {
-            var res =_authService.RemoveTKNotActive();
-            return Ok(res);
-
-        }
-
         [HttpPut]
-        [Route("/api/auth/ThayDoiQuyenHan")]
-        [Authorize(Roles ="ADMIN")]
-        public async Task<IActionResult> ThayDoiQuyenHan([FromBody]Request_ThayDoiQuyen request)
+        [Route("/api/auth/ThayDoiThongTinUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> ThayDoiThongTinUser([FromBody] Request_UpdateInfor request)
         {
-            return Ok(await _authService.ThayDoiQuyenHan(request));
+            int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
+            return Ok(await _authService.ThayDoiThongTin(id, request));
         }
     }
 }
