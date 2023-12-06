@@ -13,7 +13,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 ChiTietHoaDonID = chiTietHoaDon.id,
                 TenMon =context.MonAn.SingleOrDefault(x=>x.id==chiTietHoaDon.MonAnID).TenMon ,
                 DonViTinh = chiTietHoaDon.DonViTinh,
-                HoaDonID = chiTietHoaDon.HoaDonID,
+                MonAnID = chiTietHoaDon.MonAnID,
                 ThanhTien = chiTietHoaDon.ThanhTien,
                 SoLuong = chiTietHoaDon.SoLuong
             };

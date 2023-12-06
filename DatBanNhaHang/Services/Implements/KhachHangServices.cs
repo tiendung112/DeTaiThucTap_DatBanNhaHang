@@ -6,7 +6,6 @@ using DatBanNhaHang.Payloads.Requests.NhaHang.KhachHang;
 using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
-using System;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -20,16 +19,16 @@ namespace DatBanNhaHang.Services.Implements
             converters = new KhachHangConverters();
             response = new ResponseObject<KhachHangDTOs>();
         }
-        public async Task<PageResult<KhachHangDTOs>> HienThiKhachHang(int id , int pageSize, int pageNumber)
+        public async Task<PageResult<KhachHangDTOs>> HienThiKhachHang(int id, int pageSize, int pageNumber)
         {
-            var kh= id==0? contextDB.KhachHang.Select(x => converters.EntityToDTOs(x)): contextDB.KhachHang.Where(y=>y.id==id).Select(x => converters.EntityToDTOs(x));
+            var kh = id == 0 ? contextDB.KhachHang.Select(x => converters.EntityToDTOs(x)) : contextDB.KhachHang.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(kh, pageSize, pageNumber);
             return result;
         }
 
-        public async Task<ResponseObject<KhachHangDTOs>> SuaKhachHang(int id ,Request_SuaKhachHang request)
+        public async Task<ResponseObject<KhachHangDTOs>> SuaKhachHang(int id, Request_SuaKhachHang request)
         {
-            var kh = contextDB.KhachHang.SingleOrDefault(x => x.id ==id);
+            var kh = contextDB.KhachHang.SingleOrDefault(x => x.id == id);
             if (kh == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy khách hàng này ", null);
@@ -43,9 +42,28 @@ namespace DatBanNhaHang.Services.Implements
             return response.ResponseSuccess("Sửa khách hàng thành công ", converters.EntityToDTOs(kh));
         }
 
-        public async Task<ResponseObject<KhachHangDTOs>> ThemKhachHang(Request_ThemKhachHang request)
+        public async Task<ResponseObject<KhachHangDTOs>> ThemKhachHang(int userid, Request_ThemKhachHang request)
         {
-            if (string.IsNullOrWhiteSpace(request.HoTen)|| request.NgaySinh == null || string.IsNullOrWhiteSpace(request.DiaChi) && string.IsNullOrWhiteSpace(request.SDT))
+            if (contextDB.User.Any(x => x.id == userid))
+            {
+                var user = contextDB.User.SingleOrDefault(x => x.id == userid);
+                if (user == null)
+                {
+                    return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
+                }
+                KhachHang khachhang = new KhachHang()
+                {
+                    DiaChi = request.DiaChi,
+                    HoTen = user.Name,
+                    NgaySinh = user.DateOfBirth,
+                    SDT = request.SDT,
+                    userID = user.id,
+                };
+                await contextDB.AddAsync(khachhang);
+                await contextDB.SaveChangesAsync();
+                return response.ResponseSuccess("Thêm khách hàng thành công ", converters.EntityToDTOs(khachhang));
+            }
+            if (string.IsNullOrWhiteSpace(request.HoTen) || string.IsNullOrWhiteSpace(request.DiaChi) && string.IsNullOrWhiteSpace(request.SDT))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không nhập đủ thông tin ", null);
             }
@@ -54,34 +72,34 @@ namespace DatBanNhaHang.Services.Implements
                 HoTen = request.HoTen,
                 DiaChi = request.DiaChi,
                 NgaySinh = request.NgaySinh,
-                SDT = request.SDT
+                SDT = request.SDT,
             };
             await contextDB.AddAsync(kh);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Thêm khách hàng thành công ", converters.EntityToDTOs(kh));
         }
 
-        public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(string SDT)
+      /*  public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(string SDT)
         {
 
-            var kh= contextDB.KhachHang.Where(x => x.SDT == SDT).Select(y => converters.EntityToDTOs(y));
+            var kh = contextDB.KhachHang.Where(x => x.SDT == SDT).Select(y => converters.EntityToDTOs(y));
             var result = Pagintation.GetPagedData(kh, 0, 0);
             return result;
         }
 
         public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
         {
-            var kh= contextDB.KhachHang.AsEnumerable()
+            var kh = contextDB.KhachHang.AsEnumerable()
                 .Where(x => ChuanHoaChuoi(x.HoTen).Contains(ChuanHoaChuoi(HoTen))).AsQueryable()
                 .Select(y => converters.EntityToDTOs(y));
-            
+
             var result = Pagintation.GetPagedData<KhachHangDTOs>(kh, pageSize, pageNumber);
             return result;
-        }
+        }*/
 
-        public async Task<ResponseObject<KhachHangDTOs>> XoaKhachHang(int id )
+        public async Task<ResponseObject<KhachHangDTOs>> XoaKhachHang(int id)
         {
-            var kh = contextDB.KhachHang.SingleOrDefault(x => x.id ==id);
+            var kh = contextDB.KhachHang.SingleOrDefault(x => x.id == id);
             if (kh == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy khách hàng này ", null);

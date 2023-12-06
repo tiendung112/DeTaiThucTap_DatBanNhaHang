@@ -4,6 +4,7 @@ using DatBanNhaHang.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatBanNhaHang.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231129141548_nhaHang_v7")]
+    partial class nhaHang_v7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -552,7 +555,7 @@ namespace DatBanNhaHang.Migrations
             modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.KhachHang", b =>
                 {
                     b.HasOne("DatBanNhaHang.Entities.NguoiDung.User", "User")
-                        .WithMany("khachHangs")
+                        .WithMany()
                         .HasForeignKey("userID");
 
                     b.Navigation("User");
@@ -586,8 +589,6 @@ namespace DatBanNhaHang.Migrations
             modelBuilder.Entity("DatBanNhaHang.Entities.NguoiDung.User", b =>
                 {
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("khachHangs");
 
                     b.Navigation("xacNhanEmails");
                 });

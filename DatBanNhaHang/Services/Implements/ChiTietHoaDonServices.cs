@@ -35,7 +35,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<ChiTietHoaDonDTOs>> ThemChiTietHoaDon(Request_ThemChiTietHoaDon request)
         {
-            if (!contextDB.HoaDon.Any(x => x.id == request.HoaDonID))
+           /* if (!contextDB.HoaDon.Any(x => x.id == request.HoaDonID))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại hoá đơn này", null);
             }
@@ -57,8 +57,8 @@ namespace DatBanNhaHang.Services.Implements
                 ThanhTien =request.SoLuong * monan.GiaTien
             };
             contextDB.ChiTietHoaDon.Add(chiTietHoaDon);
-            await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("Thêm thành công chi tiết hoá đơn ",converters.EntityToDTOs(chiTietHoaDon));
+            await contextDB.SaveChangesAsync();*/
+            return response.ResponseSuccess("Thêm thành công chi tiết hoá đơn ",/*converters.EntityToDTOs(chiTietHoaDon)*/null);
         }
 
         public async Task<ResponseObject<ChiTietHoaDonDTOs>> XoaChiTietHoaDon(Request_XoaChiTietHoaDon request)

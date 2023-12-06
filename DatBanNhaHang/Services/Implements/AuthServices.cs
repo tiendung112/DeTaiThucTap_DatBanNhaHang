@@ -67,33 +67,29 @@ namespace DatBanNhaHang.Services.Implements
             }
             else
             {
-                //int imageSize = 2 * 1024 * 768;
+                int imageSize = 2 * 1024 * 768;
                 try
                 {
                     User user = new User();
                     user.UserName = request.UserName;
                     user.Name = request.Name;
-                    //user.FirstName = request.FirstName;
                     user.Password = BCryptNet.HashPassword(request.Password);
-                    //user.LastName = request.LastName;
                     user.Email = request.Email;
                     user.DateOfBirth = request.DateOfBirth;
                     user.Gender = request.Gender;
-                    //user.Roleid = 3;
                     user.ngayTao = DateTime.Now;
-                    user.AvatarUrl = request.AvatarUrl;
-                    /* if (request.AvatarUrl != null)
-                     {
-                         if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
-                         {
-                             return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                         }
-                         else
-                         {
-                             var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
-                             user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
-                         }
-                     }*/
+                    if (request.AvatarUrl != null)
+                    {
+                        if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
+                        {
+                            return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                        }
+                        else
+                        {
+                            var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
+                            user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
+                        }
+                    }
                     await contextDB.User.AddAsync(user);
                     await contextDB.SaveChangesAsync();
 
@@ -405,11 +401,11 @@ namespace DatBanNhaHang.Services.Implements
                 user.AvatarUrl = avatarFile == "" ? user.AvatarUrl : avatarFile;
             }
 
-            user.Email = request.Email==null ? user.Email : request.Email;
+            user.Email = request.Email == null ? user.Email : request.Email;
 
             contextDB.User.Update(user);
             await contextDB.SaveChangesAsync();
-            return _responseObject.ResponseSuccess("bạn đã thay đổi thông tin thành công ",_userConverter.EntityToDTO(user));
+            return _responseObject.ResponseSuccess("bạn đã thay đổi thông tin thành công ", _userConverter.EntityToDTO(user));
 
         }
     }

@@ -13,18 +13,19 @@ namespace DatBanNhaHang.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NguoiDungController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IAuthServices _authService;
         private readonly User user;
-        public NguoiDungController(IConfiguration configuration, IAuthServices authService)
+        public AuthController(IConfiguration configuration, IAuthServices authService)
         {
             _configuration = configuration;
             _authService = authService;
             user = new User();
         }
 
+        #region đăng ký, đăng nhập 
         [HttpPost]
         [Route("/api/auth/register")]
         public async Task<IActionResult> Register([FromForm] Request_Register register)
@@ -48,7 +49,12 @@ namespace DatBanNhaHang.Controllers
             }
             return Ok(result);
         }
-
+        [HttpPost]
+        [Route("/api/auth/XacNhanDangKyTaiKhoan")]
+        public async Task<IActionResult> XacNhanDangKyTaiKhoan([FromBody] Request_ValidateRegister request)
+        {
+            return Ok(await _authService.XacNhanDangKyTaiKhoan(request));
+        }
         [HttpPost]
         [Route("/api/auth/renew-token")]
         public IActionResult RenewToken(TokenDTO token)
@@ -60,7 +66,15 @@ namespace DatBanNhaHang.Controllers
             }
             return Ok(result);
         }
-
+        [HttpPut]
+        [Route("/api/auth/ThayDoiThongTinUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> ThayDoiThongTinUser([FromBody] Request_UpdateInfor request)
+        {
+            int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
+            return Ok(await _authService.ThayDoiThongTin(id, request));
+        }
+        #endregion
         [HttpGet]
         [Route("/api/auth/get-all")]
         [Authorize]
@@ -68,7 +82,7 @@ namespace DatBanNhaHang.Controllers
         {
             return Ok(await _authService.GetAlls(pageSize, pageNumber));
         }
-
+        #region quên , đổi mật khẩu
         [HttpPut]
         [Route("/api/auth/change-password")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -91,21 +105,9 @@ namespace DatBanNhaHang.Controllers
         {
             return Ok(await _authService.CreateNewPassword(request));
         }
+        #endregion
+        
 
-        [HttpPost]
-        [Route("/api/auth/XacNhanDangKyTaiKhoan")]
-        public async Task<IActionResult> XacNhanDangKyTaiKhoan([FromBody] Request_ValidateRegister request)
-        {
-            return Ok(await _authService.XacNhanDangKyTaiKhoan(request));
-        }
-
-        [HttpPut]
-        [Route("/api/auth/ThayDoiThongTinUser")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> ThayDoiThongTinUser([FromBody] Request_UpdateInfor request)
-        {
-            int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
-            return Ok(await _authService.ThayDoiThongTin(id, request));
-        }
+       
     }
 }
