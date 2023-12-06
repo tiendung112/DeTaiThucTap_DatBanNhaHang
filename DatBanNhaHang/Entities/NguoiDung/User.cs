@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DatBanNhaHang.Entities.NhaHang;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,6 +22,7 @@ namespace DatBanNhaHang.Entities.NguoiDung
         public bool? IsActive { get; set; } = false;
         public IEnumerable<RefreshToken>? RefreshTokens { get; set; }
         public IEnumerable<XacNhanEmail>? xacNhanEmails {  get; set; } 
+        public IEnumerable<KhachHang> khachHangs { get; set; }
 
     }
 }

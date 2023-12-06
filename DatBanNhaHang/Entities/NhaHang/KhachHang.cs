@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using DatBanNhaHang.Entities.NguoiDung;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DatBanNhaHang.Entities.NhaHang
 {
@@ -9,6 +10,8 @@ namespace DatBanNhaHang.Entities.NhaHang
         public DateTime? NgaySinh { get; set; }
         public string? DiaChi { get; set; }
         public string? SDT { get; set; }
+        public int? userID {  get; set; }
+        public User? User { get; set; }
         public IList<HoaDon>? hoaDon { get; set; }
 
     }

@@ -124,37 +124,43 @@ namespace DatBanNhaHang.Services.Implements
                     ma.GiaTien = request.GiaTien ==null? ma.GiaTien :request.GiaTien;
                     ma.MoTa = request.MoTa==null? ma.MoTa : request.MoTa;
                     ma.LoaiMonAnID = request.LoaiMonAnID == null? ma.LoaiMonAnID :request.LoaiMonAnID;
-                   
-                    if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
+                    if (request.AnhMonAn1URL != null)
                     {
-                        return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                        if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
+                        {
+                            return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                        }
+                        else
+                        {
+                            var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn1URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
+                            ma.AnhMonAn1URL = avatarFile;
+                        }
                     }
-                    else
+
+                    if (request.AnhMonAn2URL != null)
                     {
-                        var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn1URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
-                        ma.AnhMonAn1URL = avatarFile == "" ? ma.AnhMonAn1URL: avatarFile;
+                        if (!HandleImage.IsImage(request.AnhMonAn2URL, imageSize))
+                        {
+                            return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                        }
+                        else
+                        {
+                            var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn2URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
+                            ma.AnhMonAn2URL = avatarFile;
+                        }
                     }
-                    
-                    if (!HandleImage.IsImage(request.AnhMonAn2URL, imageSize))
+                    if (request.AnhMonAn3URL != null)
                     {
-                        return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                        if (!HandleImage.IsImage(request.AnhMonAn3URL, imageSize))
+                        {
+                            return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                        }
+                        else
+                        {
+                            var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn3URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
+                            ma.AnhMonAn3URL = avatarFile;
+                        }
                     }
-                    else
-                    {
-                        var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn2URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
-                        ma.AnhMonAn2URL = avatarFile == "" ? ma.AnhMonAn2URL : avatarFile;
-                    }
-                    
-                    if (!HandleImage.IsImage(request.AnhMonAn3URL, imageSize))
-                    {
-                        return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                    }
-                    else
-                    {
-                        var avatarFile = await HandleUploadImage.Upfile(request.AnhMonAn3URL, $"DatBanNhaHang/MonAn/{ma.LoaiMonAnID}");
-                        ma.AnhMonAn3URL = avatarFile == "" ? ma.AnhMonAn3URL : avatarFile;
-                    }   
-                    
                     contextDB.MonAn.Update(ma);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Sửa Món Ăn thành công", converters.EntityToDTOs(ma));
