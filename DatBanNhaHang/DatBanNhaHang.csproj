@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Folder Include="Helper\" />
+    <Folder Include="Payloads\Requests\NhaHang\ThongKe\" />
   </ItemGroup>
 
 </Project>

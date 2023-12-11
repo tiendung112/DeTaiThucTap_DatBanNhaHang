@@ -12,6 +12,7 @@ namespace DatBanNhaHang.Payloads.Converters.NguoiDung
         {
             return new AdminDTOs()
             {
+                ADminID = admin.id,
                 AdminName = admin.AdminName,
                 Email = admin.Email,
                 Gender = admin.Gender,

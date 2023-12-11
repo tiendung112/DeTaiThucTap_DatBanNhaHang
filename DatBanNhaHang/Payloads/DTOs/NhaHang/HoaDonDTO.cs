@@ -11,10 +11,15 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
         public int? TrangThaiHoaDonID { get; set; }
         public string? TenHoaDon { get; set; }
         public string? MaGiaoDich { get; set; }
-        public DateTime? ThoiGianTao { get; set; }
-        public DateTime? ThoiGianCapNhap { get; set; }
+        //Thời gian liên quan đến đặt bàn
+        public DateTime? ThoiGianDat { get; set; } // Thời gian đặt bàn
+        public DateTime? ThoiGianDuKienBatDau { get; set; } // Thời gian dự kiến bắt đầu
+        public DateTime? ThoiGianDuKienKetThuc { get; set; } // Thời gian dự kiến kết thúc
+        public DateTime? ThoiGianBatDauThucTe { get; set; } // Thời gian bắt đầu thực tế (nullable)
+        public DateTime? ThoiGianKetThucThucTe { get; set; } // Thời gian kết thúc thực tế (nullable)
+        public DateTime? ThoiGianHuyDat { get; set; } // Thời gian hủy đặt bàn (nullable)
         public string? GhiChu { get; set; }
         public double? TongTien { get; set; }
-        public IQueryable<ChiTietHoaDonDTOs> ChiTietHoaDonDTOs { get; set; }
+        public IQueryable<ChiTietHoaDonDTOs>? ChiTietHoaDonDTOs { get; set; }
     }
 }

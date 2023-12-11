@@ -4,6 +4,7 @@ namespace DatBanNhaHang.Payloads.DTOs.NguoiDung
 {
     public class AdminDTOs
     {
+        public int? ADminID {  get; set; }
         public string? AdminName { get; set; }
         //public string? password { get; set; }
         public string? Name { get; set; }

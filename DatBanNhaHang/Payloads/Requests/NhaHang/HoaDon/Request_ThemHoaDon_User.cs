@@ -6,8 +6,10 @@ namespace DatBanNhaHang.Payloads.Requests.NhaHang.HoaDon
     public class Request_ThemHoaDon_User
     {
         public int? BanID { get; set; }
-        public string? TenHoaDon { get; set; }
+       // public string? TenHoaDon { get; set; }
         public string? GhiChu { get; set; }
-        public IList<Request_ThemChiTietHoaDon> ChiTietHoaDonDTOs { get; set; }
+        // Thời gian liên quan đến đặt bàn
+        public DateTime ThoiGianDuKienBatDau { get; set; } // Thời gian dự kiến bắt đầu
+        public IEnumerable<Request_ThemChiTietHoaDon>? ChiTietHoaDonDTOs { get; set; }
     }
 }

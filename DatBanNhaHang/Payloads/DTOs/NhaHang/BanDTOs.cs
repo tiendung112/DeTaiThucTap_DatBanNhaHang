@@ -10,6 +10,8 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
         public int? SoNguoiToiDa { get; set; }
         public double? GiaTien { get; set; }
         public int? LoaiBanID { get; set; }
-        //public int? TrangThaiBanID { get; set; }
+        public string? Mota { get; set; }
+        public string? HinhAnhBanURL { get; set; }
+        public string? TinhTrangHienTai { get; set; }
     }
 }

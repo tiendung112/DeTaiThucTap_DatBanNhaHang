@@ -1,4 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
+using DatBanNhaHang.Handler.Image;
 using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
@@ -50,7 +51,7 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<ResponseObject<BanDTOs>> ThemBan(Request_ThemBan request)
         {
             if (string.IsNullOrWhiteSpace(request.ViTri) || !request.GiaTien.HasValue || !request.SoBan.HasValue
-                || !request.SoNguoiToiDa.HasValue || !request.GiaTien.HasValue || !request.LoaiBanID.HasValue || !request.TrangThaiBanID.HasValue)
+                || !request.SoNguoiToiDa.HasValue || !request.GiaTien.HasValue || !request.LoaiBanID.HasValue )
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "chưa điền đầy đủ thông tin ", null);
             }
@@ -66,15 +67,33 @@ namespace DatBanNhaHang.Services.Implements
                 GiaTien = request.GiaTien,
                 LoaiBanID = request.LoaiBanID,
                 SoNguoiToiDa = request.SoNguoiToiDa,
+                Mota =request.Mota,
+                TinhTrangHienTai = request.TinhTrangHienTai,
+                
                 
             };
             contextDB.Ban.Add(newBan);
+            await contextDB.SaveChangesAsync();
+            int imageSize = 4344 * 5792;
+            if (request.HinhAnhBanURL != null)
+            {
+                if (!HandleImage.IsImage(request.HinhAnhBanURL, imageSize))
+                {
+                    return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                }
+                else
+                {
+                    var avatarFile = await HandleUploadImage.Upfile(request.HinhAnhBanURL, $"DatBanNhaHang/LoaiBan/{newBan.LoaiBanID}");
+                    newBan.HinhAnhBanURL = avatarFile == "" ? "null" : avatarFile;
+                }
+            }
+            contextDB.Ban.Update(newBan);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("thêm bàn thành công", converters.EntityToDTOs(newBan));
         }
         public async Task<ResponseObject<BanDTOs>> SuaBan(int id, Request_SuaBan request)
         {
-            if (!contextDB.Ban.Any(x => x.LoaiBanID == request.LoaiBanID))
+            if (!contextDB.Ban.Any(x => x.LoaiBanID == request.LoaiBanID ) && request.LoaiBanID != null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
             }
@@ -89,7 +108,21 @@ namespace DatBanNhaHang.Services.Implements
             ban.SoNguoiToiDa = !request.SoNguoiToiDa.HasValue ? ban.SoNguoiToiDa : request.SoNguoiToiDa;
             ban.GiaTien = request.GiaTien.HasValue ? request.GiaTien : ban.GiaTien;
             ban.LoaiBanID = !request.LoaiBanID.HasValue ? ban.LoaiBanID : request.LoaiBanID;
-            
+            ban.TinhTrangHienTai = request.TinhTrangHienTai == null ? ban.TinhTrangHienTai : request.TinhTrangHienTai;
+            ban.Mota = request.Mota == null ? ban.Mota : request.Mota;
+            int imageSize = 4344 * 5792;
+            if (request.HinhAnhBanURL != null)
+            {
+                if (!HandleImage.IsImage(request.HinhAnhBanURL, imageSize))
+                {
+                    return response.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                }
+                else
+                {
+                    var avatarFile = await HandleUploadImage.Upfile(request.HinhAnhBanURL, $"DatBanNhaHang/LoaiBan/{ban.LoaiBanID}");
+                    ban.HinhAnhBanURL = avatarFile == "" ? ban.HinhAnhBanURL: avatarFile;
+                }
+            }
             contextDB.Update(ban);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Sửa bàn thành công", converters.EntityToDTOs(ban));
