@@ -7,7 +7,6 @@
         public int? MonAnID { get; set; }
         public MonAn? monAn { get; set; }
         public int? SoLuong {  get; set; }
-        public string? DonViTinh { get; set; }
         public double? ThanhTien { get; set; }
     }
 }

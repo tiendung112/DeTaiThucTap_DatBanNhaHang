@@ -6,6 +6,5 @@ namespace DatBanNhaHang.Payloads.Requests.NhaHang.ChiTietHoaDon
     {
         public int? MonAnID { get; set; }
         public int? SoLuong { get; set; }
-        public string? DonViTinh { get; set; }
     }
 }

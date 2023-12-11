@@ -10,6 +10,7 @@ using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
@@ -77,8 +78,10 @@ namespace DatBanNhaHang.Services.Implements
                     user.Email = request.Email;
                     user.DateOfBirth = request.DateOfBirth;
                     user.Gender = request.Gender;
+                    user.SDT = request.SDT;
+                    user.address = request.address;
                     user.ngayTao = DateTime.Now;
-                    if (request.AvatarUrl != null)
+                   /* if (request.AvatarUrl != null)
                     {
                         if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
                         {
@@ -89,7 +92,7 @@ namespace DatBanNhaHang.Services.Implements
                             var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
                             user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
                         }
-                    }
+                    }*/
                     await contextDB.User.AddAsync(user);
                     await contextDB.SaveChangesAsync();
 
@@ -152,8 +155,6 @@ namespace DatBanNhaHang.Services.Implements
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:SecretKey").Value!);
 
-            //var decentralization = contextDB.Role.FirstOrDefault(x => x.id == user.Roleid);
-            //var decentralization = contextDB.Role.FirstOrDefault(x => x.id == user.Roleid);
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -161,11 +162,13 @@ namespace DatBanNhaHang.Services.Implements
                     new Claim("id", user.id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("Username", user.UserName),
-                    new Claim("Avatar", user.AvatarUrl),
+                   // new Claim("Avatar", user.AvatarUrl),
+                   new Claim("Name",user.Name),
+                   new Claim("Email",user.Email)
                     /*new Claim("Roleid", user.Roleid.ToString()),
                     new Claim(ClaimTypes.Role,decentralization?.RoleName ?? "")*/
                 }),
-                Expires = DateTime.UtcNow.AddHours(3),
+                Expires = DateTime.UtcNow.AddDays(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = jwtTokenHandler.CreateToken(tokenDescription);
@@ -175,7 +178,7 @@ namespace DatBanNhaHang.Services.Implements
             RefreshToken rf = new RefreshToken
             {
                 Token = refreshToken,
-                ExpiredTime = DateTime.UtcNow.AddHours(5),
+                ExpiredTime = DateTime.UtcNow.AddDays(6),
                 UserID = user.id
             };
 
@@ -271,7 +274,7 @@ namespace DatBanNhaHang.Services.Implements
             }
         }
         #endregion
-        #region Xử lý vấn đề liên quan đến gửi email
+       /* #region Xử lý vấn đề liên quan đến gửi email
         public string SendEmail(EmailTo emailTo)
         {
             if (!Validate.IsValidEmail(emailTo.Mail))
@@ -301,12 +304,8 @@ namespace DatBanNhaHang.Services.Implements
                 return "Lỗi khi gửi email: " + ex.Message;
             }
         }
-        private int GenerateCodeActive()
-        {
-            Random random = new Random();
-            return random.Next(100000, 999999);
-        }
-        #endregion
+       
+        #endregion*/
         #region Xử lý việc đổi mật khẩu và quên mật khẩu
         public async Task<ResponseObject<UserDTO>> ChangePassword(int UserID, Request_ChangePassword request)
         {
@@ -376,6 +375,8 @@ namespace DatBanNhaHang.Services.Implements
             var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
             return result;
         }
+
+        #region thay đổi thông tin , email 
         public async Task<ResponseObject<UserDTO>> ThayDoiThongTin(int id, Request_UpdateInfor request)
         {
             var user = contextDB.User.SingleOrDefault(x => x.id == id);
@@ -383,30 +384,81 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
             }
-            if (contextDB.User.Any(x => x.Email == request.Email && x.Email != user.Email))
-            {
-                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "đã tồn tại email này ", null);
-            }
             user.Gender = request.Gender == null ? user.Gender : request.Gender;
             user.DateOfBirth = request.DateOfBirth == null ? user.DateOfBirth : request.DateOfBirth;
-
+            user.Name = request.Name==null?user.Name:request.Name;
             int imageSize = 2 * 1024 * 786;
-            if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
+            if (request.AvatarUrl != null)
             {
-                return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
+                {
+                    return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                }
+                else
+                {
+                    var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, $"DatBanNhaHang/User/{user.id}");
+                    user.AvatarUrl = avatarFile == "" ? user.AvatarUrl : avatarFile;
+                }
             }
-            else
-            {
-                var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, $"DatBanNhaHang/Account/{user.id}");
-                user.AvatarUrl = avatarFile == "" ? user.AvatarUrl : avatarFile;
-            }
-
-            user.Email = request.Email == null ? user.Email : request.Email;
+            user.SDT = request.SDT ==null ? user.SDT : request.SDT;
+            user.address = request.address==null ? user.address : request.address;
 
             contextDB.User.Update(user);
             await contextDB.SaveChangesAsync();
             return _responseObject.ResponseSuccess("bạn đã thay đổi thông tin thành công ", _userConverter.EntityToDTO(user));
+        }
+        public async Task<string> ThayDoiEmail(int id)
+        {
+            var user = contextDB.User.SingleOrDefault(x => x.id == id);
+            if (user == null)
+            {
+                return "Không tồn tại tài khoản này ";
+            }
+       
+
+            XacNhanEmail confrimEmail = new XacNhanEmail()
+            {
+                UserID = user.id,
+                DaXacNhan = false,
+                ThoiGianHetHan = DateTime.Now.AddMinutes(30),
+                MaXacNhan = GenerateCodeActive().ToString()
+            };
+
+            await contextDB.XacNhanEmail.AddAsync(confrimEmail);
+            await contextDB.SaveChangesAsync();
+            string message = SendEmail(new EmailTo
+            {
+                Mail = user.Email,
+                Subject = "Nhận mã xác nhận để thay đổi email tại đây: ",
+                Content = $"Mã kích hoạt của bạn là: {confrimEmail.MaXacNhan}" +
+                         $", mã này sẽ hết hạn sau 30 phút"
+            });
+            return "Bạn đã gửi yêu cầu đổi email," +
+                " vui lòng nhập mã xác nhận đã được gửi về email của bạn" ;
 
         }
+        public async Task<string> XacNhanDoiEmail(Request_NewMail request)
+        {
+            XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.MaXacNhan)).FirstOrDefaultAsync();
+            if (confirmEmail is null)
+            {
+                return "Mã xác nhận không chính xác";
+            }
+            if (confirmEmail.ThoiGianHetHan < DateTime.Now)
+            {
+                return "Mã xác nhận đã hết hạn";
+            }
+            var user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID);
+            if (contextDB.User.Any(x => x.Email == request.newMail && x.Email != user.Email))
+            {
+                return "đã tồn tại email này ";
+            }
+            user.Email = request.newMail;
+            contextDB.XacNhanEmail.Remove(confirmEmail);
+            contextDB.User.Update(user);
+            await contextDB.SaveChangesAsync();
+            return "Xác nhận đổi email thành công";
+        }
+        #endregion
     }
 }

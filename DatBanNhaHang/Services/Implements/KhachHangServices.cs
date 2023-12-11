@@ -41,22 +41,54 @@ namespace DatBanNhaHang.Services.Implements
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Sửa khách hàng thành công ", converters.EntityToDTOs(kh));
         }
-
-        public async Task<ResponseObject<KhachHangDTOs>> ThemKhachHang(int userid, Request_ThemKhachHang request)
+        public async Task<ResponseObject<KhachHangDTOs>> NangCapThongTinKhachHangACC(Request_NangCapThongTinKhachHang request)
         {
-            if (contextDB.User.Any(x => x.id == userid))
+            var user = contextDB.User.SingleOrDefault(x => x.id == request.UserId);
+            if (user == null)
             {
-                var user = contextDB.User.SingleOrDefault(x => x.id == userid);
+                return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
+            }
+            var khachhang = contextDB.KhachHang.SingleOrDefault(x=>x.userID == request.UserId);
+            if (khachhang == null)
+            {
+                KhachHang kh = new KhachHang()
+                {
+                    DiaChi = user.address,
+                    HoTen = user.Name,
+                    NgaySinh = user.DateOfBirth,
+                    SDT = user.SDT,
+                    userID = user.id,
+                };
+                await contextDB.AddAsync(kh);
+                await contextDB.SaveChangesAsync();
+                return response.ResponseSuccess("Sửa khách hàng thành công ", converters.EntityToDTOs(kh));
+            }
+            khachhang.DiaChi = user.address;
+            khachhang.HoTen = user.Name;
+            khachhang.NgaySinh = user.DateOfBirth;
+            khachhang.SDT = user.SDT;
+            
+            contextDB.Update(khachhang);
+            await contextDB.SaveChangesAsync();
+            return response.ResponseSuccess("Thêm khách hàng thành công ", converters.EntityToDTOs(khachhang));
+        }
+
+
+        public async Task<ResponseObject<KhachHangDTOs>> ThemKhachHang( Request_ThemKhachHang request)
+        {
+            if (contextDB.User.Any(x => x.id == request.userID))
+            {
+                var user = contextDB.User.SingleOrDefault(x => x.id == request.userID);
                 if (user == null)
                 {
                     return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
                 }
                 KhachHang khachhang = new KhachHang()
                 {
-                    DiaChi = request.DiaChi,
+                    DiaChi = user.address ,
                     HoTen = user.Name,
                     NgaySinh = user.DateOfBirth,
-                    SDT = request.SDT,
+                    SDT =user.SDT,
                     userID = user.id,
                 };
                 await contextDB.AddAsync(khachhang);

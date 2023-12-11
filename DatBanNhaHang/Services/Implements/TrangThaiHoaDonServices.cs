@@ -1,4 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
+using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 using DatBanNhaHang.Payloads.Requests.NhaHang.TrangThaiHoaDon;
@@ -17,14 +18,16 @@ namespace DatBanNhaHang.Services.Implements
             converters = new TrangThaiHoaDonConverters();
             response = new ResponseObject<TrangThaiHoaDonDTOs>();
         }
-        public  async Task<IQueryable<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int pageSize, int pageNumber)
+        public  async Task<PageResult<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int id , int pageSize, int pageNumber)
         {
-            return contextDB.TrangThaiHoaDon.Select(x=>converters.EntityToDTOs(x));
+            var lstMonAn = id == 0 ? contextDB.TrangThaiHoaDon.Select(x => converters.EntityToDTOs(x)) : contextDB.TrangThaiHoaDon.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
+            var result = Pagintation.GetPagedData(lstMonAn, pageSize, pageNumber);
+            return result;
         }
 
-        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> SuaTrangThaiHoaDon(Request_SuaTrangThaiHoaDon request)
+        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> SuaTrangThaiHoaDon(int id , Request_SuaTrangThaiHoaDon request)
         {
-            var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id == request.TrangThaiHoaDonID);
+            var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id == id);
             if(tthd == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái này ", null);
@@ -48,9 +51,9 @@ namespace DatBanNhaHang.Services.Implements
             return response.ResponseSuccess("Thêm trạng thái thành công ",converters.EntityToDTOs(tthd));
         }
 
-        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> XoaTrangThaiHoaDon(Request_XoaTrangThaiHoaDon request)
+        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> XoaTrangThaiHoaDon(int id  )
         {
-            var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id == request.TrangThaiHoaDonID);
+            var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id ==id);
             if (tthd == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái này ", null);

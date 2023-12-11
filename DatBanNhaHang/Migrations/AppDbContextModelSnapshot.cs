@@ -138,7 +138,6 @@ namespace DatBanNhaHang.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
@@ -148,16 +147,19 @@ namespace DatBanNhaHang.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SDT")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("address")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ngayTao")
                         .HasColumnType("datetime2");
@@ -165,7 +167,8 @@ namespace DatBanNhaHang.Migrations
                     b.HasKey("id");
 
                     b.HasIndex("UserName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("User");
                 });
@@ -202,6 +205,39 @@ namespace DatBanNhaHang.Migrations
                     b.ToTable("XacNhanEmail");
                 });
 
+            modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.BaiViet", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int?>("AdminId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AnhBlogURl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MoTa")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("NgayDang")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NoiDung")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TieuDe")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("AdminId");
+
+                    b.ToTable("BaiViet");
+                });
+
             modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.Ban", b =>
                 {
                     b.Property<int>("id")
@@ -213,14 +249,23 @@ namespace DatBanNhaHang.Migrations
                     b.Property<double?>("GiaTien")
                         .HasColumnType("float");
 
+                    b.Property<string>("HinhAnhBanURL")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("LoaiBanID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Mota")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SoBan")
                         .HasColumnType("int");
 
                     b.Property<int?>("SoNguoiToiDa")
                         .HasColumnType("int");
+
+                    b.Property<string>("TinhTrangHienTai")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TrangThaiBan")
                         .HasColumnType("nvarchar(max)");
@@ -242,9 +287,6 @@ namespace DatBanNhaHang.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<string>("DonViTinh")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("HoaDonID")
                         .HasColumnType("int");
@@ -318,10 +360,22 @@ namespace DatBanNhaHang.Migrations
                     b.Property<string>("TenHoaDon")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ThoiGianCapNhap")
+                    b.Property<DateTime?>("ThoiGianBatDauThucTe")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ThoiGianTao")
+                    b.Property<DateTime?>("ThoiGianDat")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThoiGianDuKienBatDau")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThoiGianDuKienKetThuc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThoiGianHuyDat")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThoiGianKetThucThucTe")
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("TongTien")
@@ -369,6 +423,40 @@ namespace DatBanNhaHang.Migrations
                     b.HasIndex("userID");
 
                     b.ToTable("KhachHang");
+                });
+
+            modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.LienHe", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<bool?>("DaTraLoi")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hoten")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoiDung")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ThoiGianGui")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThoiGianTraLoi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TieuDe")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("LienHe");
                 });
 
             modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.LoaiBan", b =>
@@ -500,6 +588,15 @@ namespace DatBanNhaHang.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.BaiViet", b =>
+                {
+                    b.HasOne("DatBanNhaHang.Entities.NguoiDung.Admin", "Admin")
+                        .WithMany("bLogs")
+                        .HasForeignKey("AdminId");
+
+                    b.Navigation("Admin");
+                });
+
             modelBuilder.Entity("DatBanNhaHang.Entities.NhaHang.Ban", b =>
                 {
                     b.HasOne("DatBanNhaHang.Entities.NhaHang.LoaiBan", "LoaiBan")
@@ -574,6 +671,8 @@ namespace DatBanNhaHang.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("bLogs");
 
                     b.Navigation("emails");
                 });

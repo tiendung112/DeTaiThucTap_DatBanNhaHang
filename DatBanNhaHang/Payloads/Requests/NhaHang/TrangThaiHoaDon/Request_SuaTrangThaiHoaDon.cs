@@ -2,7 +2,6 @@
 {
     public class Request_SuaTrangThaiHoaDon
     {
-        public int TrangThaiHoaDonID {  get; set; }
         public string? TenTrangThai { get; set; }
     }
 }

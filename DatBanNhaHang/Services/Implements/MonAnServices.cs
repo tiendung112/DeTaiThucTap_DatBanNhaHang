@@ -107,7 +107,7 @@ namespace DatBanNhaHang.Services.Implements
 
             if (string.IsNullOrWhiteSpace(id.ToString()))
                 return response.ResponseError(StatusCodes.Status404NotFound, "Chưa điền đủ nội dung ", null);
-            if (!contextDB.LoaiMonAn.Any(x => x.id == request.LoaiMonAnID))
+            if (!contextDB.LoaiMonAn.Any(x => x.id == request.LoaiMonAnID) && request.LoaiMonAnID!=null)
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại món ăn này", null);
             else
             {

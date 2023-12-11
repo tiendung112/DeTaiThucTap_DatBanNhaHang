@@ -18,11 +18,15 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 MaGiaoDich = hoaDon.MaGiaoDich,
                 GhiChu = hoaDon.GhiChu,
                 TenHoaDon = hoaDon.TenHoaDon,
-                ThoiGianTao = hoaDon.ThoiGianTao,
-                ThoiGianCapNhap = hoaDon.ThoiGianCapNhap,
+                ThoiGianDat = hoaDon.ThoiGianDat,
+                ThoiGianBatDauThucTe = hoaDon.ThoiGianBatDauThucTe,
+                ThoiGianDuKienBatDau = hoaDon.ThoiGianDuKienBatDau,
+                ThoiGianDuKienKetThuc = hoaDon.ThoiGianDuKienKetThuc,
+                ThoiGianHuyDat = hoaDon.ThoiGianHuyDat,
+                ThoiGianKetThucThucTe = hoaDon.ThoiGianKetThucThucTe,
                 TongTien = hoaDon.TongTien,
                 TrangThaiHoaDonID = hoaDon.TrangThaiHoaDonID,
-                ChiTietHoaDonDTOs = contextDB.ChiTietHoaDon.Select(x=>converters.EntityToDTOs(x))
+                ChiTietHoaDonDTOs = contextDB.ChiTietHoaDon.Where(x=>x.HoaDonID==hoaDon.id).Select(x=>converters.EntityToDTOs(x))
             };
         }
 

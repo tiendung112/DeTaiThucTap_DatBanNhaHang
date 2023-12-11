@@ -8,7 +8,7 @@ namespace DatBanNhaHang.Payloads.Requests.NhaHang.KhachHang
         public DateTime? NgaySinh { get; set; }
         public string? DiaChi { get; set; }
         public string? SDT { get; set; }
-        //public int? userID {  get; set; }
+        public int? userID {  get; set; }
 
     }
 }

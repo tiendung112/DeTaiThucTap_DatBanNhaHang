@@ -106,7 +106,7 @@ namespace DatBanNhaHang.Services.Implements
                     new Claim("Roleid", adm.RoleID.ToString()),
                     new Claim(ClaimTypes.Role,decentralization?.RoleName ?? "")
                 }),
-                Expires = DateTime.UtcNow.AddHours(3),
+                Expires = DateTime.UtcNow.AddDays(90),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = jwtTokenHandler.CreateToken(tokenDescription);
@@ -116,7 +116,7 @@ namespace DatBanNhaHang.Services.Implements
             RefreshToken rf = new RefreshToken
             {
                 Token = refreshToken,
-                ExpiredTime = DateTime.UtcNow.AddHours(5),
+                ExpiredTime = DateTime.UtcNow.AddDays(91),
                 AdminID = adm.id
             };
 
@@ -209,7 +209,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         #endregion
 
-        #region Xử lý vấn đề liên quan đến gửi email
+       /* #region Xử lý vấn đề liên quan đến gửi email
         public string SendEmail(EmailTo emailTo)
         {
             if (!Validate.IsValidEmail(emailTo.Mail))
@@ -239,7 +239,7 @@ namespace DatBanNhaHang.Services.Implements
                 return "Lỗi khi gửi email: " + ex.Message;
             }
         }
-        #endregion
+        #endregion*/
         #region Xử lý việc đổi mật khẩu và quên mật khẩu
         public async Task<ResponseObject<AdminDTOs>> ChangePassword(int AdminID, Request_AdminChangePassword request)
         {
@@ -307,7 +307,6 @@ namespace DatBanNhaHang.Services.Implements
         }
         #endregion
 
-
         #region hiển thị các tài khoản
         public async Task<PageResult<AdminDTOs>> GetAlls(int pageSize, int pageNumber)
         {
@@ -341,10 +340,9 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return "Tài khoản không tồn tại";
             }
-
-            admin.RoleID = request.RoleID;
             try
             {
+                admin.RoleID = request.RoleID;
                 contextDB.Admin.Update(admin);
                 await contextDB.SaveChangesAsync();
                 return "Thay đổi quyền tài khoản thành công";
@@ -356,10 +354,6 @@ namespace DatBanNhaHang.Services.Implements
             }
         }
         #endregion
-        private int GenerateCodeActive()
-        {
-            Random random = new Random();
-            return random.Next(100000, 999999);
-        }
+       
     }
 }

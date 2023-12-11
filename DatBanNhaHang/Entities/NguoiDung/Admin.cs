@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DatBanNhaHang.Entities.NhaHang;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DatBanNhaHang.Entities.NguoiDung
@@ -24,5 +25,6 @@ namespace DatBanNhaHang.Entities.NguoiDung
         public int? ParentID { get; set; }
         public Admin? Parent { get; set; }
         public IEnumerable<Admin>? Children { get; set; }
+        public IEnumerable<BaiViet>? bLogs { get; set; }
     }
 }

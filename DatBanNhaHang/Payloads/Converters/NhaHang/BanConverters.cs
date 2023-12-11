@@ -15,6 +15,9 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 SoBan = ban.SoBan,
                 SoNguoiToiDa = ban.SoNguoiToiDa,
                 ViTri = ban.ViTri,
+                HinhAnhBanURL = ban.HinhAnhBanURL,
+                Mota = ban.Mota,
+                TinhTrangHienTai = ban.TinhTrangHienTai
             };
         }
     }
