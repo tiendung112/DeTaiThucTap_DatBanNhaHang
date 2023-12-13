@@ -9,7 +9,8 @@ namespace DatBanNhaHang.Services.Implements
     {
         public async Task<ThongKeDoanhThuDTOs> DoanhThuTheoNam(int year)
         {
-            var lstHoaDonDaThanhToan = contextDB.HoaDon.Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Year==year);
+            var lstHoaDonDaThanhToan = contextDB.HoaDon
+                .Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Year==year);
             double? doanhthu =await lstHoaDonDaThanhToan.SumAsync(x => x.TongTien);
             int tongsodon =await lstHoaDonDaThanhToan.CountAsync();
             return new ThongKeDoanhThuDTOs()
@@ -22,7 +23,8 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ThongKeDoanhThuDTOs> DoanhThuTheoNgay(DateTime? ngay)
         {
-            var lstHoaDonDaThanhToan = contextDB.HoaDon.Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Date == ngay);
+            var lstHoaDonDaThanhToan = contextDB.HoaDon
+                .Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Date == ngay);
             double? doanhthu = await lstHoaDonDaThanhToan.SumAsync(x => x.TongTien);
             int tongsodon = await lstHoaDonDaThanhToan.CountAsync();
             return new ThongKeDoanhThuDTOs()

@@ -5,6 +5,7 @@ using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NguoiDung;
 using DatBanNhaHang.Payloads.DTOs.NguoiDung;
 using DatBanNhaHang.Payloads.Requests.NguoiDung.User;
+using DatBanNhaHang.Payloads.Requests.NhaHang.KhachHang;
 using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
@@ -28,7 +29,7 @@ namespace DatBanNhaHang.Services.Implements
         private readonly ResponseObject<UserDTO> _responseObject;
         private readonly ResponseObject<TokenDTO> _responseObjectToken;
         private readonly UserConverters _userConverter;
-
+        private readonly IKhachHang khachHangServices = new KhachHangServices();
         public AuthServices(
             IConfiguration configuration,
             ResponseObject<UserDTO> responseObject,
@@ -143,6 +144,12 @@ namespace DatBanNhaHang.Services.Implements
             user.IsActive = true;
             user.ngayTao = DateTime.Now;
             contextDB.XacNhanEmail.Remove(confirmEmail);
+            Request_NangCapThongTinKhachHang kh = new Request_NangCapThongTinKhachHang()
+            {
+                UserId = user.id,
+            };
+            await khachHangServices.NangCapThongTinKhachHangACC(kh);
+
             contextDB.User.Update(user);
             await contextDB.SaveChangesAsync();
             return "Xác nhận đăng ký tài khoản thành công, vui lòng đăng nhập tài khoản của bạn";

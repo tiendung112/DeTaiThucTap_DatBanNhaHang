@@ -22,6 +22,7 @@ namespace DatBanNhaHang.Context
         public virtual DbSet<XacNhanEmail> XacNhanEmail { get; set; }
         public virtual DbSet<LienHe> LienHe { get; set; }
         public virtual DbSet<BaiViet> BaiViet { get; set; }
+        public virtual DbSet<NhanXet> NhanXet { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(SourseData.MyConnect());

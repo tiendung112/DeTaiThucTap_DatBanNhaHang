@@ -8,7 +8,7 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
         public int KhachHangID { get; set; }
         public string TenKhachHang { get; set; }
         public int? BanID { get; set; }
-        public int? TrangThaiHoaDonID { get; set; }
+        public string? TrangThaiHoaDon {  get; set; }
         public string? TenHoaDon { get; set; }
         public string? MaGiaoDich { get; set; }
         //Thời gian liên quan đến đặt bàn

@@ -24,7 +24,8 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị và tìm kiếm món ăn 
         public async Task<PageResult<MonAnDTOs>> HienThiMonAn(int id , int pageSize, int pageNumber)
         {
-            var lstMonAn = id==0? contextDB.MonAn.Select(x => converters.EntityToDTOs(x)): contextDB.MonAn.Where(y=>y.id==id).Select(x => converters.EntityToDTOs(x));
+            var lstMonAn = id==0? contextDB.MonAn.Select(x => converters.EntityToDTOs(x))
+                : contextDB.MonAn.Where(y=>y.id==id).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstMonAn, pageSize, pageNumber);
             return result;
         }

@@ -11,6 +11,7 @@ using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -440,29 +441,127 @@ namespace DatBanNhaHang.Services.Implements
             return "đã xoá tất cả hoá đơn chưa duyệt ";
         }
 
-        public Task<ResponseObject<HoaDonDTO>> XoaHoaDonAdmin(int HoaDonid)
+        public async Task<ResponseObject<HoaDonDTO>> XoaHoaDonAdmin(int HoaDonid)
         {
-            throw new NotImplementedException();
+            var hoaDon = contextDB.HoaDon.SingleOrDefault(x => x.id == HoaDonid);
+            if (hoaDon == null)
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
+            }
+            contextDB.Remove(hoaDon);
+            await contextDB.SaveChangesAsync();
+
+            return response.ResponseSuccess( "Xoá hoá đơn thành công", converters.EntityToDTOs(hoaDon));
+        }
+        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDonAdmin(int hoaDonid,int status, Request_ThemHoaDon_Admin request)
+        {
+            var hoaDon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoaDonid);
+            if (hoaDon == null)
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
+            }
+            if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(3)) == true)
+            {
+                hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau;
+                hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(3);
+                hoaDon.GhiChu = request.GhiChu;
+            }
+            var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
+            if (status == 0) //status =0 , thêm món
+            {
+                foreach (var item in request.ChiTietHoaDonDTOs.ToList())
+                {
+                    var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+                    ChiTietHoaDon ct = new ChiTietHoaDon()
+                    {
+                        HoaDonID = hoaDonid,
+                        MonAnID = item.MonAnID,
+                        SoLuong = item.SoLuong,
+
+                        ThanhTien = ma.GiaTien * item.SoLuong,
+                    };
+                    contextDB.ChiTietHoaDon.Add(ct);
+                    await contextDB.SaveChangesAsync();
+                }
+            }
+            else if (status == 1) //bớt món
+            {
+                // Xóa chi tiết hóa đơn không xuất hiện trong request
+                var chiTietRequestIds = request.ChiTietHoaDonDTOs.Select(ct => ct.MonAnID).ToList();
+                var chiTietToRemove = lstCTHd.Where(ct => !chiTietRequestIds.Contains(ct.MonAnID));
+                contextDB.ChiTietHoaDon.RemoveRange(chiTietToRemove);
+
+                // Cập nhật chi tiết hóa đơn còn lại
+                foreach (var item in request.ChiTietHoaDonDTOs)
+                {
+                    var chiTietExisting = lstCTHd.FirstOrDefault(ct => ct.MonAnID == item.MonAnID);
+                    if (chiTietExisting != null)
+                    {
+                        var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+                        chiTietExisting.SoLuong = item.SoLuong;
+                        chiTietExisting.ThanhTien = ma.GiaTien * item.SoLuong;
+                        contextDB.ChiTietHoaDon.Update(chiTietExisting);
+                    }
+                }
+                await contextDB.SaveChangesAsync();
+            }
+            else //thêm lại món
+            {
+                contextDB.ChiTietHoaDon.RemoveRange(lstCTHd);
+                await contextDB.SaveChangesAsync();
+                foreach (var item in request.ChiTietHoaDonDTOs.ToList())
+                {
+                    var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+                    ChiTietHoaDon ct = new ChiTietHoaDon()
+                    {
+                        HoaDonID = hoaDonid,
+                        MonAnID = item.MonAnID,
+                        SoLuong = item.SoLuong,
+
+                        ThanhTien = ma.GiaTien * item.SoLuong,
+                    };
+                    contextDB.ChiTietHoaDon.Add(ct);
+                    await contextDB.SaveChangesAsync();
+                }
+            }
+
+            var cthd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
+            hoaDon.TongTien = cthd.Sum(x => x.ThanhTien);
+            contextDB.Update(hoaDon);
+            await contextDB.SaveChangesAsync();
+            return response.ResponseSuccess("sửa hoá đơn thành công",converters.EntityToDTOs(hoaDon));
         }
 
-        public Task<ResponseObject<HoaDonDTO>> SuaHoaDonAdmin(int hoaDonid, Request_ThemHoaDon_Admin request)
+        public async Task<PageResult<HoaDonDTO>> HienThiHoaDon(int hoadonid, int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            var lsthoadon = hoadonid == 0 ? 
+                contextDB.HoaDon.Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.HoaDon.Where(x => x.id == hoadonid).Select(y=>converters.EntityToDTOs(y));
+            var result = Pagintation.GetPagedData(lsthoadon, pageSize, pageNumber);
+            return  result;
         }
 
-        public Task<PageResult<HoaDonDTO>> HienThiHoaDon(int hoadonid, int pageSize, int pageNumber)
+        public async Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaUser(int userid, int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            var user = contextDB.User.SingleOrDefault(x => x.id == userid);
+            var kh = contextDB.KhachHang.SingleOrDefault(x => x.userID == user.id);
+            var lsthoadon = contextDB.HoaDon
+                .Where(x => x.KhachHangID == kh.id)
+                .OrderByDescending(z => z.ThoiGianKetThucThucTe)
+                .Select(y => converters.EntityToDTOs(y));
+            var result = Pagintation.GetPagedData(lsthoadon, pageSize, pageNumber);
+            return result;
         }
 
-        public Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaUser(int userid, int pageSize, int pageNumber)
+        public async Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaKhachHang(int khid, int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaKhachHang(int userid, int pageSize, int pageNumber)
-        {
-            throw new NotImplementedException();
+            var kh = contextDB.KhachHang.SingleOrDefault(x=>x.userID== khid);
+            var lsthoadon = contextDB.HoaDon
+                .Where(x => x.KhachHangID == kh.id)
+                .OrderByDescending(z => z.ThoiGianKetThucThucTe)
+                .Select(y => converters.EntityToDTOs(y));
+            var result = Pagintation.GetPagedData(lsthoadon,pageSize,pageNumber);
+            return result;
         }
         #endregion
     }
