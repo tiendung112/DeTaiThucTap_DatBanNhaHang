@@ -22,7 +22,8 @@ namespace DatBanNhaHang.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAuthServices _authService;
         private readonly IHoaDon hoadonServices;
-        private readonly ILienHe LienHeServices; 
+        private readonly ILienHe LienHeServices;
+        private readonly IKhachHang khachhangServices;
 
         public AuthController(IConfiguration configuration, IAuthServices authService)
         {
@@ -30,6 +31,7 @@ namespace DatBanNhaHang.Controllers
             _authService = authService;
             LienHeServices = new LienHeServices();
             hoadonServices = new HoaDonServices();
+            khachhangServices =new KhachHangServices();
         }
 
         #region đăng ký, đăng nhập 
@@ -184,10 +186,18 @@ namespace DatBanNhaHang.Controllers
             return Ok(await hoadonServices.XacNhanHuyOrder(id, hoadonid,request));
         }
         [HttpGet]
-        [Route("/api/Ban/HienThiBanTrong")]
-        public async Task<IActionResult> HienThiBanTrong([FromForm ]Request_timBanTrong request)
+        [Route("/api/datBan/HienThiBanTrong")]
+        public async Task<IActionResult> HienThiBanTrong([FromForm]Request_timBanTrong request)
         {
             return Ok(await hoadonServices.TimBanTrong(request));
+        }
+        [HttpGet]
+        [Route("/api/datBan/LichSuHoaDon")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> LichSuHoaDon(int pageSize, int pageNumber)
+        {
+            int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
+            return Ok(await hoadonServices.HienThiHoaDonCuaUser(id,pageSize,pageNumber));
         }
         #endregion
         #region liên hệ

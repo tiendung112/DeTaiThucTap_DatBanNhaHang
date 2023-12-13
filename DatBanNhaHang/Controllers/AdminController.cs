@@ -2,6 +2,7 @@
 using DatBanNhaHang.Payloads.Requests.NguoiDung;
 using DatBanNhaHang.Payloads.Requests.NguoiDung.Admin;
 using DatBanNhaHang.Payloads.Requests.NguoiDung.Admin.Blog;
+using DatBanNhaHang.Payloads.Requests.NguoiDung.Admin.NhanXet;
 using DatBanNhaHang.Payloads.Requests.NhaHang.Ban;
 using DatBanNhaHang.Payloads.Requests.NhaHang.DauBep;
 using DatBanNhaHang.Payloads.Requests.NhaHang.HoaDon;
@@ -35,6 +36,7 @@ namespace DatBanNhaHang.Controllers
         private readonly IBaiViet BaiVietServices;
         private readonly ILienHe LienHeServices;
         private readonly IThongKe thongKeServices;
+        private readonly INhanXet nhanXetServices;
         public AdminController(IConfiguration configuration, IAdminServices _services)
         {
             ADMservices = _services;
@@ -50,6 +52,7 @@ namespace DatBanNhaHang.Controllers
             BaiVietServices = new BaiVietServices();
             LienHeServices = new LienHeServices();
             thongKeServices = new ThongKeServices();
+            nhanXetServices = new NhanXetServices();
         }
         #region đăng nhập , đăng ký 
         [HttpPost]
@@ -555,27 +558,79 @@ namespace DatBanNhaHang.Controllers
         #endregion
         #region hoá đơn
 
-        [HttpDelete]
-        [Route("/api/HoaDonAdmin/XoaHoaDonChuaDuyet")]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> XoaHoaDonChuaDuyet()
-        {
-            return Ok(await hoaDonServices.XoaTatCaHoaDonChuaDuyet());
-        }
+       
         [HttpPost]
         [Route("/api/HoaDonAdmin/ThemHoaDonAdmin")]
-        [Authorize(Roles = "ADMIN")]
+       // [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThemHoaDonAdmin([FromForm] Request_ThemHoaDon_Admin request)
         {
             return Ok(await hoaDonServices.ThemHoaDonAdmin(request));
         }
         [HttpPut]
         [Route("/api/HoaDonAdmin/CapNhatThongTinHoaDonAdmin")]
-        [Authorize(Roles = "ADMIN")]
+
+        //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> CapNhatThongTinHoaDonAdmin([FromForm] Request_CapNhatThongTinHoaDon request)
         {
             return Ok(await hoaDonServices.CapNhatThongTinHoaDon(request));
         }
+        [HttpPut]
+        [Route("/api/HoaDonAdmin/SuaHoaDonAdmin/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> SuaHoaDon([FromRoute]int id , int status,[FromForm] Request_ThemHoaDon_Admin request)
+        {
+            return Ok(await hoaDonServices.SuaHoaDonAdmin( id ,status,request));
+        }
+
+        [HttpDelete]
+        [Route("/api/HoaDonAdmin/XoaHoaDon/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> XoaHoaDon([FromRoute]int id)
+        {
+            return Ok(await hoaDonServices.XoaHoaDonAdmin(id));
+        }
+        [HttpDelete]
+        [Route("/api/HoaDonAdmin/XoaHoaDonChuaDuyet")]
+        // [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> XoaHoaDonChuaDuyet()
+        {
+            return Ok(await hoaDonServices.XoaTatCaHoaDonChuaDuyet());
+        }
+        [HttpGet]
+        [Route("/api/HoaDonAdmin/HienThiHoaDon")]
+        public async Task<IActionResult> HienThiHoaDon(int pageSize, int pageNumber)
+        {
+            var result = await hoaDonServices.HienThiHoaDon(0,pageSize, pageNumber);
+            if (result == null)
+            {
+                return BadRequest("Không có hoá đơn nào");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("/api/HoaDonAdmin/HienThiHoaDonTheoid/{id}")]
+        public async Task<IActionResult> HienThiHoaDon(int id)
+        {
+            var result = await hoaDonServices.HienThiHoaDon(1, 0, 0);
+            if (result == null)
+            {
+                return BadRequest("Không có hoá đơn nào");
+            }
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("/api/HoaDonAdmin/HienThiHoaDonKhachHang/{id}")]
+        public async Task<IActionResult> HienThiHoaDonTheoKhachHang([FromRoute]int id , int pageSize, int pageNumber)
+        {
+            var result = await hoaDonServices.HienThiHoaDonCuaKhachHang(id, pageSize, pageNumber);
+            if (result == null)
+            {
+                return BadRequest("Không có hoá đơn nào");
+            }
+            return Ok(result);
+        }
+
         #endregion
         #region Bài Viết
         [HttpPost]
@@ -591,8 +646,8 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/BaiViet/SuaBaiViet/{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-       // [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> SuaBaiViet([FromRoute] int id ,[FromForm] Request_SuaBaiViet request)
+        // [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> SuaBaiViet([FromRoute] int id, [FromForm] Request_SuaBaiViet request)
         {
             int admid = int.Parse(HttpContext.User.FindFirst("Id").Value);
             return Ok(await BaiVietServices.SuaBaiViet(id, admid, request));
@@ -611,7 +666,7 @@ namespace DatBanNhaHang.Controllers
         //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> HienThiBaiVietTheoID([FromRoute] int id)
         {
-            return Ok(await BaiVietServices.HienThiBaiViet(id,0,0));
+            return Ok(await BaiVietServices.HienThiBaiViet(id, 0, 0));
         }
 
         [HttpGet]
@@ -675,18 +730,56 @@ namespace DatBanNhaHang.Controllers
         [HttpGet]
         [Route("/api/ThongKe/DoanhThuTheoThang")]
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> DoanhThuTheoThang(int thang , int nam)
+        public async Task<IActionResult> DoanhThuTheoThang(int thang, int nam)
         {
 
-            return Ok(await thongKeServices.DoanhThuTheoThang(thang,nam));
+            return Ok(await thongKeServices.DoanhThuTheoThang(thang, nam));
         }
         [HttpGet]
         [Route("/api/ThongKe/DoanhThuTheoNam")]
-       // [Authorize(Roles ="ADMIN")]
+        // [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> DoanhThuTheoNam(int nam)
         {
 
             return Ok(await thongKeServices.DoanhThuTheoNam(nam));
+        }
+        #endregion
+
+        #region nhận xét
+        [HttpGet]
+        [Route("/api/NhanXet/HienThiNhanXet")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> HienThiNhanXet(int pageSize, int pageNumber)
+        {
+            return Ok(await nhanXetServices.HienThiNhanXet(0, pageSize, pageNumber));
+        }
+        [HttpGet]
+        [Route("/api/NhanXet/HienThiNhanXetTheoid/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> HienThiNhanXet([FromRoute] int id)
+        {
+            return Ok(await nhanXetServices.HienThiNhanXet(id, 0, 0));
+        }
+        [HttpPost]
+        [Route("/api/NhanXet/ThemNhanXet")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> ThemNhaNXet([FromForm] Request_ThemNhanXet request)
+        {
+            return Ok(await nhanXetServices.ThemNhanXet(request));
+        }
+        [HttpPut]
+        [Route("/api/NhanXet/SuaNhanXet/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> SuaNhaNXet([FromRoute] int id, [FromForm] Request_SuaNhanXet request)
+        {
+            return Ok(await nhanXetServices.SuaNhanXet(id, request));
+        }
+        [HttpDelete]
+        [Route("/api/NhanXet/XoaNhanXet/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> XoaNhanXet([FromRoute] int id)
+        {
+            return Ok(await nhanXetServices.XoaNhanXet(id));
         }
         #endregion
     }
