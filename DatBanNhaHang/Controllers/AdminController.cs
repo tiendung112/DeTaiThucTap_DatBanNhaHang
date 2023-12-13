@@ -577,7 +577,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/HoaDonAdmin/SuaHoaDonAdmin/{id}")]
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> SuaHoaDon([FromRoute]int id , int status,[FromForm] Request_ThemHoaDon_Admin request)
+        public async Task<IActionResult> SuaHoaDon([FromRoute]int id , int status,[FromForm] Request_SuaHoaDon request)
         {
             return Ok(await hoaDonServices.SuaHoaDonAdmin( id ,status,request));
         }

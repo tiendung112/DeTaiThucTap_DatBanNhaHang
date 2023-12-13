@@ -211,7 +211,7 @@ namespace DatBanNhaHang.Services.Implements
                 var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoadonid);
                 if(status== 0) //status =0 , thêm món
                 {
-                    foreach (var item in request.ChiTietHoaDonDTOs.ToList())
+                    foreach (var item in request.chitiet.ToList())
                     {
                         var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
                         ChiTietHoaDon ct = new ChiTietHoaDon() 
@@ -229,12 +229,12 @@ namespace DatBanNhaHang.Services.Implements
                 else if(status== 1) //bớt món
                 {
                     // Xóa chi tiết hóa đơn không xuất hiện trong request
-                    var chiTietRequestIds = request.ChiTietHoaDonDTOs.Select(ct => ct.MonAnID).ToList();
+                    var chiTietRequestIds = request.chitiet.Select(ct => ct.MonAnID).ToList();
                     var chiTietToRemove = lstCTHd.Where(ct => !chiTietRequestIds.Contains(ct.MonAnID));
                     contextDB.ChiTietHoaDon.RemoveRange(chiTietToRemove);
 
                     // Cập nhật chi tiết hóa đơn còn lại
-                    foreach (var item in request.ChiTietHoaDonDTOs)
+                    foreach (var item in request.chitiet)
                     {
                         var chiTietExisting = lstCTHd.FirstOrDefault(ct => ct.MonAnID == item.MonAnID);
                         if (chiTietExisting != null)
@@ -251,7 +251,7 @@ namespace DatBanNhaHang.Services.Implements
                 {
                     contextDB.ChiTietHoaDon.RemoveRange(lstCTHd);
                     await contextDB.SaveChangesAsync();
-                    foreach (var item in request.ChiTietHoaDonDTOs.ToList())
+                    foreach (var item in request.chitiet.ToList())
                     {
                         var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
                         ChiTietHoaDon ct = new ChiTietHoaDon()
@@ -380,8 +380,17 @@ namespace DatBanNhaHang.Services.Implements
         //lưu thông tin khách hàng đến và đi giờ nào cũng như thanh toán 
         public async Task<ResponseObject<HoaDonDTO>> CapNhatThongTinHoaDon(Request_CapNhatThongTinHoaDon request)
         {
+            if(string.IsNullOrWhiteSpace(request.ThoiGianKetThucThucTe.ToString()) || string.IsNullOrWhiteSpace(request.ThoiGianBatDauThucTe.ToString()))
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "Chưa điền đủ thông tin ", null);
+            }
+
             var hoadon = contextDB.HoaDon.SingleOrDefault(x=>x.id==request.hoaDonid);
             hoadon.ThoiGianBatDauThucTe = request.ThoiGianBatDauThucTe;
+            if (hoadon == null)
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại hoá đơn này", null);
+            }
             hoadon.ThoiGianKetThucThucTe = request.ThoiGianKetThucThucTe;
             hoadon.TrangThaiHoaDonID = 3;
             contextDB.Update(hoadon);
@@ -394,9 +403,13 @@ namespace DatBanNhaHang.Services.Implements
             if(await KiemTraBanTrong(request.BanID, DateTime.Now, DateTime.Now.AddHours(3))==true){
                 var kh = contextDB.KhachHang.SingleOrDefault(x => x.id == request.Khid);
 
-                if (contextDB.Ban.Any(x => x.id == request.BanID))
+                if (!contextDB.Ban.Any(x => x.id == request.BanID))
                 {
                     return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại bàn này", null);
+                }
+                if(kh == null)
+                {
+                    return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại khách hàng này", null);
                 }
                 HoaDon newHoaDon = new HoaDon()
                 {
@@ -453,8 +466,13 @@ namespace DatBanNhaHang.Services.Implements
 
             return response.ResponseSuccess( "Xoá hoá đơn thành công", converters.EntityToDTOs(hoaDon));
         }
-        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDonAdmin(int hoaDonid,int status, Request_ThemHoaDon_Admin request)
+        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDonAdmin(int hoaDonid,int status, Request_SuaHoaDon request)
         {
+            if (string.IsNullOrWhiteSpace(request.GhiChu) 
+                || request.chitiet.Count()==0)
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "Chưa điền đủ thông tin ", null);
+            }
             var hoaDon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoaDonid);
             if (hoaDon == null)
             {
@@ -469,7 +487,7 @@ namespace DatBanNhaHang.Services.Implements
             var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
             if (status == 0) //status =0 , thêm món
             {
-                foreach (var item in request.ChiTietHoaDonDTOs.ToList())
+                foreach (var item in request.chitiet.ToList())
                 {
                     var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
                     ChiTietHoaDon ct = new ChiTietHoaDon()
@@ -487,12 +505,12 @@ namespace DatBanNhaHang.Services.Implements
             else if (status == 1) //bớt món
             {
                 // Xóa chi tiết hóa đơn không xuất hiện trong request
-                var chiTietRequestIds = request.ChiTietHoaDonDTOs.Select(ct => ct.MonAnID).ToList();
+                var chiTietRequestIds = request.chitiet.Select(ct => ct.MonAnID).ToList();
                 var chiTietToRemove = lstCTHd.Where(ct => !chiTietRequestIds.Contains(ct.MonAnID));
                 contextDB.ChiTietHoaDon.RemoveRange(chiTietToRemove);
 
                 // Cập nhật chi tiết hóa đơn còn lại
-                foreach (var item in request.ChiTietHoaDonDTOs)
+                foreach (var item in request.chitiet)
                 {
                     var chiTietExisting = lstCTHd.FirstOrDefault(ct => ct.MonAnID == item.MonAnID);
                     if (chiTietExisting != null)
@@ -509,7 +527,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 contextDB.ChiTietHoaDon.RemoveRange(lstCTHd);
                 await contextDB.SaveChangesAsync();
-                foreach (var item in request.ChiTietHoaDonDTOs.ToList())
+                foreach (var item in request.chitiet.ToList())
                 {
                     var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
                     ChiTietHoaDon ct = new ChiTietHoaDon()
