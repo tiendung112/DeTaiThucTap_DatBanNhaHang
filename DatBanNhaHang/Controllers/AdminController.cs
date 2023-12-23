@@ -108,8 +108,14 @@ namespace DatBanNhaHang.Controllers
         [Route("/api/Admin/forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromForm] Request_AdminForgotPassword request)
         {
-            return Ok(await ADMservices.ForgotPassword(request));
+            var result = await ADMservices.ForgotPassword(request);
+            if (result == null)
+            {
+                return NotFound("Không tồn tại email này");
+            }
+            return Ok(result);
         }
+        
 
         [HttpPost]
         [Route("/api/Admin/create-new-password")]

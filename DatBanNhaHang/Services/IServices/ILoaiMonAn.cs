@@ -13,7 +13,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<LoaiMonAnDTOs>> ThemLoaiMonAnKemMonAn(Request_ThemLoaiMonAnKemMonAn request);
         Task<ResponseObject<LoaiMonAnDTOs>> SuaLoaiMonAn(int id,Request_SuaLoaiMonAn request);
         Task<ResponseObject<LoaiMonAnDTOs>> XoaLoaiMonAn(int id);
-        Task<PageResult<LoaiMonAnDTOs>> HienThiLoaiMonAn (int id ,int pageSize, int pageNumber);
-
+        Task<PageResult<LoaiMonAnDTOs>> HienThiLoaiMonAnKemMonAn (int id ,int pageSize, int pageNumber);
+        Task<PageResult<SingleLoaiMonAnDTOs>> HienThiLoaiMonAn(int id, int pageSize, int pageNumber);
     }
 }

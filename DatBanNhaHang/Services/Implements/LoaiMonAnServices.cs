@@ -22,9 +22,21 @@ namespace DatBanNhaHang.Services.Implements
             res = new ResponseObject<LoaiMonAnDTOs>();
         }
         #region hiển thị , tìm kiếm các loại món ăn 
-        public async Task<PageResult<LoaiMonAnDTOs>> HienThiLoaiMonAn(int id ,int pageSize, int pageNumber)
+        public async Task<PageResult<LoaiMonAnDTOs>> HienThiLoaiMonAnKemMonAn(int id, int pageSize, int pageNumber)
         {
-            var lstLMA =id==0? contextDB.LoaiMonAn.Select(x => converters.entityTODTOs(x)): contextDB.LoaiMonAn.Where(y=>y.id==id).Select(x => converters.entityTODTOs(x));
+            var lstLMA = id == 0 ?
+                 contextDB.LoaiMonAn.Select(x => converters.entityTODTOs(x))
+                 : contextDB.LoaiMonAn.Where(y => y.id == id).Select(x => converters.entityTODTOs(x));
+            var res = Pagintation.GetPagedData(lstLMA, pageSize, pageNumber);
+            return res;
+        }
+
+        public async Task<PageResult<SingleLoaiMonAnDTOs>> HienThiLoaiMonAn(int id, int pageSize, int pageNumber)
+        {
+        
+            var lstLMA =id==0? 
+                contextDB.LoaiMonAn.Select(x => converters.EntitySingletoDTOs(x))
+                : contextDB.LoaiMonAn.Where(y=>y.id==id).Select(x => converters.EntitySingletoDTOs(x));
             var res = Pagintation.GetPagedData(lstLMA, pageSize, pageNumber);
             return res;
         }
@@ -131,6 +143,8 @@ namespace DatBanNhaHang.Services.Implements
                 return res.ResponseSuccess("đã xoá thành công loại món ăn này", converters.entityTODTOs(lstLMA));
             }
         }
+
+       
         #endregion
     }
 }

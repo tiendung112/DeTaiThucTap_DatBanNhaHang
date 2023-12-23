@@ -275,12 +275,12 @@ namespace DatBanNhaHang.Services.Implements
 
         }
 
-        public async Task<string> ForgotPassword(Request_AdminForgotPassword request)
+        public async Task<ResponseObject<AdminDTOs>> ForgotPassword(Request_AdminForgotPassword request)
         {
             Admin admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.Email.Equals(request.Email));
             if (admin is null)
             {
-                return "Email không tồn tại trong hệ thống";
+                return responseObject.ResponseError(StatusCodes.Status404NotFound,"Email không tồn tại ",null);
             }
             else
             {
@@ -302,7 +302,7 @@ namespace DatBanNhaHang.Services.Implements
                     Subject = "Nhận mã xác nhận để tạo mật khẩu mới từ đây: ",
                     Content = $"Mã kích hoạt của bạn là: {confirmEmail.MaXacNhan}, mã này sẽ hết hạn sau 15 phút"
                 });
-                return "Gửi mã xác nhận về email thành công, vui lòng kiểm tra email";
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Gửi mã xác nhận về email thành công, vui lòng kiểm tra email", null);
             }
         }
         #endregion
