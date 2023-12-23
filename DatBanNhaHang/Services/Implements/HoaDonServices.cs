@@ -31,7 +31,8 @@ namespace DatBanNhaHang.Services.Implements
             throw new NotImplementedException();
         }
 
-        #region hoá đơn by user 
+        #region tìm bàn trống , hiển thị bàn trống
+
         public async Task<List<BanDTOs>> TimBanTrong(Request_timBanTrong request)
         {
             var tatCaBan = await contextDB.Ban.ToListAsync();
@@ -47,12 +48,26 @@ namespace DatBanNhaHang.Services.Implements
 
             return banTrong;
         }
+        public async Task<List<BanDTOs>> HienThiBanTrong()
+        {
+            var tatCaBan = await contextDB.Ban.ToListAsync();
+            var banTrong = new List<BanDTOs>();
+
+            foreach (var ban in tatCaBan)
+            {
+                if (await KiemTraBanTrong(ban.id, DateTime.Now, DateTime.Now.AddHours(2)))
+                {
+                    banTrong.Add(banConverters.EntityToDTOs(ban));
+                }
+            }
+            return banTrong;
+        }
 
         public async Task<bool> KiemTraBanTrong(int? banId, DateTime thoiGianBatDauDuKien, DateTime thoiGianKetThucDuKien)
         {
             var hoaDons = await contextDB.HoaDon
                                 .Where(hd => hd.BanID == banId
-                                             && hd.TrangThaiHoaDonID == 2 )
+                                             && hd.TrangThaiHoaDonID == 2)
                                 .ToListAsync();
             foreach (var hoaDon in hoaDons)
             {
@@ -69,6 +84,9 @@ namespace DatBanNhaHang.Services.Implements
 
             return true; // Không có xung đột, bàn trống
         }
+
+        #endregion
+        #region hoá đơn by user 
         private string TaoMaGiaoDich(DateTime nt, List<HoaDon> ct)
         {
             //newHoaDon.MaGiaoDich = $"{newHoaDon.ThoiGianTao.Year}" +

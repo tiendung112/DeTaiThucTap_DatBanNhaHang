@@ -26,7 +26,7 @@ namespace DatBanNhaHang.Controllers
         private readonly IAdminServices ADMservices;
         private readonly IConfiguration _configuration;
         private readonly IDauBep daubepservices;
-        public readonly ILoaiBan LoaiBanservices;
+        private readonly ILoaiBan LoaiBanservices;
         private readonly ILoaiMonAn loaiMonAnservices;
         private readonly IMonAn MonAnservices;
         private readonly IBan banServices;
@@ -37,22 +37,37 @@ namespace DatBanNhaHang.Controllers
         private readonly ILienHe LienHeServices;
         private readonly IThongKe thongKeServices;
         private readonly INhanXet nhanXetServices;
-        public AdminController(IConfiguration configuration, IAdminServices _services)
+        public AdminController
+            (IConfiguration configuration,
+                IAdminServices admservices,
+                IDauBep dauBep,
+                ILoaiBan loaiBan,
+                ILoaiMonAn loaiMonAn,
+                IMonAn monAn,
+                IBan ban,
+                IKhachHang khachHang,
+                ITrangThaiHoaDon trangThaiHoaDon,
+                IHoaDon hoaDon,
+                IBaiViet baiViet,
+                ILienHe lienHe,
+                IThongKe thongKe,
+                INhanXet nhanXet
+            )
         {
-            ADMservices = _services;
+            ADMservices = admservices;
             _configuration = configuration;
-            daubepservices = new DauBepServices();
-            LoaiBanservices = new LoaiBanServices();
-            loaiMonAnservices = new LoaiMonAnServices();
-            MonAnservices = new MonAnServices();
-            banServices = new BanServices();
-            khachhangServices = new KhachHangServices();
-            TTHDservices = new TrangThaiHoaDonServices();
-            hoaDonServices = new HoaDonServices();
-            BaiVietServices = new BaiVietServices();
-            LienHeServices = new LienHeServices();
-            thongKeServices = new ThongKeServices();
-            nhanXetServices = new NhanXetServices();
+            daubepservices = dauBep;
+            LoaiBanservices = loaiBan;
+            loaiMonAnservices = loaiMonAn;
+            MonAnservices = monAn;
+            banServices = ban;
+            khachhangServices = khachHang;
+            TTHDservices = trangThaiHoaDon;
+            hoaDonServices = hoaDon;
+            BaiVietServices = baiViet;
+            LienHeServices =  lienHe;
+            thongKeServices = thongKe;
+            nhanXetServices = nhanXet;
         }
         #region đăng nhập , đăng ký 
         [HttpPost]
@@ -141,12 +156,31 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpDelete]
         [Route("/api/Admin/XoaTKChuaKichHoat")]
-        //[Authorize(Roles = "ADMIN,MOD")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public IActionResult DeleteTK()
         {
             var res = ADMservices.RemoveTKNotActive();
             return Ok(res);
 
+        }
+
+        [HttpPut]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Route("/api/Admin/SuaThongTin")]
+        public async Task<IActionResult> SuaThongTin([FromForm] Request_AdminUpdateInfor request)
+        {
+            int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
+            return Ok(await ADMservices.SuaThongTin(id,request));
+        }
+
+        [HttpGet]
+        [Route("/api/Admin/ThongTinAdmin")]
+        //[Authorize(Roles = "ADMIN")]
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> ThongTinAdmin()
+        {
+            int id =Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
+            return Ok( ADMservices.GetAdminTheoId(id));
         }
         #endregion
         #region đầu bếp 
@@ -212,9 +246,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiBan([FromForm] Request_ThemLoaiBan request)
         {
             var result = await LoaiBanservices.ThemLoaiBan(request);
-            if (result != null)
-                return Ok(result);
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPut]
         [Route("api/LoaiBan/SuaLoaiBan/{id}")]
@@ -257,10 +289,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiMonAn([FromForm] Request_ThemLoaiMonAn request)
         {
             var result = await loaiMonAnservices.ThemLoaiMonAn(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+            
             return Ok(result);
         }
         [HttpPost]
@@ -532,10 +561,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemTrangThaiHoaDon([FromForm] Request_ThemTrangThaiHoaDon request)
         {
             var result = await TTHDservices.ThemTrangThaiHoaDon(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+            
             return Ok(result);
         }
         [HttpPut]
@@ -544,10 +570,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaTrangThaiHoaDon([FromRoute] int id, [FromForm] Request_SuaTrangThaiHoaDon request)
         {
             var result = await TTHDservices.SuaTrangThaiHoaDon(id, request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
         [HttpDelete]
@@ -556,10 +578,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaTrangThaiHoaDon([FromRoute] int id)
         {
             var result = await TTHDservices.XoaTrangThaiHoaDon(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+            
             return Ok(result);
         }
 
@@ -568,19 +587,17 @@ namespace DatBanNhaHang.Controllers
         [Authorize(Roles = "ADMIN , MOD")]
         public async Task<IActionResult> HienThiTrangThaiHoaDon(int pageSize, int pageNumer)
         {
-            return Ok(TTHDservices.HienThiTrangThaiHoaDon(0, pageSize, pageNumer));
+            return Ok(await TTHDservices.HienThiTrangThaiHoaDon(0, pageSize, pageNumer));
         }
         [HttpGet]
         [Route("/api/TrangThaiHoaDon/HienThiTrangThaiHoaDonTheoID/{id}")]
         [Authorize(Roles = "ADMIN , MOD")]
         public async Task<IActionResult> HienThiTrangThaiHoaDonTheoID([FromRoute] int id)
         {
-            return Ok(TTHDservices.HienThiTrangThaiHoaDon(id, 0, 0));
+            return Ok(await TTHDservices.HienThiTrangThaiHoaDon(id, 0, 0));
         }
         #endregion
         #region hoá đơn
-
-       
         [HttpPost]
         [Route("/api/HoaDonAdmin/ThemHoaDonAdmin")]
        // [Authorize(Roles = "ADMIN")]
@@ -652,7 +669,13 @@ namespace DatBanNhaHang.Controllers
             }
             return Ok(result);
         }
-
+        [HttpGet]
+        [Route("/api/datBan/HienThiTatCaBanTrong")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> HienThiTatCaBanTrong()
+        {
+            return Ok(await hoaDonServices.HienThiBanTrong());
+        }
         #endregion
         #region Bài Viết
         [HttpPost]
@@ -764,6 +787,30 @@ namespace DatBanNhaHang.Controllers
         {
 
             return Ok(await thongKeServices.DoanhThuTheoNam(nam));
+        }
+        
+        [HttpGet]
+        [Route("/api/ThongKe/ThongKeKhachHang")]
+        // [Authorize(Roles ="ADMIN")]
+        public async Task<IActionResult> ThongKeKhachHang()
+        {
+            return Ok(await thongKeServices.ThongKeKhachHang());
+        }
+        
+        [HttpGet]
+        [Route("/api/ThongKe/SoLuongHoaDonTheoNgay")]
+        // [Authorize(Roles ="ADMIN")]
+        public async Task<IActionResult> SoLuongHoaDonTheoNgay()
+        {
+            return Ok(await thongKeServices.SoLuongHoaDonTheoNgay());
+        }
+        
+        [HttpGet]
+        [Route("/api/ThongKe/ThongKeBanDangConSuDung")]
+        // [Authorize(Roles ="ADMIN")]
+        public async Task<IActionResult> ThongKeBanDangConSuDung()
+        {
+            return Ok(await thongKeServices.ThongKeBanDangConSuDung());
         }
         #endregion
 

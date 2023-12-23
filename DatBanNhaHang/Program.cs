@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using DatBanNhaHang.Payloads.DTOs.NhaHang;
+
 var builder = WebApplication.CreateBuilder(args);
 var service = builder.Services;
 // Add services to the container.
@@ -63,16 +65,37 @@ builder.Services.AddCors(options =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IAdminServices, AdminServices>();
+builder.Services.AddScoped<IBaiViet,BaiVietServices>();
+builder.Services.AddScoped<IBan, BanServices>();
+builder.Services.AddScoped<IChiTietHoaDon,ChiTietHoaDonServices>();
 builder.Services.AddScoped<IDauBep, DauBepServices>();
+builder.Services.AddScoped<IHoaDon, HoaDonServices>();
+builder.Services.AddScoped<IKhachHang, KhachHangServices>();
+builder.Services.AddScoped<ILienHe, LienHeServices>();
+builder.Services.AddScoped<ILoaiBan, LoaiBanServices>();
 builder.Services.AddScoped<ILoaiMonAn, LoaiMonAnServices>();
 builder.Services.AddScoped<IMonAn, MonAnServices>();
-builder.Services.AddScoped<IKhachHang, KhachHangServices>();
+builder.Services.AddScoped<INhanXet, NhanXetServices>();
 builder.Services.AddScoped<ITrangThaiHoaDon, TrangThaiHoaDonServices>();
-builder.Services.AddScoped<ILoaiBan, LoaiBanServices>();
-builder.Services.AddScoped<IBan, BanServices>();
+builder.Services.AddScoped<IThongKe, ThongKeServices>();
+
 
 builder.Services.AddSingleton<ResponseObject<UserDTO>>();
 builder.Services.AddSingleton<ResponseObject<TokenDTO>>();
+builder.Services.AddSingleton<ResponseObject<AdminDTOs>>();
+builder.Services.AddSingleton<ResponseObject<BaiVietDTOs>>();
+builder.Services.AddSingleton<ResponseObject<BanDTOs>>();
+builder.Services.AddSingleton<ResponseObject<ChiTietHoaDonDTOs>>();
+builder.Services.AddSingleton<ResponseObject<DauBepDTOs>>();
+builder.Services.AddSingleton<ResponseObject<HoaDonDTO>>();
+builder.Services.AddSingleton<ResponseObject<KhachHangDTOs>>();
+builder.Services.AddSingleton<ResponseObject<LienHeDTOs>>();
+builder.Services.AddSingleton<ResponseObject<LoaiBanDTOs>>();
+builder.Services.AddSingleton<ResponseObject<LoaiMonAnDTOs>>();
+builder.Services.AddSingleton<ResponseObject<MonAnDTOs>>();
+builder.Services.AddSingleton<ResponseObject<NhanXetDTOs>>();
+builder.Services.AddSingleton < ResponseObject<NhanXetDTOs>>();
+builder.Services.AddSingleton<ResponseObject<TrangThaiHoaDonDTOs>>();
 builder.Services.AddSingleton<UserConverters>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
