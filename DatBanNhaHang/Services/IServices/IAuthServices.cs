@@ -21,8 +21,8 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<UserDTO>> CreateNewPassword(Request_ConfirmCreateNewPassword request);
         Task<string> XacNhanDangKyTaiKhoan(Request_ValidateRegister request);
         Task<ResponseObject<UserDTO>> ThayDoiThongTin(int id, Request_UpdateInfor request);
-        Task<string> XacNhanDoiEmail( Request_NewMail request);
+        Task<string> XacNhanDoiEmail(Request_NewMail request);
         Task<string> ThayDoiEmail(int id);
-   
+
     }
 }

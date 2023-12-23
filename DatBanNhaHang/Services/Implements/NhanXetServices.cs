@@ -22,14 +22,14 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<NhanXetDTOs>> HienThiNhanXet(int nhanxetid, int pageSize, int pageNumber)
         {
-            var lstnx =nhanxetid!=0? contextDB.NhanXet.Where(y=>y.id==nhanxetid).Select(x => converters.EntityToDTOs(x)) : contextDB.NhanXet.Select(x => converters.EntityToDTOs(x));
+            var lstnx = nhanxetid != 0 ? contextDB.NhanXet.Where(y => y.id == nhanxetid).Select(x => converters.EntityToDTOs(x)) : contextDB.NhanXet.Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstnx, pageSize, pageNumber);
             return result;
         }
 
         public async Task<ResponseObject<NhanXetDTOs>> SuaNhanXet(int nhanxetid, Request_SuaNhanXet request)
         {
-            var nhanxet = contextDB.NhanXet.SingleOrDefault(x=>x.id==nhanxetid);
+            var nhanxet = contextDB.NhanXet.SingleOrDefault(x => x.id == nhanxetid);
             if (nhanxet == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại nhận xét này", null);
@@ -44,10 +44,10 @@ namespace DatBanNhaHang.Services.Implements
                 else
                 {
                     var avatarFile = await HandleUploadImage.Upfile(request.AnhURL, $"DatBanNhaHang/MonAn/{nhanxet.id}");
-                    nhanxet.AnhURL = avatarFile == "" ?nhanxet.AnhURL : avatarFile;
+                    nhanxet.AnhURL = avatarFile == "" ? nhanxet.AnhURL : avatarFile;
                 }
             }
-            nhanxet.ChuThich = request.ChuThich == null? nhanxet.ChuThich : request.ChuThich;
+            nhanxet.ChuThich = request.ChuThich == null ? nhanxet.ChuThich : request.ChuThich;
             nhanxet.HoTen = request.HoTen == null ? nhanxet.HoTen : request.HoTen;
             nhanxet.NoiDung = request.NoiDung == null ? nhanxet.NoiDung : request.NoiDung;
             contextDB.Update(nhanxet);

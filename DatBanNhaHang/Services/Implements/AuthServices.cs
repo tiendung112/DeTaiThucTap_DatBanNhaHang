@@ -11,15 +11,11 @@ using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using BCryptNet = BCrypt.Net.BCrypt;
-using SmtpClient = System.Net.Mail.SmtpClient;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -82,18 +78,18 @@ namespace DatBanNhaHang.Services.Implements
                     user.SDT = request.SDT;
                     user.address = request.address;
                     user.ngayTao = DateTime.Now;
-                   /* if (request.AvatarUrl != null)
-                    {
-                        if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
-                        {
-                            return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
-                        }
-                        else
-                        {
-                            var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
-                            user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
-                        }
-                    }*/
+                    /* if (request.AvatarUrl != null)
+                     {
+                         if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
+                         {
+                             return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Ảnh không hợp lệ", null);
+                         }
+                         else
+                         {
+                             var avatarFile = await HandleUploadImage.Upfile(request.AvatarUrl, "DatBanNhaHang/Account");
+                             user.AvatarUrl = avatarFile == "" ? "https://media.istockphoto.com/Id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" : avatarFile;
+                         }
+                     }*/
                     await contextDB.User.AddAsync(user);
                     await contextDB.SaveChangesAsync();
 
@@ -280,38 +276,38 @@ namespace DatBanNhaHang.Services.Implements
             }
         }
         #endregion
-       /* #region Xử lý vấn đề liên quan đến gửi email
-        public string SendEmail(EmailTo emailTo)
-        {
-            if (!Validate.IsValidEmail(emailTo.Mail))
-            {
-                return "Định dạng email không hợp lệ";
-            }
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("dung0112.dev.test@gmail.com", "xssyibnbzpqhmzsz"),
-                EnableSsl = true
-            };
-            try
-            {
-                var message = new MailMessage();
-                message.From = new MailAddress("dung0112.dev.test@gmail.com");
-                message.To.Add(emailTo.Mail);
-                message.Subject = emailTo.Subject;
-                message.Body = emailTo.Content;
-                message.IsBodyHtml = true;
-                smtpClient.Send(message);
+        /* #region Xử lý vấn đề liên quan đến gửi email
+         public string SendEmail(EmailTo emailTo)
+         {
+             if (!Validate.IsValidEmail(emailTo.Mail))
+             {
+                 return "Định dạng email không hợp lệ";
+             }
+             var smtpClient = new SmtpClient("smtp.gmail.com")
+             {
+                 Port = 587,
+                 Credentials = new NetworkCredential("dung0112.dev.test@gmail.com", "xssyibnbzpqhmzsz"),
+                 EnableSsl = true
+             };
+             try
+             {
+                 var message = new MailMessage();
+                 message.From = new MailAddress("dung0112.dev.test@gmail.com");
+                 message.To.Add(emailTo.Mail);
+                 message.Subject = emailTo.Subject;
+                 message.Body = emailTo.Content;
+                 message.IsBodyHtml = true;
+                 smtpClient.Send(message);
 
-                return "Gửi email thành công";
-            }
-            catch (Exception ex)
-            {
-                return "Lỗi khi gửi email: " + ex.Message;
-            }
-        }
-       
-        #endregion*/
+                 return "Gửi email thành công";
+             }
+             catch (Exception ex)
+             {
+                 return "Lỗi khi gửi email: " + ex.Message;
+             }
+         }
+
+         #endregion*/
         #region Xử lý việc đổi mật khẩu và quên mật khẩu
         public async Task<ResponseObject<UserDTO>> ChangePassword(int UserID, Request_ChangePassword request)
         {
@@ -377,7 +373,7 @@ namespace DatBanNhaHang.Services.Implements
         #endregion
         public async Task<PageResult<UserDTO>> GetAlls(int pageSize, int pageNumber)
         {
-            var list =contextDB.User.Select(x => _userConverter.EntityToDTO(x));
+            var list = contextDB.User.Select(x => _userConverter.EntityToDTO(x));
             var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
             return result;
         }
@@ -392,7 +388,7 @@ namespace DatBanNhaHang.Services.Implements
             }
             user.Gender = request.Gender == null ? user.Gender : request.Gender;
             user.DateOfBirth = request.DateOfBirth == null ? user.DateOfBirth : request.DateOfBirth;
-            user.Name = request.Name==null?user.Name:request.Name;
+            user.Name = request.Name == null ? user.Name : request.Name;
             int imageSize = 2 * 1024 * 786;
             if (request.AvatarUrl != null)
             {
@@ -406,8 +402,8 @@ namespace DatBanNhaHang.Services.Implements
                     user.AvatarUrl = avatarFile == "" ? user.AvatarUrl : avatarFile;
                 }
             }
-            user.SDT = request.SDT ==null ? user.SDT : request.SDT;
-            user.address = request.address==null ? user.address : request.address;
+            user.SDT = request.SDT == null ? user.SDT : request.SDT;
+            user.address = request.address == null ? user.address : request.address;
             Request_NangCapThongTinKhachHang kh = new Request_NangCapThongTinKhachHang()
             {
                 UserId = user.id,
@@ -415,7 +411,7 @@ namespace DatBanNhaHang.Services.Implements
             await khachHangServices.NangCapThongTinKhachHangACC(kh);
             khachHangServices.NangCapThongTinKhachHangACC(kh);
             contextDB.User.Update(user);
-            
+
             await contextDB.SaveChangesAsync();
             return _responseObject.ResponseSuccess("bạn đã thay đổi thông tin thành công ", _userConverter.EntityToDTO(user));
         }
@@ -426,7 +422,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return "Không tồn tại tài khoản này ";
             }
-       
+
 
             XacNhanEmail confrimEmail = new XacNhanEmail()
             {
@@ -446,7 +442,7 @@ namespace DatBanNhaHang.Services.Implements
                          $", mã này sẽ hết hạn sau 30 phút"
             });
             return "Bạn đã gửi yêu cầu đổi email," +
-                " vui lòng nhập mã xác nhận đã được gửi về email của bạn" ;
+                " vui lòng nhập mã xác nhận đã được gửi về email của bạn";
 
         }
         public async Task<string> XacNhanDoiEmail(Request_NewMail request)

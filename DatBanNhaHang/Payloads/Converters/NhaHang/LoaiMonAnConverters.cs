@@ -8,7 +8,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
     {
         private readonly AppDbContext context;
         private readonly MonAnConverters MA_converters;
-        
+
         public LoaiMonAnConverters()
         {
             this.context = new AppDbContext();

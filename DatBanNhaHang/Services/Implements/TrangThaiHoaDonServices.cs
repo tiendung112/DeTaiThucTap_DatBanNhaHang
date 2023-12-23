@@ -18,21 +18,21 @@ namespace DatBanNhaHang.Services.Implements
             converters = new TrangThaiHoaDonConverters();
             response = new ResponseObject<TrangThaiHoaDonDTOs>();
         }
-        public  async Task<PageResult<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int id , int pageSize, int pageNumber)
+        public async Task<PageResult<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int id, int pageSize, int pageNumber)
         {
             var lstMonAn = id == 0 ? contextDB.TrangThaiHoaDon.Select(x => converters.EntityToDTOs(x)) : contextDB.TrangThaiHoaDon.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstMonAn, pageSize, pageNumber);
             return result;
         }
 
-        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> SuaTrangThaiHoaDon(int id , Request_SuaTrangThaiHoaDon request)
+        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> SuaTrangThaiHoaDon(int id, Request_SuaTrangThaiHoaDon request)
         {
             var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id == id);
-            if(tthd == null)
+            if (tthd == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái này ", null);
             }
-            tthd.TenTrangThai = request.TenTrangThai==null?tthd.TenTrangThai:request.TenTrangThai;
+            tthd.TenTrangThai = request.TenTrangThai == null ? tthd.TenTrangThai : request.TenTrangThai;
             contextDB.Update(tthd);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Sửa trạng thái thành công ", converters.EntityToDTOs(tthd));
@@ -48,18 +48,18 @@ namespace DatBanNhaHang.Services.Implements
             };
             contextDB.TrangThaiHoaDon.Add(tthd);
             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("Thêm trạng thái thành công ",converters.EntityToDTOs(tthd));
+            return response.ResponseSuccess("Thêm trạng thái thành công ", converters.EntityToDTOs(tthd));
         }
 
-        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> XoaTrangThaiHoaDon(int id  )
+        public async Task<ResponseObject<TrangThaiHoaDonDTOs>> XoaTrangThaiHoaDon(int id)
         {
-            var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id ==id);
+            var tthd = contextDB.TrangThaiHoaDon.SingleOrDefault(x => x.id == id);
             if (tthd == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái này ", null);
             }
-            var lsthd = contextDB.HoaDon.Where(x=>x.id==tthd.id).ToList();
-            foreach(var hd in lsthd)
+            var lsthd = contextDB.HoaDon.Where(x => x.id == tthd.id).ToList();
+            foreach (var hd in lsthd)
             {
                 var lstCT = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hd.id);
                 contextDB.RemoveRange(lstCT);

@@ -14,6 +14,6 @@
         public string? Mota { get; set; }
         public string? HinhAnhBanURL { get; set; }
         public string? TinhTrangHienTai { get; set; }
-       
+
     }
 }

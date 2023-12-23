@@ -23,7 +23,7 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị và tìm kiếm bàn
         public async Task<PageResult<BanDTOs>> HienThiBan(int id, int pageSize, int pageNumber)
         {
-            var ban = id == 0 ? contextDB.Ban.Select(x => converters.EntityToDTOs(x)) 
+            var ban = id == 0 ? contextDB.Ban.Select(x => converters.EntityToDTOs(x))
                 : contextDB.Ban.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(ban, pageSize, pageNumber);
             return result;
@@ -51,11 +51,11 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<ResponseObject<BanDTOs>> ThemBan(Request_ThemBan request)
         {
             if (string.IsNullOrWhiteSpace(request.ViTri) || !request.GiaTien.HasValue || !request.SoBan.HasValue
-                || !request.SoNguoiToiDa.HasValue || !request.GiaTien.HasValue || !request.LoaiBanID.HasValue )
+                || !request.SoNguoiToiDa.HasValue || !request.GiaTien.HasValue || !request.LoaiBanID.HasValue)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "chưa điền đầy đủ thông tin ", null);
             }
-            
+
             if (!contextDB.LoaiBan.Any(x => x.id == request.LoaiBanID))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
@@ -67,10 +67,10 @@ namespace DatBanNhaHang.Services.Implements
                 GiaTien = request.GiaTien,
                 LoaiBanID = request.LoaiBanID,
                 SoNguoiToiDa = request.SoNguoiToiDa,
-                Mota =request.Mota,
+                Mota = request.Mota,
                 TinhTrangHienTai = request.TinhTrangHienTai,
-                
-                
+
+
             };
             contextDB.Ban.Add(newBan);
             await contextDB.SaveChangesAsync();
@@ -93,11 +93,11 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<BanDTOs>> SuaBan(int id, Request_SuaBan request)
         {
-            if (!contextDB.Ban.Any(x => x.LoaiBanID == request.LoaiBanID ) && request.LoaiBanID != null)
+            if (!contextDB.Ban.Any(x => x.LoaiBanID == request.LoaiBanID) && request.LoaiBanID != null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
             }
-           
+
             var ban = contextDB.Ban.SingleOrDefault(x => x.id == id);
             if (ban == null)
             {
@@ -120,7 +120,7 @@ namespace DatBanNhaHang.Services.Implements
                 else
                 {
                     var avatarFile = await HandleUploadImage.Upfile(request.HinhAnhBanURL, $"DatBanNhaHang/LoaiBan/{ban.LoaiBanID}");
-                    ban.HinhAnhBanURL = avatarFile == "" ? ban.HinhAnhBanURL: avatarFile;
+                    ban.HinhAnhBanURL = avatarFile == "" ? ban.HinhAnhBanURL : avatarFile;
                 }
             }
             contextDB.Update(ban);

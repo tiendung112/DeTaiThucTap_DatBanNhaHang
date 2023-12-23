@@ -1,8 +1,4 @@
-﻿using DatBanNhaHang.Payloads.DTOs.NhaHang;
-using DatBanNhaHang.Payloads.Requests.NhaHang.ChiTietHoaDon;
-using DatBanNhaHang.Payloads.Responses;
-
-namespace DatBanNhaHang.Services.IServices
+﻿namespace DatBanNhaHang.Services.IServices
 {
     public interface IChiTietHoaDon
     {
@@ -11,5 +7,6 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<ChiTietHoaDonDTOs>> XoaChiTietHoaDon(Request_XoaChiTietHoaDon request);
         Task<IQueryable<ChiTietHoaDonDTOs>> HienThiChiTietHoaDon(int pageSize, int pageNumber);
        // Task<IQueryable<ChiTietHoaDonDTOs>> TimKiemThiChiTietHoaDonTheoHoaDon(Request_TimKiemChiTietHoaDonTheoHoaDon request);
-*/    }
+*/
+    }
 }

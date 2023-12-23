@@ -1,5 +1,5 @@
-﻿using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace DatBanNhaHang.Handler.Image
 {
@@ -10,7 +10,7 @@ namespace DatBanNhaHang.Handler.Image
         static string apiSecret = "te9r711mW3Phzt8Dv4s3oyUArxU";
         static public Account account = new Account(cloudName, apiKey, apiSecret);
         static public Cloudinary _cloudinary = new Cloudinary(account);
-        public static async Task<string> Upfile(IFormFile file,string duongdan)
+        public static async Task<string> Upfile(IFormFile file, string duongdan)
         {
             if (file == null || file.Length == 0)
             {
@@ -22,7 +22,7 @@ namespace DatBanNhaHang.Handler.Image
                 {
                     File = new FileDescription(file.FileName, stream),
                     PublicId = $"{duongdan}/" + DateTime.Now.Ticks + "image",
-                    Transformation = new Transformation().Width(300).Height(400).Crop("fill") 
+                    Transformation = new Transformation().Width(300).Height(400).Crop("fill")
                 };
                 var uploadResult = await HandleUploadImage._cloudinary.UploadAsync(uploadParams);
                 if (uploadResult.Error != null)

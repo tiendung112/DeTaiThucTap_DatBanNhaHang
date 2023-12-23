@@ -5,17 +5,18 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
 {
     public class DauBepConverters
     {
-        public DauBepDTOs EntityToDTOs(DauBep dauBep) 
+        public DauBepDTOs EntityToDTOs(DauBep dauBep)
         {
-            return new DauBepDTOs {
+            return new DauBepDTOs
+            {
                 Id = dauBep.id,
-                HoTen= dauBep.HoTen,
+                HoTen = dauBep.HoTen,
                 ngaySinh = dauBep.ngaySinh,
                 AnhDauBepURl = dauBep.AnhDauBepURl,
                 MoTa = dauBep.MoTa,
                 SDT = dauBep.SDT
             };
-        
+
         }
 
     }

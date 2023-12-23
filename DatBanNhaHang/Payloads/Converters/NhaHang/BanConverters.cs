@@ -10,7 +10,8 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
         public BanDTOs EntityToDTOs(Ban ban)
         {
 
-            return new BanDTOs() {
+            return new BanDTOs()
+            {
                 BanID = ban.id,
                 GiaTien = ban.GiaTien,
                 LoaiBanID = ban.LoaiBanID,
@@ -20,7 +21,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 HinhAnhBanURL = ban.HinhAnhBanURL,
                 Mota = ban.Mota,
                 TinhTrangHienTai = ban.TinhTrangHienTai,
-                TenLoaiBan =con.LoaiBan.SingleOrDefault(x=>x.id==ban.LoaiBanID).TenLoaiBan,
+                TenLoaiBan = con.LoaiBan.SingleOrDefault(x => x.id == ban.LoaiBanID).TenLoaiBan,
             };
         }
     }

@@ -1,6 +1,4 @@
-﻿using DatBanNhaHang.Context;
-using DatBanNhaHang.Entities;
-using DatBanNhaHang.Entities.NguoiDung;
+﻿using DatBanNhaHang.Entities.NguoiDung;
 using DatBanNhaHang.Payloads.DTOs.NguoiDung;
 
 namespace DatBanNhaHang.Payloads.Converters.NguoiDung

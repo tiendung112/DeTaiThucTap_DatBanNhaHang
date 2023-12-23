@@ -10,12 +10,12 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<ThongKeDoanhThuDTOs> DoanhThuTheoNam(int year)
         {
             var lstHoaDonDaThanhToan = contextDB.HoaDon
-                .Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Year==year);
-            double? doanhthu =await lstHoaDonDaThanhToan.SumAsync(x => x.TongTien);
-            int tongsodon =await lstHoaDonDaThanhToan.CountAsync();
+                .Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Year == year);
+            double? doanhthu = await lstHoaDonDaThanhToan.SumAsync(x => x.TongTien);
+            int tongsodon = await lstHoaDonDaThanhToan.CountAsync();
             return new ThongKeDoanhThuDTOs()
             {
-                ThoiGian =$"Thống kê trong năm {year}",
+                ThoiGian = $"Thống kê trong năm {year}",
                 soLuongDon = tongsodon,
                 tongDoanhThu = doanhthu,
             };
@@ -25,7 +25,7 @@ namespace DatBanNhaHang.Services.Implements
         {
             var lstHoaDonDaThanhToan = contextDB.HoaDon
                 .Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Date == ngay);
-            
+
             double? doanhthu = await lstHoaDonDaThanhToan.SumAsync(x => x.TongTien);
             int tongsodon = await lstHoaDonDaThanhToan.CountAsync();
             return new ThongKeDoanhThuDTOs()
@@ -38,7 +38,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ThongKeDoanhThuDTOs> DoanhThuTheoThang(int month, int year)
         {
-            var lstHoaDonDaThanhToan = contextDB.HoaDon.Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Month == month&& x.ThoiGianKetThucThucTe.Value.Year == year);
+            var lstHoaDonDaThanhToan = contextDB.HoaDon.Where(x => x.TrangThaiHoaDonID == 3 && x.ThoiGianKetThucThucTe.Value.Month == month && x.ThoiGianKetThucThucTe.Value.Year == year);
             double? doanhthu = await lstHoaDonDaThanhToan.SumAsync(x => x.TongTien);
             int tongsodon = await lstHoaDonDaThanhToan.CountAsync();
             return new ThongKeDoanhThuDTOs()
@@ -52,15 +52,16 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<List<ThongKeHoaDonTheoNgayDTOs>> SoLuongHoaDonTheoNgay()
         {
             var lstHoadon = contextDB.HoaDon.
-                Where(x => x.ThoiGianBatDauThucTe.Value.Month == DateTime.Now.Month 
+                Where(x => x.ThoiGianBatDauThucTe.Value.Month == DateTime.Now.Month
                 && x.ThoiGianBatDauThucTe.Value.Day == DateTime.Now.Day).ToList();
             List<ThongKeHoaDonTheoNgayDTOs> lst = new List<ThongKeHoaDonTheoNgayDTOs>();
-            foreach(var tongDo in lstHoadon)
+            foreach (var tongDo in lstHoadon)
             {
-                ThongKeHoaDonTheoNgayDTOs newhd = new ThongKeHoaDonTheoNgayDTOs() {
+                ThongKeHoaDonTheoNgayDTOs newhd = new ThongKeHoaDonTheoNgayDTOs()
+                {
                     Ban = "Bàn số" + contextDB.Ban.SingleOrDefault(x => x.id == tongDo.BanID).SoBan.ToString(),
                     GiaTien = tongDo.TongTien,
-                    tenKhachHang = contextDB.KhachHang.SingleOrDefault(x=>x.id==tongDo.KhachHangID).HoTen,
+                    tenKhachHang = contextDB.KhachHang.SingleOrDefault(x => x.id == tongDo.KhachHangID).HoTen,
                     ThoiGianDen = tongDo.ThoiGianBatDauThucTe,
                     ThoiGianVe = tongDo.ThoiGianKetThucThucTe,
                 };
@@ -91,7 +92,7 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<ThongKeKhachHangDTOs> ThongKeKhachHang()
         {
             int lstKh = contextDB.KhachHang.Count();
-            return  new ThongKeKhachHangDTOs()
+            return new ThongKeKhachHangDTOs()
             {
                 soLuongKh = lstKh
             };

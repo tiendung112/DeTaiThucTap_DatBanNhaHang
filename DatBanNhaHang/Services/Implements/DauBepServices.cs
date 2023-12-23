@@ -1,4 +1,5 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
+using DatBanNhaHang.Handler.Image;
 using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
@@ -6,7 +7,6 @@ using DatBanNhaHang.Payloads.Requests.NhaHang.DauBep;
 using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
-using DatBanNhaHang.Handler.Image;
 namespace DatBanNhaHang.Services.Implements
 {
     public class DauBepServices : BaseService, IDauBep
@@ -43,7 +43,7 @@ namespace DatBanNhaHang.Services.Implements
             }
             else
             {
-                 int imageSize = 2 * 1024 * 768;
+                int imageSize = 2 * 1024 * 768;
                 try
                 {
                     DauBep db = new DauBep();
@@ -103,7 +103,7 @@ namespace DatBanNhaHang.Services.Implements
                             daubep.AnhDauBepURl = avatarFile == "" ? daubep.AnhDauBepURl : avatarFile;
                         }
                     }
-                   
+
                     contextDB.DauBep.Update(daubep);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Sửa Đầu Bếp thành công", converters.EntityToDTOs(daubep));
@@ -119,7 +119,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<DauBepDTOs>> XoaDauBep(int id)
         {
-            var daubep = context.DauBep.FirstOrDefault(x => x.id ==id);
+            var daubep = context.DauBep.FirstOrDefault(x => x.id == id);
             if (daubep != null)
             {
                 context.DauBep.Remove(daubep);
