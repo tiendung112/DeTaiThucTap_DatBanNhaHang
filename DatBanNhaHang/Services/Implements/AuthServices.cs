@@ -149,7 +149,6 @@ namespace DatBanNhaHang.Services.Implements
                 UserId = user.id,
             };
             await khachHangServices.NangCapThongTinKhachHangACC(kh);
-
             contextDB.User.Update(user);
             await contextDB.SaveChangesAsync();
             return "Xác nhận đăng ký tài khoản thành công, vui lòng đăng nhập tài khoản của bạn";
@@ -409,8 +408,14 @@ namespace DatBanNhaHang.Services.Implements
             }
             user.SDT = request.SDT ==null ? user.SDT : request.SDT;
             user.address = request.address==null ? user.address : request.address;
-
+            Request_NangCapThongTinKhachHang kh = new Request_NangCapThongTinKhachHang()
+            {
+                UserId = user.id,
+            };
+            await khachHangServices.NangCapThongTinKhachHangACC(kh);
+            khachHangServices.NangCapThongTinKhachHangACC(kh);
             contextDB.User.Update(user);
+            
             await contextDB.SaveChangesAsync();
             return _responseObject.ResponseSuccess("bạn đã thay đổi thông tin thành công ", _userConverter.EntityToDTO(user));
         }

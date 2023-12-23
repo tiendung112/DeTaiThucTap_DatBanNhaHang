@@ -8,6 +8,7 @@ namespace DatBanNhaHang.Entities.NguoiDung
     [Index("AdminName", IsUnique = true)]
     public class Admin :BaseEntity
     {
+
         public string? AdminName { get; set; }
         public string? password { get; set; }
         public string? Name { get; set; }

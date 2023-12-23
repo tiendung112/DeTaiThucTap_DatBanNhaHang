@@ -18,8 +18,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 GiaTien = monAn.GiaTien,
                 MoTa= monAn.MoTa,
                 AnhMonAn1URL = monAn.AnhMonAn1URL,
-                AnhMonAn2URL = monAn.AnhMonAn2URL,
-                AnhMonAn3URL = monAn.AnhMonAn3URL
+                
             };
         }
     }
