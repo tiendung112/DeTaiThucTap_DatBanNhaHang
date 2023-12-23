@@ -23,5 +23,13 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 MonAn = context.MonAn.Where(x => x.LoaiMonAnID == loaiMonAn.id).Select(x => MA_converters.EntityToDTOs(x)).AsQueryable(),
             };
         }
+        public SingleLoaiMonAnDTOs EntitySingletoDTOs(LoaiMonAn loaiMonAn)
+        {
+            return new SingleLoaiMonAnDTOs
+            {
+                ID = loaiMonAn.id,
+                TenLoai = loaiMonAn.TenLoai,
+            };
+        }
     }
 }

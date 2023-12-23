@@ -18,7 +18,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<PageResult<AdminDTOs>> GetAlls(int pageSize, int pageNumber);
         Task<ResponseObject<AdminDTOs>> ChangePassword(int AdminID, Request_AdminChangePassword request);
         string SendEmail(EmailTo emailTo);
-        Task<string> ForgotPassword(Request_AdminForgotPassword request);
+        Task<ResponseObject<AdminDTOs>> ForgotPassword(Request_AdminForgotPassword request);
         Task<ResponseObject<AdminDTOs>> CreateNewPassword(Request_AdminConfirmCreateNewPassword request);  
         string RemoveTKNotActive();
         Task<string> ThayDoiQuyenHan(Request_AdminThayDoiQuyen request);
