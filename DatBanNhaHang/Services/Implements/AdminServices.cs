@@ -272,7 +272,6 @@ namespace DatBanNhaHang.Services.Implements
             contextDB.Admin.Update(admin);
             await contextDB.SaveChangesAsync();
             return responseObject.ResponseSuccess("Tạo mật khẩu mới thành công", converters.EntityToDTOs(admin));
-
         }
 
         public async Task<ResponseObject<AdminDTOs>> ForgotPassword(Request_AdminForgotPassword request)
@@ -302,7 +301,7 @@ namespace DatBanNhaHang.Services.Implements
                     Subject = "Nhận mã xác nhận để tạo mật khẩu mới từ đây: ",
                     Content = $"Mã kích hoạt của bạn là: {confirmEmail.MaXacNhan}, mã này sẽ hết hạn sau 15 phút"
                 });
-                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Gửi mã xác nhận về email thành công, vui lòng kiểm tra email", null);
+                return responseObject.ResponseSuccess("Gửi mã xác nhận về email thành công, vui lòng kiểm tra email", null);
             }
         }
         #endregion
