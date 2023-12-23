@@ -282,6 +282,18 @@ namespace DatBanNhaHang.Controllers
         {
             return Ok(await LoaiBanservices.HienThiLoaiBan(id, 0, 0));
         }
+        [HttpGet]
+        [Route("api/LoaiBan/HienThiLoaiBanKemBan")]
+        public async Task<IActionResult> HienThiLoaiBanKemBan(int pageSize, int pageNumber)
+        {
+            return Ok(await LoaiBanservices.HienThiLoaiBanKemBan(0, pageSize, pageNumber));
+        }
+        [HttpGet]
+        [Route("api/LoaiBan/HienThiLoaiBanKemBan/{id}")]
+        public async Task<IActionResult> HienThiLoaiBanKemBan(int id)
+        {
+            return Ok(await LoaiBanservices.HienThiLoaiBanKemBan(id, 0, 0));
+        }
         #endregion
         #region loại món ăn
         [HttpPost]

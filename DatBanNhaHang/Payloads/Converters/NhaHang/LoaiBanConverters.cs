@@ -17,5 +17,14 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 bans = contextDB.Ban.Where(x=>x.LoaiBanID== loaiBan.id).Select(y=>_banConverters.EntityToDTOs(y))
             };
         }
+
+        public SingleLoaiBanDTOs EntitySingleLoaiBanToDTOs(LoaiBan loaiBan)
+        {
+            return new SingleLoaiBanDTOs()
+            {
+                LoaiBanID = loaiBan.id,
+                TenLoaiBan = loaiBan.TenLoaiBan,
+            };
+        }
     }
 }

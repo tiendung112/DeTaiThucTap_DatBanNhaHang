@@ -20,12 +20,22 @@ namespace DatBanNhaHang.Services.Implements
         }
 
         #region hiển thị và tìm kiếm loại bàn
-        public async Task<PageResult<LoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber)
+        public async Task<PageResult<SingleLoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber)
         {
-            var lst =id==0? contextDB.LoaiBan.Select(x => converters.EntityToDTOs(x)): contextDB.LoaiBan.Where(y=>y.id==id).Select(x => converters.EntityToDTOs(x));
+            var lst =id==0? 
+                contextDB.LoaiBan.Select(x => converters.EntitySingleLoaiBanToDTOs(x))
+                : contextDB.LoaiBan.Where(y=>y.id==id).Select(x => converters.EntitySingleLoaiBanToDTOs(x));
             var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
             return result;
         }
+
+        public async Task<PageResult<LoaiBanDTOs>> HienThiLoaiBanKemBan(int id, int pageSize, int pageNumber)
+        {
+            var lst = id == 0 ? contextDB.LoaiBan.Select(x => converters.EntityToDTOs(x)) : contextDB.LoaiBan.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
+            var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
+            return result;
+        }
+
         #endregion
 
         #region  thêm, sửa , xoá loại bàn
