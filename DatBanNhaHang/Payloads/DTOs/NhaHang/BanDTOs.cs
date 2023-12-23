@@ -1,11 +1,8 @@
-﻿using DatBanNhaHang.Entities.NhaHang;
-using Microsoft.VisualBasic;
-
-namespace DatBanNhaHang.Payloads.DTOs.NhaHang
+﻿namespace DatBanNhaHang.Payloads.DTOs.NhaHang
 {
     public class BanDTOs
     {
-        public int BanID   { get; set; }
+        public int BanID { get; set; }
         public string? ViTri { get; set; }
         public int? SoBan { get; set; }
         public int? SoNguoiToiDa { get; set; }

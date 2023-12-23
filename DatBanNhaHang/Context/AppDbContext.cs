@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DatBanNhaHang.Context
 {
-    public class AppDbContext :DbContext
+    public class AppDbContext : DbContext
     {
-        public virtual DbSet<User> User {  get; set; }
+        public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Admin> Admin { get; set; }
         public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<LoaiMonAn> LoaiMonAn {  get; set; }
+        public virtual DbSet<LoaiMonAn> LoaiMonAn { get; set; }
         public virtual DbSet<MonAn> MonAn { get; set; }
         public virtual DbSet<Ban> Ban { get; set; }
         public virtual DbSet<LoaiBan> LoaiBan { get; set; }
@@ -17,8 +17,8 @@ namespace DatBanNhaHang.Context
         public virtual DbSet<ChiTietHoaDon> ChiTietHoaDon { get; set; }
         public virtual DbSet<TrangThaiHoaDon> TrangThaiHoaDon { get; set; }
         public virtual DbSet<KhachHang> KhachHang { get; set; }
-        public virtual DbSet<DauBep> DauBep {  get; set; }
-        public virtual DbSet<RefreshToken> RefreshToken { get; set; }  
+        public virtual DbSet<DauBep> DauBep { get; set; }
+        public virtual DbSet<RefreshToken> RefreshToken { get; set; }
         public virtual DbSet<XacNhanEmail> XacNhanEmail { get; set; }
         public virtual DbSet<LienHe> LienHe { get; set; }
         public virtual DbSet<BaiViet> BaiViet { get; set; }

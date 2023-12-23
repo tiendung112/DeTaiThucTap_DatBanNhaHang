@@ -1,4 +1,4 @@
-﻿    namespace DatBanNhaHang.Entities.NhaHang
+﻿namespace DatBanNhaHang.Entities.NhaHang
 {
     public class HoaDon : BaseEntity
     {

@@ -6,7 +6,7 @@ namespace DatBanNhaHang.Entities.NguoiDung
 {
     [Table("Admin")]
     [Index("AdminName", IsUnique = true)]
-    public class Admin :BaseEntity
+    public class Admin : BaseEntity
     {
 
         public string? AdminName { get; set; }
@@ -15,8 +15,8 @@ namespace DatBanNhaHang.Entities.NguoiDung
         public string? Email { get; set; }
         public string? Gender { get; set; }
         public DateTime? ngaysinh { get; set; }
-        public string? QueQuan {  get; set; }
-        public string? SDT {  get; set; }
+        public string? QueQuan { get; set; }
+        public string? SDT { get; set; }
         public DateTime? create_at { get; set; }
         public int? RoleID { get; set; }
         public Role? Role { get; set; }

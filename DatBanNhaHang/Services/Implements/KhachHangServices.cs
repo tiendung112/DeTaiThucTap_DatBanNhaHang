@@ -48,7 +48,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
             }
-            var khachhang = contextDB.KhachHang.SingleOrDefault(x=>x.userID == request.UserId);
+            var khachhang = contextDB.KhachHang.SingleOrDefault(x => x.userID == request.UserId);
             if (khachhang == null)
             {
                 KhachHang kh = new KhachHang()
@@ -67,14 +67,14 @@ namespace DatBanNhaHang.Services.Implements
             khachhang.HoTen = user.Name;
             khachhang.NgaySinh = user.DateOfBirth;
             khachhang.SDT = user.SDT;
-            
+
             contextDB.Update(khachhang);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Thêm khách hàng thành công ", converters.EntityToDTOs(khachhang));
         }
 
 
-        public async Task<ResponseObject<KhachHangDTOs>> ThemKhachHang( Request_ThemKhachHang request)
+        public async Task<ResponseObject<KhachHangDTOs>> ThemKhachHang(Request_ThemKhachHang request)
         {
             if (contextDB.User.Any(x => x.id == request.userID))
             {
@@ -85,10 +85,10 @@ namespace DatBanNhaHang.Services.Implements
                 }
                 KhachHang khachhang = new KhachHang()
                 {
-                    DiaChi = user.address ,
+                    DiaChi = user.address,
                     HoTen = user.Name,
                     NgaySinh = user.DateOfBirth,
-                    SDT =user.SDT,
+                    SDT = user.SDT,
                     userID = user.id,
                 };
                 await contextDB.AddAsync(khachhang);
@@ -111,23 +111,23 @@ namespace DatBanNhaHang.Services.Implements
             return response.ResponseSuccess("Thêm khách hàng thành công ", converters.EntityToDTOs(kh));
         }
 
-      /*  public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(string SDT)
-        {
+        /*  public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(string SDT)
+          {
 
-            var kh = contextDB.KhachHang.Where(x => x.SDT == SDT).Select(y => converters.EntityToDTOs(y));
-            var result = Pagintation.GetPagedData(kh, 0, 0);
-            return result;
-        }
+              var kh = contextDB.KhachHang.Where(x => x.SDT == SDT).Select(y => converters.EntityToDTOs(y));
+              var result = Pagintation.GetPagedData(kh, 0, 0);
+              return result;
+          }
 
-        public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
-        {
-            var kh = contextDB.KhachHang.AsEnumerable()
-                .Where(x => ChuanHoaChuoi(x.HoTen).Contains(ChuanHoaChuoi(HoTen))).AsQueryable()
-                .Select(y => converters.EntityToDTOs(y));
+          public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
+          {
+              var kh = contextDB.KhachHang.AsEnumerable()
+                  .Where(x => ChuanHoaChuoi(x.HoTen).Contains(ChuanHoaChuoi(HoTen))).AsQueryable()
+                  .Select(y => converters.EntityToDTOs(y));
 
-            var result = Pagintation.GetPagedData<KhachHangDTOs>(kh, pageSize, pageNumber);
-            return result;
-        }*/
+              var result = Pagintation.GetPagedData<KhachHangDTOs>(kh, pageSize, pageNumber);
+              return result;
+          }*/
 
         public async Task<ResponseObject<KhachHangDTOs>> XoaKhachHang(int id)
         {

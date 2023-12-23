@@ -11,7 +11,6 @@ using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiBan;
 using DatBanNhaHang.Payloads.Requests.NhaHang.LoaiMonAn;
 using DatBanNhaHang.Payloads.Requests.NhaHang.MonAn;
 using DatBanNhaHang.Payloads.Requests.NhaHang.TrangThaiHoaDon;
-using DatBanNhaHang.Services.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DatBanNhaHang.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -65,7 +64,7 @@ namespace DatBanNhaHang.Controllers
             TTHDservices = trangThaiHoaDon;
             hoaDonServices = hoaDon;
             BaiVietServices = baiViet;
-            LienHeServices =  lienHe;
+            LienHeServices = lienHe;
             thongKeServices = thongKe;
             nhanXetServices = nhanXet;
         }
@@ -73,15 +72,11 @@ namespace DatBanNhaHang.Controllers
         [HttpPost]
         [Route("/api/Admin/TaoTaiKhoan")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [Authorize(Roles ="ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Register([FromForm] Request_AdminRegister register)
         {
             int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
             var result = await ADMservices.RegisterRequest(id, register);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
@@ -90,10 +85,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> Login([FromForm] Request_AdminLogin request)
         {
             var result = await ADMservices.Login(request);
-            if (result == null)
-            {
-                return Unauthorized(result);
-            }
+
             return Ok(result);
         }
 
@@ -102,10 +94,7 @@ namespace DatBanNhaHang.Controllers
         public IActionResult RenewToken([FromForm] TokenDTO token)
         {
             var result = ADMservices.RenewAccessToken(token);
-            if (result == null)
-            {
-                return Unauthorized(result);
-            }
+
             return Ok(result);
         }
         #endregion
@@ -124,13 +113,9 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ForgotPassword([FromForm] Request_AdminForgotPassword request)
         {
             var result = await ADMservices.ForgotPassword(request);
-            if (result == null)
-            {
-                return NotFound("Không tồn tại email này");
-            }
             return Ok(result);
         }
-        
+
 
         [HttpPost]
         [Route("/api/Admin/create-new-password")]
@@ -170,17 +155,17 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaThongTin([FromForm] Request_AdminUpdateInfor request)
         {
             int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
-            return Ok(await ADMservices.SuaThongTin(id,request));
+            return Ok(await ADMservices.SuaThongTin(id, request));
         }
 
         [HttpGet]
         [Route("/api/Admin/ThongTinAdmin")]
         //[Authorize(Roles = "ADMIN")]
-        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ThongTinAdmin()
         {
-            int id =Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
-            return Ok( ADMservices.GetAdminTheoId(id));
+            int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
+            return Ok(ADMservices.GetAdminTheoId(id));
         }
         #endregion
         #region đầu bếp 
@@ -190,10 +175,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemDauBep([FromForm] Request_ThemDauBep request)
         {
             var result = await daubepservices.ThemDauBep(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+
             return Ok(result);
         }
 
@@ -203,11 +185,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaDauBep(int id, [FromForm] Request_SuaDauBep request)
         {
             var result = await daubepservices.SuaDauBep(id, request);
-
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
@@ -217,10 +194,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaDauBep([FromRoute] int id)
         {
             var result = await daubepservices.XoaDauBep(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+
             return Ok(result);
         }
 
@@ -254,9 +228,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaLoaiBan([FromRoute] int id, [FromForm] Request_SuaLoaiBan request)
         {
             var result = await LoaiBanservices.SuaLoaiBan(id, request);
-            if (result != null)
-                return Ok(result);
-            return BadRequest(result);
+            return Ok(result);
         }
 
         [HttpDelete]
@@ -265,9 +237,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaLoaiBan([FromRoute] int id)
         {
             var result = await LoaiBanservices.XoaLoaiBan(id);
-            if (result != null)
-                return Ok(result);
-            return BadRequest(result);
+            return Ok(result);
         }
 
         [HttpGet]
@@ -301,7 +271,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiMonAn([FromForm] Request_ThemLoaiMonAn request)
         {
             var result = await loaiMonAnservices.ThemLoaiMonAn(request);
-            
+
             return Ok(result);
         }
         [HttpPost]
@@ -310,10 +280,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiMonAnKemMonAn([FromForm] Request_ThemLoaiMonAnKemMonAn request)
         {
             var result = await loaiMonAnservices.ThemLoaiMonAnKemMonAn(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
@@ -323,10 +289,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaLoaiMonAn([FromRoute] int id, [FromForm] Request_SuaLoaiMonAn request)
         {
             var result = await loaiMonAnservices.SuaLoaiMonAn(id, request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
@@ -336,10 +298,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaLoaiMonAn([FromRoute] int id)
         {
             var result = await loaiMonAnservices.XoaLoaiMonAn(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+
             return Ok(result);
         }
 
@@ -379,10 +338,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemMonAn([FromForm] Request_ThemMonAn request)
         {
             var result = await MonAnservices.ThemMonAn(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+
             return Ok(result);
         }
         [HttpPut]
@@ -390,10 +346,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaMonAn([FromRoute] int id, [FromForm] Request_SuaMonAn request)
         {
             var result = await MonAnservices.SuaMonAn(id, request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+
             return Ok(result);
         }
         [HttpDelete]
@@ -401,10 +354,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaMonAn([FromRoute] int id)
         {
             var result = await MonAnservices.XoaMonAn(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+
             return Ok(result);
         }
 
@@ -464,10 +414,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemBan([FromForm] Request_ThemBan request)
         {
             var result = await banServices.ThemBan(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
 
         }
@@ -478,10 +424,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaBan([FromRoute] int id, [FromForm] Request_SuaBan request)
         {
             var result = await banServices.SuaBan(id, request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
@@ -491,10 +433,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaBan([FromRoute] int id)
         {
             var result = await banServices.XoaBan(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
         #endregion
@@ -522,10 +460,6 @@ namespace DatBanNhaHang.Controllers
         {
 
             var result = await khachhangServices.ThemKhachHang(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
 
@@ -535,10 +469,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaKhachHang([FromRoute] int id, [FromForm] Request_SuaKhachHang request)
         {
             var result = await khachhangServices.SuaKhachHang(id, request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
         [HttpPut]
@@ -547,10 +477,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> NangCapThongTinKhachHangACC([FromForm] Request_NangCapThongTinKhachHang request)
         {
             var result = await khachhangServices.NangCapThongTinKhachHangACC(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
         [HttpDelete]
@@ -559,10 +485,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaKhachHang([FromRoute] int id)
         {
             var result = await khachhangServices.XoaKhachHang(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
         #endregion
@@ -573,7 +495,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemTrangThaiHoaDon([FromForm] Request_ThemTrangThaiHoaDon request)
         {
             var result = await TTHDservices.ThemTrangThaiHoaDon(request);
-            
             return Ok(result);
         }
         [HttpPut]
@@ -590,7 +511,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaTrangThaiHoaDon([FromRoute] int id)
         {
             var result = await TTHDservices.XoaTrangThaiHoaDon(id);
-            
             return Ok(result);
         }
 
@@ -612,7 +532,7 @@ namespace DatBanNhaHang.Controllers
         #region hoá đơn
         [HttpPost]
         [Route("/api/HoaDonAdmin/ThemHoaDonAdmin")]
-       // [Authorize(Roles = "ADMIN")]
+        // [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThemHoaDonAdmin([FromForm] Request_ThemHoaDon_Admin request)
         {
             return Ok(await hoaDonServices.ThemHoaDonAdmin(request));
@@ -628,15 +548,15 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/HoaDonAdmin/SuaHoaDonAdmin/{id}")]
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> SuaHoaDon([FromRoute]int id , int status,[FromForm] Request_SuaHoaDon request)
+        public async Task<IActionResult> SuaHoaDon([FromRoute] int id, int status, [FromForm] Request_SuaHoaDon request)
         {
-            return Ok(await hoaDonServices.SuaHoaDonAdmin( id ,status,request));
+            return Ok(await hoaDonServices.SuaHoaDonAdmin(id, status, request));
         }
 
         [HttpDelete]
         [Route("/api/HoaDonAdmin/XoaHoaDon/{id}")]
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> XoaHoaDon([FromRoute]int id)
+        public async Task<IActionResult> XoaHoaDon([FromRoute] int id)
         {
             return Ok(await hoaDonServices.XoaHoaDonAdmin(id));
         }
@@ -651,11 +571,7 @@ namespace DatBanNhaHang.Controllers
         [Route("/api/HoaDonAdmin/HienThiHoaDon")]
         public async Task<IActionResult> HienThiHoaDon(int pageSize, int pageNumber)
         {
-            var result = await hoaDonServices.HienThiHoaDon(0,pageSize, pageNumber);
-            if (result == null)
-            {
-                return BadRequest("Không có hoá đơn nào");
-            }
+            var result = await hoaDonServices.HienThiHoaDon(0, pageSize, pageNumber);
             return Ok(result);
         }
 
@@ -664,21 +580,13 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> HienThiHoaDon(int id)
         {
             var result = await hoaDonServices.HienThiHoaDon(1, 0, 0);
-            if (result == null)
-            {
-                return BadRequest("Không có hoá đơn nào");
-            }
             return Ok(result);
         }
         [HttpGet]
         [Route("/api/HoaDonAdmin/HienThiHoaDonKhachHang/{id}")]
-        public async Task<IActionResult> HienThiHoaDonTheoKhachHang([FromRoute]int id , int pageSize, int pageNumber)
+        public async Task<IActionResult> HienThiHoaDonTheoKhachHang([FromRoute] int id, int pageSize, int pageNumber)
         {
             var result = await hoaDonServices.HienThiHoaDonCuaKhachHang(id, pageSize, pageNumber);
-            if (result == null)
-            {
-                return BadRequest("Không có hoá đơn nào");
-            }
             return Ok(result);
         }
         [HttpGet]
@@ -777,10 +685,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> DoanhThuTheoNgay(DateTime ngay)
         {
             var result = await thongKeServices.DoanhThuTheoNgay(ngay);
-            if (result == null)
-            {
-                return BadRequest("không có doanh thu nào");
-            }
             return Ok(result);
         }
 
@@ -800,7 +704,7 @@ namespace DatBanNhaHang.Controllers
 
             return Ok(await thongKeServices.DoanhThuTheoNam(nam));
         }
-        
+
         [HttpGet]
         [Route("/api/ThongKe/ThongKeKhachHang")]
         // [Authorize(Roles ="ADMIN")]
@@ -808,16 +712,16 @@ namespace DatBanNhaHang.Controllers
         {
             return Ok(await thongKeServices.ThongKeKhachHang());
         }
-        
+
         [HttpGet]
         [Route("/api/ThongKe/SoLuongHoaDonTheoNgay")]
         // [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> SoLuongHoaDonTheoNgay()
         {
-            
+
             return Ok(await thongKeServices.SoLuongHoaDonTheoNgay());
         }
-        
+
         [HttpGet]
         [Route("/api/ThongKe/ThongKeBanDangConSuDung")]
         // [Authorize(Roles ="ADMIN")]

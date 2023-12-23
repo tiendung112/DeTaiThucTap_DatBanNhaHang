@@ -1,5 +1,4 @@
-﻿using BCrypt.Net;
-using DatBanNhaHang.Entities.NguoiDung;
+﻿using DatBanNhaHang.Entities.NguoiDung;
 using DatBanNhaHang.Handler.Email;
 using DatBanNhaHang.Handler.Pagination;
 using DatBanNhaHang.Payloads.Converters.NguoiDung;
@@ -12,8 +11,6 @@ using DatBanNhaHang.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
-using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -36,14 +33,14 @@ namespace DatBanNhaHang.Services.Implements
         }
 
         #region Xử lý đăng ký và xác nhận đăng ký tài khoản
-        public async Task<ResponseObject<AdminDTOs>> RegisterRequest(int id ,Request_AdminRegister request)
+        public async Task<ResponseObject<AdminDTOs>> RegisterRequest(int id, Request_AdminRegister request)
         {
             if (string.IsNullOrWhiteSpace(request.Name)
                || string.IsNullOrWhiteSpace(request.password)
                || string.IsNullOrWhiteSpace(request.AdminName)
                || string.IsNullOrWhiteSpace(request.Email)
                || string.IsNullOrWhiteSpace(request.Gender)
-               ||string.IsNullOrWhiteSpace(request.QueQuan)
+               || string.IsNullOrWhiteSpace(request.QueQuan)
                || string.IsNullOrWhiteSpace(request.SDT))
             {
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Bạn cần truyền vào đầy đủ thông tin", null);
@@ -80,7 +77,7 @@ namespace DatBanNhaHang.Services.Implements
                 };
                 await contextDB.Admin.AddAsync(admin);
                 await contextDB.SaveChangesAsync();
-                return responseObject.ResponseSuccess("thêm tài khoản thành công ",converters.EntityToDTOs(admin));
+                return responseObject.ResponseSuccess("thêm tài khoản thành công ", converters.EntityToDTOs(admin));
             }
         }
         #endregion
@@ -192,8 +189,8 @@ namespace DatBanNhaHang.Services.Implements
                 {
                     return responseToken.ResponseError(StatusCodes.Status401Unauthorized, "Token chưa hết hạn", null);
                 }
-        
-                var admin =  contextDB.Admin.FirstOrDefault(x => x.id ==refreshToken.AdminID);
+
+                var admin = contextDB.Admin.FirstOrDefault(x => x.id == refreshToken.AdminID);
                 if (admin == null)
                 {
                     return responseToken.ResponseError(StatusCodes.Status404NotFound, "Người dùng không tồn tại", null);
@@ -209,37 +206,37 @@ namespace DatBanNhaHang.Services.Implements
         }
         #endregion
 
-       /* #region Xử lý vấn đề liên quan đến gửi email
-        public string SendEmail(EmailTo emailTo)
-        {
-            if (!Validate.IsValidEmail(emailTo.Mail))
-            {
-                return "Định dạng email không hợp lệ";
-            }
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("dung0112.dev.test@gmail.com", "xssyibnbzpqhmzsz"),
-                EnableSsl = true
-            };
-            try
-            {
-                var message = new MailMessage();
-                message.From = new MailAddress("dung0112.dev.test@gmail.com");
-                message.To.Add(emailTo.Mail);
-                message.Subject = emailTo.Subject;
-                message.Body = emailTo.Content;
-                message.IsBodyHtml = true;
-                smtpClient.Send(message);
+        /* #region Xử lý vấn đề liên quan đến gửi email
+         public string SendEmail(EmailTo emailTo)
+         {
+             if (!Validate.IsValidEmail(emailTo.Mail))
+             {
+                 return "Định dạng email không hợp lệ";
+             }
+             var smtpClient = new SmtpClient("smtp.gmail.com")
+             {
+                 Port = 587,
+                 Credentials = new NetworkCredential("dung0112.dev.test@gmail.com", "xssyibnbzpqhmzsz"),
+                 EnableSsl = true
+             };
+             try
+             {
+                 var message = new MailMessage();
+                 message.From = new MailAddress("dung0112.dev.test@gmail.com");
+                 message.To.Add(emailTo.Mail);
+                 message.Subject = emailTo.Subject;
+                 message.Body = emailTo.Content;
+                 message.IsBodyHtml = true;
+                 smtpClient.Send(message);
 
-                return "Gửi email thành công";
-            }
-            catch (Exception ex)
-            {
-                return "Lỗi khi gửi email: " + ex.Message;
-            }
-        }
-        #endregion*/
+                 return "Gửi email thành công";
+             }
+             catch (Exception ex)
+             {
+                 return "Lỗi khi gửi email: " + ex.Message;
+             }
+         }
+         #endregion*/
         #region Xử lý việc đổi mật khẩu và quên mật khẩu
         public async Task<ResponseObject<AdminDTOs>> ChangePassword(int AdminID, Request_AdminChangePassword request)
         {
@@ -279,7 +276,7 @@ namespace DatBanNhaHang.Services.Implements
             Admin admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.Email.Equals(request.Email));
             if (admin is null)
             {
-                return responseObject.ResponseError(StatusCodes.Status404NotFound,"Email không tồn tại ",null);
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Email không tồn tại ", null);
             }
             else
             {
@@ -341,14 +338,14 @@ namespace DatBanNhaHang.Services.Implements
 
             if (admin == null)
             {
-                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Tài khoản không tồn tại",null);
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Tài khoản không tồn tại", null);
             }
             try
             {
                 admin.RoleID = request.RoleID;
                 contextDB.Admin.Update(admin);
                 await contextDB.SaveChangesAsync();
-                return responseObject.ResponseSuccess( "Thay đổi quyền tài khoản thành công",converters.EntityToDTOs(admin));
+                return responseObject.ResponseSuccess("Thay đổi quyền tài khoản thành công", converters.EntityToDTOs(admin));
             }
             catch (Exception ex)
             {
@@ -358,7 +355,7 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<ResponseObject<AdminDTOs>> SuaThongTin(int id, Request_AdminUpdateInfor request)
         {
             var admin = contextDB.Admin.SingleOrDefault(x => x.id == id);
-            if(admin == null)
+            if (admin == null)
             {
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "không tồn tại tài khoản này", null);
             }
@@ -370,15 +367,16 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Định dạng Email không hợp lệ", null);
             }
-            admin.Email = request.Email==null? admin.Email : request.Email;
-            admin.QueQuan = request.QueQuan==null ? admin.QueQuan:request.QueQuan;
-            admin.SDT = request.SDT ==null? admin.SDT:request.SDT;
-            admin.Name = request.Name==null? admin.Name:request.Name; 
-            admin.ngaysinh=request.ngaysinh==null? admin.ngaysinh:request.ngaysinh;
-            admin.Gender = request.gioiTinh==null? admin.Gender:request.gioiTinh;
+            admin.Email = request.Email == null ? admin.Email : request.Email;
+            admin.QueQuan = request.QueQuan == null ? admin.QueQuan : request.QueQuan;
+            admin.SDT = request.SDT == null ? admin.SDT : request.SDT;
+            admin.Name = request.Name == null ? admin.Name : request.Name;
+            admin.ngaysinh = request.ngaysinh == null ? admin.ngaysinh : request.ngaysinh;
+            admin.Gender = request.gioiTinh == null ? admin.Gender : request.gioiTinh;
             contextDB.Update(admin);
             await contextDB.SaveChangesAsync();
-            return responseObject.ResponseSuccess("đổi thông tin thành công", converters.EntityToDTOs(admin));        }
+            return responseObject.ResponseSuccess("đổi thông tin thành công", converters.EntityToDTOs(admin));
+        }
         #endregion
 
     }

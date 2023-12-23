@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace DatBanNhaHang.Entities.NhaHang
+﻿namespace DatBanNhaHang.Entities.NhaHang
 {
     public class DauBep : BaseEntity
     {

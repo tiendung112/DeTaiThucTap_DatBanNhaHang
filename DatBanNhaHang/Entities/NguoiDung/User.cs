@@ -1,9 +1,6 @@
 ﻿using DatBanNhaHang.Entities.NhaHang;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 
 namespace DatBanNhaHang.Entities.NguoiDung
 {
@@ -19,11 +16,11 @@ namespace DatBanNhaHang.Entities.NguoiDung
         public string? AvatarUrl { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? SDT { get; set; }
-        public string? address {  get; set; }
+        public string? address { get; set; }
         public DateTime? ngayTao { get; set; }
         public bool? IsActive { get; set; } = false;
         public IEnumerable<RefreshToken>? RefreshTokens { get; set; }
-        public IEnumerable<XacNhanEmail>? xacNhanEmails {  get; set; } 
+        public IEnumerable<XacNhanEmail>? xacNhanEmails { get; set; }
         public IEnumerable<KhachHang> khachHangs { get; set; }
 
     }

@@ -11,14 +11,14 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
         {
             return new MonAnDTOs
             {
-                MonAnID =monAn.id,
+                MonAnID = monAn.id,
                 LoaiMonAnID = monAn.LoaiMonAnID,
-                TenLoaiMonAn = context.LoaiMonAn.SingleOrDefault(x=>x.id==monAn.LoaiMonAnID).TenLoai,
+                TenLoaiMonAn = context.LoaiMonAn.SingleOrDefault(x => x.id == monAn.LoaiMonAnID).TenLoai,
                 TenMon = monAn.TenMon,
                 GiaTien = monAn.GiaTien,
-                MoTa= monAn.MoTa,
+                MoTa = monAn.MoTa,
                 AnhMonAn1URL = monAn.AnhMonAn1URL,
-                
+
             };
         }
     }

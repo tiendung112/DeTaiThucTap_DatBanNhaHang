@@ -7,7 +7,6 @@ using DatBanNhaHang.Payloads.Requests.NguoiDung.Admin.Blog;
 using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
-using System.Drawing.Printing;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -27,15 +26,15 @@ namespace DatBanNhaHang.Services.Implements
             return result;
         }
 
-        public async Task<ResponseObject<BaiVietDTOs>> SuaBaiViet(int blogid,int adminid, Request_SuaBaiViet request)
+        public async Task<ResponseObject<BaiVietDTOs>> SuaBaiViet(int blogid, int adminid, Request_SuaBaiViet request)
         {
-            var baiviet  = contextDB.BaiViet.SingleOrDefault(x=>x.id == blogid);
+            var baiviet = contextDB.BaiViet.SingleOrDefault(x => x.id == blogid);
             if (baiviet == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại bài viết này", null);
             }
-            baiviet.TieuDe = request.TieuDe==null ? baiviet.TieuDe : baiviet.TieuDe;
-            baiviet.NoiDung  = request.NoiDung==null? baiviet.NoiDung : baiviet.NoiDung;
+            baiviet.TieuDe = request.TieuDe == null ? baiviet.TieuDe : baiviet.TieuDe;
+            baiviet.NoiDung = request.NoiDung == null ? baiviet.NoiDung : baiviet.NoiDung;
             baiviet.NgayDang = DateTime.Now;
             baiviet.AdminId = adminid;
 
@@ -59,7 +58,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<BaiVietDTOs>> ThemBaiViet(int admid, Request_ThemBaiViet request)
         {
-            if(string.IsNullOrWhiteSpace(request.TieuDe) || string.IsNullOrWhiteSpace(request.MoTa) || string.IsNullOrWhiteSpace(request.NoiDung))
+            if (string.IsNullOrWhiteSpace(request.TieuDe) || string.IsNullOrWhiteSpace(request.MoTa) || string.IsNullOrWhiteSpace(request.NoiDung))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "chưa nhập đầy đủ thông tin", null);
             }
@@ -89,7 +88,7 @@ namespace DatBanNhaHang.Services.Implements
             }
             contextDB.Update(newbaiviet);
             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("thêm bài viết thành công",converters.EntityToDTOs(newbaiviet));
+            return response.ResponseSuccess("thêm bài viết thành công", converters.EntityToDTOs(newbaiviet));
         }
 
         public async Task<ResponseObject<BaiVietDTOs>> XoaBaiViet(int blogid)

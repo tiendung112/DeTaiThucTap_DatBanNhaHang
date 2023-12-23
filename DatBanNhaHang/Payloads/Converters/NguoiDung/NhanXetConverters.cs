@@ -12,7 +12,7 @@ namespace DatBanNhaHang.Payloads.Converters.NguoiDung
                 AnhURL = nhanXet.AnhURL,
                 ChuThich = nhanXet.ChuThich,
                 HoTen = nhanXet.HoTen,
-                id =nhanXet.id,
+                id = nhanXet.id,
                 NoiDung = nhanXet.NoiDung,
             };
         }

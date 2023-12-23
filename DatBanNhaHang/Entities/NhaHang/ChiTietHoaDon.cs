@@ -6,7 +6,7 @@
         public HoaDon? HoaDon { get; set; }
         public int? MonAnID { get; set; }
         public MonAn? monAn { get; set; }
-        public int? SoLuong {  get; set; }
+        public int? SoLuong { get; set; }
         public double? ThanhTien { get; set; }
     }
 }

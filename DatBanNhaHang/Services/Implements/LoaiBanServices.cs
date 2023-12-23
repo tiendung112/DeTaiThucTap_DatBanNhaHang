@@ -20,11 +20,11 @@ namespace DatBanNhaHang.Services.Implements
         }
 
         #region hiển thị và tìm kiếm loại bàn
-        public async Task<PageResult<SingleLoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber)
+        public async Task<PageResult<SingleLoaiBanDTOs>> HienThiLoaiBan(int id, int pageSize, int pageNumber)
         {
-            var lst =id==0? 
+            var lst = id == 0 ?
                 contextDB.LoaiBan.Select(x => converters.EntitySingleLoaiBanToDTOs(x))
-                : contextDB.LoaiBan.Where(y=>y.id==id).Select(x => converters.EntitySingleLoaiBanToDTOs(x));
+                : contextDB.LoaiBan.Where(y => y.id == id).Select(x => converters.EntitySingleLoaiBanToDTOs(x));
             var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
             return result;
         }
@@ -53,14 +53,14 @@ namespace DatBanNhaHang.Services.Implements
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Thêm loại bàn thành công ", converters.EntityToDTOs(loaiBan));
         }
-        public async Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(int id,Request_SuaLoaiBan request)
+        public async Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(int id, Request_SuaLoaiBan request)
         {
             var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == id);
             if (lb == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có loại bàn cần sửa ", null);
             }
-            lb.TenLoaiBan = request.TenLoaiBan==null?lb.TenLoaiBan:request.TenLoaiBan;
+            lb.TenLoaiBan = request.TenLoaiBan == null ? lb.TenLoaiBan : request.TenLoaiBan;
             contextDB.Update(lb);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Sửa loại bàn thành công ", converters.EntityToDTOs(lb));
