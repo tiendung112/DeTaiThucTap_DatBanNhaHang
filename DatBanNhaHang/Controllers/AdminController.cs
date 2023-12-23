@@ -58,6 +58,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPost]
         [Route("/api/Admin/TaoTaiKhoan")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> Register([FromForm] Request_AdminRegister register)
         {
             int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
@@ -120,21 +121,21 @@ namespace DatBanNhaHang.Controllers
         #region thay đổi quyền hạn , xoá acc, laythongtin
         [HttpPut]
         [Route("/api/Admin/ThayDoiQuyenHan")]
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThayDoiQuyenHan([FromForm] Request_AdminThayDoiQuyen request)
         {
             return Ok(await ADMservices.ThayDoiQuyenHan(request));
         }
         [HttpGet]
         [Route("/api/Admin/LayTatCaThongTinADMin")]
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> LayTatCaThongTinADMin(int pageSize, int pageNumber)
         {
             return Ok(await ADMservices.GetAlls(pageSize, pageNumber));
         }
         [HttpDelete]
         [Route("/api/Admin/XoaTKChuaKichHoat")]
-        [Authorize(Roles = "ADMIN,MOD")]
+        //[Authorize(Roles = "ADMIN,MOD")]
         public IActionResult DeleteTK()
         {
             var res = ADMservices.RemoveTKNotActive();
@@ -258,6 +259,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpPost]
         [Route("/api/LoaiMonAn/ThemLoaiMonAnKemMonAn")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> ThemLoaiMonAnKemMonAn([FromForm] Request_ThemLoaiMonAnKemMonAn request)
         {
             var result = await loaiMonAnservices.ThemLoaiMonAnKemMonAn(request);
