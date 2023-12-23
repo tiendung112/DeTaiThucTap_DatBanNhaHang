@@ -25,13 +25,13 @@ namespace DatBanNhaHang.Controllers
         private readonly ILienHe LienHeServices;
         private readonly IKhachHang khachhangServices;
 
-        public AuthController(IConfiguration configuration, IAuthServices authService)
+        public AuthController(IConfiguration configuration, IAuthServices authService,ILienHe lienHe,IHoaDon hoaDon,IKhachHang khachHang)
         {
             _configuration = configuration;
             _authService = authService;
-            LienHeServices = new LienHeServices();
-            hoadonServices = new HoaDonServices();
-            khachhangServices =new KhachHangServices();
+            LienHeServices = lienHe;
+            hoadonServices = hoaDon;
+            khachhangServices =khachHang;
         }
 
         #region đăng ký, đăng nhập 
