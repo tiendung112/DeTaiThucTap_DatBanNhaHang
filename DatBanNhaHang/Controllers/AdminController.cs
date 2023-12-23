@@ -802,6 +802,7 @@ namespace DatBanNhaHang.Controllers
         // [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> SoLuongHoaDonTheoNgay()
         {
+            
             return Ok(await thongKeServices.SoLuongHoaDonTheoNgay());
         }
         
