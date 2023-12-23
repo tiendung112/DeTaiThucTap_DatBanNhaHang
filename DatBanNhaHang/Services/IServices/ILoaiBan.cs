@@ -10,7 +10,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<LoaiBanDTOs>> ThemLoaiBan(Request_ThemLoaiBan request);
         Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(int id,Request_SuaLoaiBan request);
         Task<ResponseObject<LoaiBanDTOs>> XoaLoaiBan(int id );
-        Task<PageResult<LoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber);
-
+        Task<PageResult<SingleLoaiBanDTOs>> HienThiLoaiBan(int id,int pageSize, int pageNumber);
+        Task<PageResult<LoaiBanDTOs>> HienThiLoaiBanKemBan(int id, int pageSize, int pageNumber);
     }
 }
