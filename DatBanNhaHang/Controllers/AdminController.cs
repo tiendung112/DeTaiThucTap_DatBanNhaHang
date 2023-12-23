@@ -309,12 +309,26 @@ namespace DatBanNhaHang.Controllers
         {
             return Ok(await loaiMonAnservices.HienThiLoaiMonAn(0, pageSize, pageNumber));
         }
+
         [HttpGet]
         [Route("/api/LoaiMonAn/HienThiLoaiMonAn/{id}")]
-
         public async Task<IActionResult> HienThiLoaiMonAn([FromRoute] int id)
         {
             return Ok(await loaiMonAnservices.HienThiLoaiMonAn(id, 0, 0));
+        }
+        [HttpGet]
+        [Route("/api/LoaiMonAn/HienThiLoaiMonAnKemMonAn")]
+
+        public async Task<IActionResult> HienThiLoaiMonAnKemMonAn(int pageSize, int pageNumber)
+        {
+            return Ok(await loaiMonAnservices.HienThiLoaiMonAnKemMonAn(0, pageSize, pageNumber));
+        }
+        [HttpGet]
+        [Route("/api/LoaiMonAn/HienThiLoaiMonAnKemMonAnID/{id}")]
+
+        public async Task<IActionResult> HienThiLoaiMonAnKemMonAnID([FromRoute] int id)
+        {
+            return Ok(await loaiMonAnservices.HienThiLoaiMonAnKemMonAn(id, 0, 0));
         }
         #endregion
         #region món ăn
