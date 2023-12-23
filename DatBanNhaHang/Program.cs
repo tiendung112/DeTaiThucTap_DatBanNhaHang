@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using DatBanNhaHang.Payloads.Converters.NhaHang;
 using DatBanNhaHang.Payloads.DTOs.NhaHang;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -94,8 +95,22 @@ builder.Services.AddSingleton<ResponseObject<LoaiBanDTOs>>();
 builder.Services.AddSingleton<ResponseObject<LoaiMonAnDTOs>>();
 builder.Services.AddSingleton<ResponseObject<MonAnDTOs>>();
 builder.Services.AddSingleton<ResponseObject<NhanXetDTOs>>();
-builder.Services.AddSingleton < ResponseObject<NhanXetDTOs>>();
+builder.Services.AddSingleton<ResponseObject<NhanXetDTOs>>();
 builder.Services.AddSingleton<ResponseObject<TrangThaiHoaDonDTOs>>();
+
+builder.Services.AddSingleton<AdminConverters>();
+builder.Services.AddSingleton<BaiVietConverters>();
+builder.Services.AddSingleton<LienHeConverters>();
+builder.Services.AddSingleton<NhanXetConverters>();
+builder.Services.AddSingleton<BanConverters>();
+builder.Services.AddSingleton<ChiTietHoaDonConverters>();
+builder.Services.AddSingleton<DauBepConverters>();
+builder.Services.AddSingleton<HoaDonConverters>();
+builder.Services.AddSingleton<KhachHangConverters>();
+builder.Services.AddSingleton<LoaiBanConverters>();
+builder.Services.AddSingleton<LoaiMonAnConverters>();
+builder.Services.AddSingleton<MonAnConverters>();
+builder.Services.AddSingleton<TrangThaiHoaDonConverters>();
 builder.Services.AddSingleton<UserConverters>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>

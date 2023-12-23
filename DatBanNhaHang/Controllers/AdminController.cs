@@ -26,7 +26,7 @@ namespace DatBanNhaHang.Controllers
         private readonly IAdminServices ADMservices;
         private readonly IConfiguration _configuration;
         private readonly IDauBep daubepservices;
-        public readonly ILoaiBan LoaiBanservices;
+        private readonly ILoaiBan LoaiBanservices;
         private readonly ILoaiMonAn loaiMonAnservices;
         private readonly IMonAn MonAnservices;
         private readonly IBan banServices;
@@ -246,9 +246,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiBan([FromForm] Request_ThemLoaiBan request)
         {
             var result = await LoaiBanservices.ThemLoaiBan(request);
-            if (result != null)
-                return Ok(result);
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPut]
         [Route("api/LoaiBan/SuaLoaiBan/{id}")]
@@ -291,10 +289,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemLoaiMonAn([FromForm] Request_ThemLoaiMonAn request)
         {
             var result = await loaiMonAnservices.ThemLoaiMonAn(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+            
             return Ok(result);
         }
         [HttpPost]
@@ -566,10 +561,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThemTrangThaiHoaDon([FromForm] Request_ThemTrangThaiHoaDon request)
         {
             var result = await TTHDservices.ThemTrangThaiHoaDon(request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+            
             return Ok(result);
         }
         [HttpPut]
@@ -578,10 +570,6 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> SuaTrangThaiHoaDon([FromRoute] int id, [FromForm] Request_SuaTrangThaiHoaDon request)
         {
             var result = await TTHDservices.SuaTrangThaiHoaDon(id, request);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
             return Ok(result);
         }
         [HttpDelete]
@@ -590,10 +578,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> XoaTrangThaiHoaDon([FromRoute] int id)
         {
             var result = await TTHDservices.XoaTrangThaiHoaDon(id);
-            if (result == null)
-            {
-                return BadRequest(result);
-            }
+            
             return Ok(result);
         }
 
@@ -817,6 +802,7 @@ namespace DatBanNhaHang.Controllers
         // [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> SoLuongHoaDonTheoNgay()
         {
+            
             return Ok(await thongKeServices.SoLuongHoaDonTheoNgay());
         }
         
