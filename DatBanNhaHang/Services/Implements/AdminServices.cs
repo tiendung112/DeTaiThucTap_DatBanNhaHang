@@ -313,6 +313,10 @@ namespace DatBanNhaHang.Services.Implements
             var result = Pagintation.GetPagedData<AdminDTOs>(list, pageSize, pageNumber);
             return result;
         }
+        public IQueryable<AdminDTOs> GetAdminTheoId(int id)
+        {
+            return contextDB.Admin.Where(x => x.id == id).Select(y => converters.EntityToDTOs(y));
+        }
         #endregion
         #region Xử lý việc thay đổi quyền hạn của người dùng và xoá tài khoản chưa active
 
@@ -331,28 +335,51 @@ namespace DatBanNhaHang.Services.Implements
             return "đã xoá hết tài khoản chưa kích hoạt";
         }
 
-        public async Task<string> ThayDoiQuyenHan(Request_AdminThayDoiQuyen request)
+        public async Task<ResponseObject<AdminDTOs>> ThayDoiQuyenHan(Request_AdminThayDoiQuyen request)
         {
             var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.id == request.AdminID);
 
             if (admin == null)
             {
-                return "Tài khoản không tồn tại";
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "Tài khoản không tồn tại",null);
             }
             try
             {
                 admin.RoleID = request.RoleID;
                 contextDB.Admin.Update(admin);
                 await contextDB.SaveChangesAsync();
-                return "Thay đổi quyền tài khoản thành công";
+                return responseObject.ResponseSuccess( "Thay đổi quyền tài khoản thành công",converters.EntityToDTOs(admin));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                return "Lỗi trong quá trình thay đổi quyền tài khoản";
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Lỗi trong quá trình thay đổi quyền tài khoản", null);
             }
         }
+        public async Task<ResponseObject<AdminDTOs>> SuaThongTin(int id, Request_AdminUpdateInfor request)
+        {
+            var admin = contextDB.Admin.SingleOrDefault(x => x.id == id);
+            if(admin == null)
+            {
+                return responseObject.ResponseError(StatusCodes.Status404NotFound, "không tồn tại tài khoản này", null);
+            }
+            if (await contextDB.User.FirstOrDefaultAsync(x => x.Email.Equals(request.Email)) != null)
+            {
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Email đã tồn tại trên hệ thống", null);
+            }
+            if (Validate.IsValidEmail(request.Email) == false)
+            {
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Định dạng Email không hợp lệ", null);
+            }
+            admin.Email = request.Email==null? admin.Email : request.Email;
+            admin.QueQuan = request.QueQuan==null ? admin.QueQuan:request.QueQuan;
+            admin.SDT = request.SDT ==null? admin.SDT:request.SDT;
+            admin.Name = request.Name==null? admin.Name:request.Name; 
+            admin.ngaysinh=request.ngaysinh==null? admin.ngaysinh:request.ngaysinh;
+            admin.Gender = request.gioiTinh==null? admin.Gender:request.gioiTinh;
+            contextDB.Update(admin);
+            await contextDB.SaveChangesAsync();
+            return responseObject.ResponseSuccess("đổi thông tin thành công", converters.EntityToDTOs(admin));        }
         #endregion
-       
+
     }
 }

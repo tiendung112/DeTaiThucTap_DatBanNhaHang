@@ -377,7 +377,7 @@ namespace DatBanNhaHang.Services.Implements
         #endregion
         public async Task<PageResult<UserDTO>> GetAlls(int pageSize, int pageNumber)
         {
-            var list = contextDB.User.Select(x => _userConverter.EntityToDTO(x));
+            var list =contextDB.User.Select(x => _userConverter.EntityToDTO(x));
             var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
             return result;
         }
