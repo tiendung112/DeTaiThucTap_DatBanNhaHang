@@ -97,7 +97,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonUser(int userid, Request_ThemHoaDon_User request)
         {
-            if (await KiemTraBanTrong(request.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(3)) == true)
+            if (await KiemTraBanTrong(request.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
             {
                 var kh = contextDB.KhachHang.SingleOrDefault(x => x.userID == userid);
 
@@ -217,10 +217,10 @@ namespace DatBanNhaHang.Services.Implements
             var khachHang = contextDB.KhachHang.SingleOrDefault(x => x.userID == userid);
             if (khachHang.id == hoaDon.KhachHangID)
             {
-                if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(3)) == true)
+                if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
                 {
                     hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau;
-                    hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(3);
+                    hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1);
                     hoaDon.GhiChu = request.GhiChu;
                 }
                 if (hoaDon.TrangThaiHoaDonID == 2)
@@ -414,7 +414,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonAdmin(Request_ThemHoaDon_Admin request)
         {
-            if (await KiemTraBanTrong(request.BanID, DateTime.Now, DateTime.Now.AddHours(3)) == true)
+            if (await KiemTraBanTrong(request.BanID, DateTime.Now, DateTime.Now.AddHours(1)) == true)
             {
                 var kh = contextDB.KhachHang.SingleOrDefault(x => x.id == request.Khid);
 
@@ -435,7 +435,7 @@ namespace DatBanNhaHang.Services.Implements
                     KhachHangID = kh.id,
                     ThoiGianDuKienBatDau = DateTime.Now,
                     ThoiGianBatDauThucTe = DateTime.Now,
-                    ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(3),
+                    ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1),
                     GhiChu = request.GhiChu,
                     TrangThaiHoaDonID = 2,
                 };
@@ -493,10 +493,10 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
             }
-            if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(3)) == true)
+            if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
             {
                 hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau;
-                hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(3);
+                hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1);
                 hoaDon.GhiChu = request.GhiChu;
             }
             var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
