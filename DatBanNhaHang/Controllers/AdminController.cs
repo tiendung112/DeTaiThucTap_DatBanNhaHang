@@ -538,12 +538,12 @@ namespace DatBanNhaHang.Controllers
             return Ok(await hoaDonServices.ThemHoaDonAdmin(request));
         }
         [HttpPut]
-        [Route("/api/HoaDonAdmin/CapNhatThongTinHoaDonAdmin")]
+        [Route("/api/HoaDonAdmin/CapNhatThongTinHoaDonAdmin/{id}")]
 
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> CapNhatThongTinHoaDonAdmin([FromBody] Request_CapNhatThongTinHoaDon request)
+        public async Task<IActionResult> CapNhatThongTinHoaDonAdmin([FromRoute] int id )
         {
-            return Ok(await hoaDonServices.CapNhatThongTinHoaDon(request));
+            return Ok(await hoaDonServices.CapNhatThongTinHoaDon(id));
         }
         [HttpPut]
         [Route("/api/HoaDonAdmin/SuaHoaDonAdmin/{id}")]
