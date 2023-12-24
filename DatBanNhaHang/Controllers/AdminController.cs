@@ -533,7 +533,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPost]
         [Route("/api/HoaDonAdmin/ThemHoaDonAdmin")]
         // [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> ThemHoaDonAdmin([FromForm] Request_ThemHoaDon_Admin request)
+        public async Task<IActionResult> ThemHoaDonAdmin([FromBody] Request_ThemHoaDon_Admin request)
         {
             return Ok(await hoaDonServices.ThemHoaDonAdmin(request));
         }
@@ -541,14 +541,14 @@ namespace DatBanNhaHang.Controllers
         [Route("/api/HoaDonAdmin/CapNhatThongTinHoaDonAdmin")]
 
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> CapNhatThongTinHoaDonAdmin([FromForm] Request_CapNhatThongTinHoaDon request)
+        public async Task<IActionResult> CapNhatThongTinHoaDonAdmin([FromBody] Request_CapNhatThongTinHoaDon request)
         {
             return Ok(await hoaDonServices.CapNhatThongTinHoaDon(request));
         }
         [HttpPut]
         [Route("/api/HoaDonAdmin/SuaHoaDonAdmin/{id}")]
         //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> SuaHoaDon([FromRoute] int id, int status, [FromForm] Request_SuaHoaDon request)
+        public async Task<IActionResult> SuaHoaDon([FromRoute] int id, int status, [FromBody] Request_SuaHoaDon request)
         {
             return Ok(await hoaDonServices.SuaHoaDonAdmin(id, status, request));
         }
