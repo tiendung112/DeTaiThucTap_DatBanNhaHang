@@ -11,7 +11,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<KhachHangDTOs>> SuaKhachHang(int id, Request_SuaKhachHang request);
         Task<ResponseObject<KhachHangDTOs>> NangCapThongTinKhachHangACC(Request_NangCapThongTinKhachHang request);
         Task<ResponseObject<KhachHangDTOs>> XoaKhachHang(int id);
-        //Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(string SDT);
+        Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(Request_TimSDT request);
         //Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber);
         Task<PageResult<KhachHangDTOs>> HienThiKhachHang(int id, int pageSize, int pageNumber);
     }

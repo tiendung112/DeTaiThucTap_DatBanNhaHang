@@ -453,6 +453,13 @@ namespace DatBanNhaHang.Controllers
         {
             return Ok(await khachhangServices.HienThiKhachHang(id, 0, 0));
         }
+        [HttpGet]
+        [Route("/api/KhachHang/HienThiKhachHangSDT")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> HienThiKhachHangSDT([FromForm] Request_TimSDT request)
+        {
+            return Ok(await khachhangServices.TimKiemKhachHangSDT(request));
+        }
         [HttpPost]
         [Route("/api/KhachHang/ThemKhachHang")]
         //[Authorize(Roles ="ADMIN,MOD")]

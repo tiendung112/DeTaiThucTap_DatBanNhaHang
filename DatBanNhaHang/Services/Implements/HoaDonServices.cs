@@ -66,7 +66,7 @@ namespace DatBanNhaHang.Services.Implements
         {
             var hoaDons = await contextDB.HoaDon
                                 .Where(hd => hd.BanID == banId
-                                             && hd.TrangThaiHoaDonID == 2)
+                                             && hd.TrangThaiHoaDonID == 2 ||hd.TrangThaiHoaDonID==3)
                                 .ToListAsync();
             foreach (var hoaDon in hoaDons)
             {
@@ -431,11 +431,11 @@ namespace DatBanNhaHang.Services.Implements
                     BanID = request.BanID,
                     ThoiGianDat = DateTime.Now,
                     TenHoaDon = $"dat ban {contextDB.Ban.SingleOrDefault(x => x.id == request.BanID).SoBan} ngay{DateTime.Now}",
-                    MaGiaoDich = TaoMaGiaoDich(request.ThoiGianDuKienBatDau, contextDB.HoaDon.Where(x => x.ThoiGianDat.Value.Date == DateTime.Now.Date).ToList()),
+                    MaGiaoDich = TaoMaGiaoDich(DateTime.Now, contextDB.HoaDon.Where(x => x.ThoiGianDat.Value.Date == DateTime.Now.Date).ToList()),
                     KhachHangID = kh.id,
                     ThoiGianDuKienBatDau = DateTime.Now,
                     ThoiGianBatDauThucTe = DateTime.Now,
-                    ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1),
+                    ThoiGianDuKienKetThuc = DateTime.Now.AddHours(1),
                     GhiChu = request.GhiChu,
                     TrangThaiHoaDonID = 2,
                 };

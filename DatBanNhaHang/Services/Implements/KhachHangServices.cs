@@ -111,23 +111,23 @@ namespace DatBanNhaHang.Services.Implements
             return response.ResponseSuccess("Thêm khách hàng thành công ", converters.EntityToDTOs(kh));
         }
 
-        /*  public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(string SDT)
-          {
+        public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangSDT(Request_TimSDT request)
+        {
 
-              var kh = contextDB.KhachHang.Where(x => x.SDT == SDT).Select(y => converters.EntityToDTOs(y));
-              var result = Pagintation.GetPagedData(kh, 0, 0);
-              return result;
-          }
+            var kh = contextDB.KhachHang.Where(x => x.SDT == request.SDT).Select(y => converters.EntityToDTOs(y));
+            var result = Pagintation.GetPagedData(kh, 0, 0);
+            return result;
+        }
 
-          public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
-          {
-              var kh = contextDB.KhachHang.AsEnumerable()
-                  .Where(x => ChuanHoaChuoi(x.HoTen).Contains(ChuanHoaChuoi(HoTen))).AsQueryable()
-                  .Select(y => converters.EntityToDTOs(y));
+        //public async Task<PageResult<KhachHangDTOs>> TimKiemKhachHangHoTen(string HoTen, int pageSize, int pageNumber)
+        //{
+        //    var kh = contextDB.KhachHang.AsEnumerable()
+        //        .Where(x => ChuanHoaChuoi(x.HoTen).Contains(ChuanHoaChuoi(HoTen))).AsQueryable()
+        //        .Select(y => converters.EntityToDTOs(y));
 
-              var result = Pagintation.GetPagedData<KhachHangDTOs>(kh, pageSize, pageNumber);
-              return result;
-          }*/
+        //    var result = Pagintation.GetPagedData<KhachHangDTOs>(kh, pageSize, pageNumber);
+        //    return result;
+        //}
 
         public async Task<ResponseObject<KhachHangDTOs>> XoaKhachHang(int id)
         {
