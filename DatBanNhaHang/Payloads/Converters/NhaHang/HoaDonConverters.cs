@@ -28,7 +28,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 TrangThaiHoaDon = hoaDon.TrangThaiHoaDonID == 1 ? "Chưa xác nhận"
                 : hoaDon.TrangThaiHoaDonID == 2 ? "Chưa thanh toán"
                 : "Đã thanh toán",
-                SoBan = contextDB.Ban.SingleOrDefault(x=>x.id==hoaDon.BanID).ViTri,
+                SoBan = contextDB.Ban.SingleOrDefault(x=>x.id==hoaDon.BanID).SoBan.ToString(),
                 ChiTietHoaDonDTOs = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDon.id).Select(x => converters.EntityToDTOs(x))
             };
         }
