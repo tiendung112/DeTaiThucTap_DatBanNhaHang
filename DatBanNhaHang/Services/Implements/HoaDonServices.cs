@@ -54,7 +54,7 @@ namespace DatBanNhaHang.Services.Implements
 
             foreach (var ban in tatCaBan)
             {
-                if (await KiemTraBanTrong(ban.id, DateTime.Now, DateTime.Now.AddHours(2)))
+                if (await KiemTraBanTrong(ban.id, DateTime.Now, DateTime.Now.AddHours(1)))
                 {
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
@@ -92,7 +92,7 @@ namespace DatBanNhaHang.Services.Implements
             //                $"{newHoaDon.ThoiGianTao.Month}" +
             //                $"{newHoaDon.ThoiGianTao.Day}" +
             //                $"_{String.Format("{0:000}", lstHoaDon.Count() + 1)}";
-            string maGiaoDich = nt.ToString("yyyyMMdd") + $"{ct.Count() + 1}";
+            string maGiaoDich = nt.ToString("yyyyMMdd") + $"T{ct.Count() + 1}";
             return maGiaoDich;
         }
         public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonUser(int userid, Request_ThemHoaDon_User request)
@@ -113,7 +113,8 @@ namespace DatBanNhaHang.Services.Implements
                     MaGiaoDich = TaoMaGiaoDich(request.ThoiGianDuKienBatDau, contextDB.HoaDon.Where(x => x.ThoiGianDat.Value.Date == DateTime.Now.Date).ToList()),
                     KhachHangID = kh.id,
                     ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau,
-                    ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(3),
+                    ThoiGianBatDauThucTe=request.ThoiGianDuKienBatDau,
+                    ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1),
                     GhiChu = request.GhiChu,
                     TrangThaiHoaDonID = 1,
                 };
@@ -396,20 +397,15 @@ namespace DatBanNhaHang.Services.Implements
         #endregion
         #region hoá đơn by admin
         //lưu thông tin khách hàng đến và đi giờ nào cũng như thanh toán 
-        public async Task<ResponseObject<HoaDonDTO>> CapNhatThongTinHoaDon(Request_CapNhatThongTinHoaDon request)
+        public async Task<ResponseObject<HoaDonDTO>> CapNhatThongTinHoaDon(int id )
         {
-            if (string.IsNullOrWhiteSpace(request.ThoiGianKetThucThucTe.ToString()) || string.IsNullOrWhiteSpace(request.ThoiGianBatDauThucTe.ToString()))
-            {
-                return response.ResponseError(StatusCodes.Status404NotFound, "Chưa điền đủ thông tin ", null);
-            }
-
-            var hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == request.hoaDonid);
-            hoadon.ThoiGianBatDauThucTe = request.ThoiGianBatDauThucTe;
+            
+            var hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == id);
             if (hoadon == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại hoá đơn này", null);
             }
-            hoadon.ThoiGianKetThucThucTe = request.ThoiGianKetThucThucTe;
+            hoadon.ThoiGianKetThucThucTe = DateTime.Now;
             hoadon.TrangThaiHoaDonID = 3;
             contextDB.Update(hoadon);
             await contextDB.SaveChangesAsync();
