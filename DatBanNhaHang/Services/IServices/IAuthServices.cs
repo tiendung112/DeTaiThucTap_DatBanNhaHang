@@ -18,7 +18,7 @@ namespace DatBanNhaHang.Services.IServices
         Task<PageResult<UserDTO>> XoaTaiKhoan(int id);
         Task<ResponseObject<UserDTO>> ChangePassword(int UserID, Request_ChangePassword request);
         string SendEmail(EmailTo emailTo);
-        Task<string> ForgotPassword(Request_ForgotPassword request);
+        Task<ResponseObject<UserDTO>> ForgotPassword(Request_ForgotPassword request);
         Task<ResponseObject<UserDTO>> CreateNewPassword(Request_ConfirmCreateNewPassword request);
         Task<ResponseObject<UserDTO>> XacNhanDangKyTaiKhoan(Request_ValidateRegister request);
         Task<ResponseObject<UserDTO>> ThayDoiThongTin(int id, Request_UpdateInfor request);
