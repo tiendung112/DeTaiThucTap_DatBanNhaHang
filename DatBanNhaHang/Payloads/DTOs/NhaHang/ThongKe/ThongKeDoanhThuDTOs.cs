@@ -4,6 +4,6 @@
     {
         public string? ThoiGian {  get; set; }
         public int soLuongDon { get; set; }
-        public double? tongDoanhThu { get; set; }
+        //public double? tongDoanhThu { get; set; }
     }
 }

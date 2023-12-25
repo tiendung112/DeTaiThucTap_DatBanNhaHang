@@ -20,7 +20,8 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 ViTri = ban.ViTri,
                 HinhAnhBanURL = ban.HinhAnhBanURL,
                 Mota = ban.Mota,
-                TinhTrangHienTai = ban.TinhTrangHienTai,
+                
+                //TinhTrangHienTai = ban.TinhTrangHienTai,
                 TenLoaiBan = con.LoaiBan.SingleOrDefault(x => x.id == ban.LoaiBanID).TenLoaiBan,
             };
         }

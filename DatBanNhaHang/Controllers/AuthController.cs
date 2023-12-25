@@ -17,15 +17,15 @@ namespace DatBanNhaHang.Controllers
         private readonly IAuthServices _authService;
         private readonly IHoaDon hoadonServices;
         private readonly ILienHe LienHeServices;
-        private readonly IKhachHang khachhangServices;
+        //private readonly IKhachHang khachhangServices;
 
-        public AuthController(IConfiguration configuration, IAuthServices authService, ILienHe lienHe, IHoaDon hoaDon, IKhachHang khachHang)
+        public AuthController(IConfiguration configuration, IAuthServices authService, ILienHe lienHe, IHoaDon hoaDon/*, IKhachHang khachHang*/)
         {
             _configuration = configuration;
             _authService = authService;
             LienHeServices = lienHe;
             hoadonServices = hoaDon;
-            khachhangServices = khachHang;
+            //khachhangServices = khachHang;
         }
 
         #region đăng ký, đăng nhập 
@@ -84,7 +84,24 @@ namespace DatBanNhaHang.Controllers
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> LayTatCaThongTinUser(int pageSize, int pageNumber)
         {
-            return Ok(await _authService.GetAlls(pageSize, pageNumber));
+            return Ok(await _authService.GetAlls(0,pageSize, pageNumber));
+        }
+        [HttpGet]
+        [Route("/api/auth/ThongTinUser")]
+        [Authorize(Roles = "ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> ThongTinUser()
+        {
+            int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
+            return Ok(await _authService.GetAlls(id,0,0));
+        }
+        [HttpDelete]
+        [Route("/api/auth/XoaUser/{id}")]
+        [Authorize(Roles = "ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> XoaUser([FromRoute]int id)
+        {
+            return Ok(await _authService.XoaTaiKhoan(id));
         }
         #region quên , đổi mật khẩu
         [HttpPut]
@@ -146,21 +163,21 @@ namespace DatBanNhaHang.Controllers
             int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
             return Ok(await hoadonServices.ThemHoaDonUser(id, request));
         }
-        [HttpPut]
-        [Route("/api/datBan/XacNhanDatBan/{hoadonid}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> XacNhanDatBan([FromRoute] int hoadonid, [FromForm] Request_ValidateRegister request)
-        {
-            int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
-            return Ok(await hoadonServices.XacNhanOrder(id, hoadonid, request));
-        }
+        //[HttpPut]
+        //[Route("/api/datBan/XacNhanDatBan/{hoadonid}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public async Task<IActionResult> XacNhanDatBan([FromRoute] int hoadonid, [FromForm] Request_ValidateRegister request)
+        //{
+        //    int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
+        //    return Ok(await hoadonServices.XacNhanOrder(id, hoadonid, request));
+        //}
         [HttpPut]
         [Route("/api/datBan/SuaHoaDon/{hoadonid}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> SuaHoaDon([FromRoute] int hoadonid, [FromForm] Request_SuaHoaDon_User request, int status)
         {
             int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
-            return Ok(await hoadonServices.SuaHoaDon(id, hoadonid, status, request));
+            return Ok(await hoadonServices.SuaHoaDon(id, hoadonid, request));
         }
         [HttpDelete]
         [Route("/api/datBan/HuyHoaDon/{hoadonid}")]

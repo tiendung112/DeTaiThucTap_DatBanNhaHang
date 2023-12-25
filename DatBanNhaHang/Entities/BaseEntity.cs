@@ -8,5 +8,7 @@ namespace DatBanNhaHang.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
+
+        public int? status { get; set; }
     }
 }

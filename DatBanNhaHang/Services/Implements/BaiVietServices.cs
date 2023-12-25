@@ -21,7 +21,9 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<BaiVietDTOs>> HienThiBaiViet(int blogid, int pageSize, int pageNumber)
         {
-            var blog = blogid == 0 ? contextDB.BaiViet.Select(x => converters.EntityToDTOs(x)) : contextDB.BaiViet.Where(y => y.id == blogid).Select(x => converters.EntityToDTOs(x));
+            var blog = blogid == 0 ?
+                contextDB.BaiViet.Where(x=>x.status==1).Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.BaiViet.Where(y => y.id == blogid && y.status==1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(blog, pageSize, pageNumber);
             return result;
         }
@@ -69,6 +71,7 @@ namespace DatBanNhaHang.Services.Implements
                 NgayDang = DateTime.Now,
                 NoiDung = request.NoiDung,
                 TieuDe = request.TieuDe,
+                status = 1,
             };
             await contextDB.AddAsync(newbaiviet);
             await contextDB.SaveChangesAsync();
@@ -98,7 +101,8 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại bài viết này", null);
             }
-            contextDB.Remove(baiviet);
+            baiviet.status = 2;
+            contextDB.Update(baiviet);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Xoá bài viết thành công", converters.EntityToDTOs(baiviet));
         }

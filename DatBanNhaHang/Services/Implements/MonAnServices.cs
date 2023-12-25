@@ -22,8 +22,8 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị và tìm kiếm món ăn 
         public async Task<PageResult<MonAnDTOs>> HienThiMonAn(int id, int pageSize, int pageNumber)
         {
-            var lstMonAn = id == 0 ? contextDB.MonAn.Select(x => converters.EntityToDTOs(x))
-                : contextDB.MonAn.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
+            var lstMonAn = id == 0 ? contextDB.MonAn.Where(y => y.status == 1).Select(x => converters.EntityToDTOs(x))
+                : contextDB.MonAn.Where(y => y.id == id && y.status == 1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstMonAn, pageSize, pageNumber);
             return result;
         }
@@ -54,7 +54,7 @@ namespace DatBanNhaHang.Services.Implements
                     ma.GiaTien = request.GiaTien;
                     ma.MoTa = request.MoTa;
                     ma.LoaiMonAnID = request.LoaiMonAnID;
-
+                    ma.status = 2;
                     if (request.AnhMonAn1URL != null)
                     {
                         if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
@@ -131,16 +131,18 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại món ăn này ", null);
             }
-            var lstchitiethoadon = contextDB.ChiTietHoaDon.Where(x => x.MonAnID == ma.id).ToList();
-            foreach (var item in lstchitiethoadon)
+
+            ma.status = 2;
+            //var lstchitiethoadon = contextDB.ChiTietHoaDon.Where(x => x.MonAnID == ma.id).ToList();
+            /*foreach (var item in lstchitiethoadon)
             {
                 var hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == item.HoaDonID);
                 var lstcthd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoadon.id);
                 contextDB.RemoveRange(lstcthd);
                 contextDB.Remove(hoadon);
-            }
-            contextDB.Remove(ma);
-            contextDB.Remove(ma);
+            }*/
+            //contextDB.Remove(ma);
+            contextDB.Update(ma);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Xoá Món Ăn thành công", converters.EntityToDTOs(ma));
         }

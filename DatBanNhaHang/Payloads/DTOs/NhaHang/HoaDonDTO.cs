@@ -5,8 +5,8 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
     public class HoaDonDTO
     {
         public int HoaDonID { get; set; }
-        public int KhachHangID { get; set; }
-        public string TenKhachHang { get; set; }
+        public int? UserID { get; set; }
+        public string? TenKhachHang { get; set; }
         public int? BanID { get; set; }
         public string? SoBan {  get; set; }
         public string? TrangThaiHoaDon {  get; set; }
@@ -21,6 +21,6 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
         public DateTime? ThoiGianHuyDat { get; set; } // Thời gian hủy đặt bàn (nullable)
         public string? GhiChu { get; set; }
         public double? TongTien { get; set; }
-        public IQueryable<ChiTietHoaDonDTOs>? ChiTietHoaDonDTOs { get; set; }
+        //public IQueryable<ChiTietHoaDonDTOs>? ChiTietHoaDonDTOs { get; set; }
     }
 }

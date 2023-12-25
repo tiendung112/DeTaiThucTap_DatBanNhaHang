@@ -22,7 +22,8 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<LienHeDTOs>> HienThiLienHe(int LienHeId, int pageSize, int pageNumber)
         {
-            var LienHe = LienHeId == 0 ? contextDB.LienHe.Select(x => converters.EntityToDTOs(x)) : contextDB.LienHe.Where(y => y.id == LienHeId).Select(x => converters.EntityToDTOs(x));
+            var LienHe = LienHeId == 0 ? contextDB.LienHe.Where(y=>y.status == 1).Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.LienHe.Where(y => y.id == LienHeId && y.status == 1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(LienHe, pageSize, pageNumber);
             return result;
         }
@@ -46,6 +47,7 @@ namespace DatBanNhaHang.Services.Implements
                 DaTraLoi = false,
                 ThoiGianGui = DateTime.Now,
                 TieuDe = request.TieuDe,
+                status = 1
             };
             await contextDB.AddAsync(newfb);
             await contextDB.SaveChangesAsync();
@@ -63,7 +65,7 @@ namespace DatBanNhaHang.Services.Implements
             LienHe.ThoiGianTraLoi = DateTime.Now;
             contextDB.Update(LienHe);
             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("Xác nhận LienHe thành công", converters.EntityToDTOs(LienHe));
+            return response.ResponseSuccess("Xác nhận Liên Hệ thành công", converters.EntityToDTOs(LienHe));
         }
 
         public async Task<ResponseObject<LienHeDTOs>> XoaLienHe(int LienHeId)
@@ -73,9 +75,10 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại LienHe này", null);
             }
-            contextDB.LienHe.Remove(LienHe);
+            LienHe.status = 2;
+            contextDB.LienHe.Update(LienHe);
             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("Xoá LienHe thành công", converters.EntityToDTOs(LienHe));
+            return response.ResponseSuccess("Xoá Liên Hệ thành công", converters.EntityToDTOs(LienHe));
         }
 
         public async Task<List<LienHeDTOs>> XoaLienHeQuaLau()
@@ -87,7 +90,8 @@ namespace DatBanNhaHang.Services.Implements
             {
                 if (item.ThoiGianGui.Value.AddDays(15) < quahan && item.ThoiGianTraLoi == null)
                 {
-                    contextDB.LienHe.Remove(item);
+                    item.status= 2;
+                    contextDB.LienHe.Update(item);
                     lh.Add(converters.EntityToDTOs(item));
                 }
             }

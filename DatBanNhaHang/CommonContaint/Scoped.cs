@@ -19,7 +19,7 @@ namespace DatBanNhaHang.CommonContaint
             Services.AddScoped<IChiTietHoaDon, ChiTietHoaDonServices>();
             Services.AddScoped<IDauBep, DauBepServices>();
             Services.AddScoped<IHoaDon, HoaDonServices>();
-            Services.AddScoped<IKhachHang, KhachHangServices>();
+            //Services.AddScoped<IKhachHang, KhachHangServices>();
             Services.AddScoped<ILienHe, LienHeServices>();
             Services.AddScoped<ILoaiBan, LoaiBanServices>();
             Services.AddScoped<ILoaiMonAn, LoaiMonAnServices>();
@@ -38,7 +38,7 @@ namespace DatBanNhaHang.CommonContaint
             Services.AddSingleton<ResponseObject<ChiTietHoaDonDTOs>>();
             Services.AddSingleton<ResponseObject<DauBepDTOs>>();
             Services.AddSingleton<ResponseObject<HoaDonDTO>>();
-            Services.AddSingleton<ResponseObject<KhachHangDTOs>>();
+            //Services.AddSingleton<ResponseObject<KhachHangDTOs>>();
             Services.AddSingleton<ResponseObject<LienHeDTOs>>();
             Services.AddSingleton<ResponseObject<LoaiBanDTOs>>();
             Services.AddSingleton<ResponseObject<LoaiMonAnDTOs>>();
@@ -57,7 +57,7 @@ namespace DatBanNhaHang.CommonContaint
             Services.AddSingleton<ChiTietHoaDonConverters>();
             Services.AddSingleton<DauBepConverters>();
             Services.AddSingleton<HoaDonConverters>();
-            Services.AddSingleton<KhachHangConverters>();
+            //Services.AddSingleton<KhachHangConverters>();
             Services.AddSingleton<LoaiBanConverters>();
             Services.AddSingleton<LoaiMonAnConverters>();
             Services.AddSingleton<MonAnConverters>();

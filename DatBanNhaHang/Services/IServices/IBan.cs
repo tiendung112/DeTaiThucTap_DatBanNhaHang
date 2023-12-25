@@ -10,7 +10,6 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<BanDTOs>> ThemBan(Request_ThemBan request);
         Task<ResponseObject<BanDTOs>> SuaBan(int id, Request_SuaBan request);
         Task<ResponseObject<BanDTOs>> XoaBan(int id);
-        Task<PageResult<BanDTOs>> TimkiemBan(string tenBan, int pageSize, int pageNumber);
         Task<PageResult<BanDTOs>> HienThiBan(int id, int pageSize, int pageNumber);
 
         Task<PageResult<BanDTOs>> HienThiBanTheoViTri(int pageSize, int pageNumber);

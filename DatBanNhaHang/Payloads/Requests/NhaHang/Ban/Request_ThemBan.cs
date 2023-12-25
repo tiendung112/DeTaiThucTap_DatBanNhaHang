@@ -9,6 +9,6 @@
         public int? LoaiBanID { get; set; }
         public string? Mota { get; set; }
         public IFormFile? HinhAnhBanURL { get; set; }
-        public string? TinhTrangHienTai { get; set; }
+        //public string? TinhTrangHienTai { get; set; }
     }
 }

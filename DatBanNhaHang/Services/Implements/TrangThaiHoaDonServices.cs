@@ -20,7 +20,9 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<TrangThaiHoaDonDTOs>> HienThiTrangThaiHoaDon(int id, int pageSize, int pageNumber)
         {
-            var lstMonAn = id == 0 ? contextDB.TrangThaiHoaDon.Select(x => converters.EntityToDTOs(x)) : contextDB.TrangThaiHoaDon.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
+            var lstMonAn = id == 0 ? 
+                contextDB.TrangThaiHoaDon.Where(y=>y.status==1).Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.TrangThaiHoaDon.Where(y => y.id == id&& y.status==1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstMonAn, pageSize, pageNumber);
             return result;
         }
@@ -45,6 +47,7 @@ namespace DatBanNhaHang.Services.Implements
             TrangThaiHoaDon tthd = new TrangThaiHoaDon()
             {
                 TenTrangThai = request.TenTrangThai,
+                status = 1,
             };
             contextDB.TrangThaiHoaDon.Add(tthd);
             await contextDB.SaveChangesAsync();
@@ -58,14 +61,17 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại trạng thái này ", null);
             }
+
+            tthd.status = 2;
             var lsthd = contextDB.HoaDon.Where(x => x.id == tthd.id).ToList();
             foreach (var hd in lsthd)
             {
-                var lstCT = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hd.id);
-                contextDB.RemoveRange(lstCT);
+                hd.status = 2;
+                /*var lstCT = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hd.id);
+                contextDB.RemoveRange(lstCT);*/
             }
-            contextDB.RemoveRange(lsthd);
-            contextDB.Remove(tthd);
+            contextDB.Update(lsthd);
+            contextDB.Update(tthd);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Xoá trạng thái thành công ", converters.EntityToDTOs(tthd));
         }
