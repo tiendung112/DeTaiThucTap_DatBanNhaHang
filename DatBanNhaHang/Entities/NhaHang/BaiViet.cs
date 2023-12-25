@@ -11,6 +11,5 @@ namespace DatBanNhaHang.Entities.NhaHang
         public DateTime? NgayDang { get; set; }
         public string? AnhBlogURl { get; set; }
         public string? NoiDung { get; set; }
-
     }
 }

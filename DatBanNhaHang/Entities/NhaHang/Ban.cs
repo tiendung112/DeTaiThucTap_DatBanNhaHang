@@ -8,12 +8,10 @@
         public double? GiaTien { get; set; }
         public int? LoaiBanID { get; set; }
         public LoaiBan? LoaiBan { get; set; }
-        public string? TrangThaiBan { get; set; }
-
+        public string? TrangThaiBan { get; set; }     
         // Thông tin mở rộng
         public string? Mota { get; set; }
         public string? HinhAnhBanURL { get; set; }
-        public string? TinhTrangHienTai { get; set; }
-
+        //public int? status { get; set; }
     }
 }

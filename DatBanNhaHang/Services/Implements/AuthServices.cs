@@ -25,7 +25,7 @@ namespace DatBanNhaHang.Services.Implements
         private readonly ResponseObject<UserDTO> _responseObject;
         private readonly ResponseObject<TokenDTO> _responseObjectToken;
         private readonly UserConverters _userConverter;
-        private readonly IKhachHang khachHangServices = new KhachHangServices();
+        //private readonly IKhachHang khachHangServices = new KhachHangServices();
         public AuthServices(
             IConfiguration configuration,
             ResponseObject<UserDTO> responseObject,
@@ -78,6 +78,10 @@ namespace DatBanNhaHang.Services.Implements
                     user.SDT = request.SDT;
                     user.address = request.address;
                     user.ngayTao = DateTime.Now;
+                    user.status = 1;
+                    {
+
+                    }
                     /* if (request.AvatarUrl != null)
                      {
                          if (!HandleImage.IsImage(request.AvatarUrl, imageSize))
@@ -124,17 +128,17 @@ namespace DatBanNhaHang.Services.Implements
                 }
             }
         }
-        public async Task<string> XacNhanDangKyTaiKhoan(Request_ValidateRegister request)
+        public async Task<ResponseObject<UserDTO>> XacNhanDangKyTaiKhoan(Request_ValidateRegister request)
         {
 
             XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.MaXacNhan)).FirstOrDefaultAsync();
             if (confirmEmail is null)
             {
-                return "Mã xác nhận không chính xác";
+                _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác nhận không chính xác", null);
             }
             if (confirmEmail.ThoiGianHetHan < DateTime.Now)
             {
-                return "Mã xác nhận đã hết hạn";
+                _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác nhận đã hết hạn", null);
             }
             User user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID);
             user.IsActive = true;
@@ -144,10 +148,10 @@ namespace DatBanNhaHang.Services.Implements
             {
                 UserId = user.id,
             };
-            await khachHangServices.NangCapThongTinKhachHangACC(kh);
+            //await khachHangServices.NangCapThongTinKhachHangACC(kh);
             contextDB.User.Update(user);
             await contextDB.SaveChangesAsync();
-            return "Xác nhận đăng ký tài khoản thành công, vui lòng đăng nhập tài khoản của bạn";
+            return _responseObject.ResponseSuccess("Xác nhận đăng ký tài khoản thành công, vui lòng đăng nhập tài khoản của bạn", _userConverter.EntityToDTO(user));
         }
 
         #endregion
@@ -371,9 +375,18 @@ namespace DatBanNhaHang.Services.Implements
 
         }
         #endregion
-        public async Task<PageResult<UserDTO>> GetAlls(int pageSize, int pageNumber)
+
+        public async Task<PageResult<UserDTO>> XoaTaiKhoan(int id)
         {
-            var list = contextDB.User.Select(x => _userConverter.EntityToDTO(x));
+            var kh = contextDB.User.Where(x => x.id == id && x.status == 1)
+                .Select(y => _userConverter.EntityToDTO(y));
+            return Pagintation.GetPagedData<UserDTO>(kh, 0, 0);
+        }
+        public async Task<PageResult<UserDTO>> GetAlls(int id, int pageSize, int pageNumber)
+        {
+            var list = id == 0 ?
+                contextDB.User.Where(y => y.status == 1 && y.id == id).Select(x => _userConverter.EntityToDTO(x))
+                : contextDB.User.Where(y => y.status == 1).Select(x => _userConverter.EntityToDTO(x));
             var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
             return result;
         }
@@ -408,8 +421,8 @@ namespace DatBanNhaHang.Services.Implements
             {
                 UserId = user.id,
             };
-            await khachHangServices.NangCapThongTinKhachHangACC(kh);
-            khachHangServices.NangCapThongTinKhachHangACC(kh);
+            //await khachHangServices.NangCapThongTinKhachHangACC(kh);
+            //khachHangServices.NangCapThongTinKhachHangACC(kh);
             contextDB.User.Update(user);
 
             await contextDB.SaveChangesAsync();

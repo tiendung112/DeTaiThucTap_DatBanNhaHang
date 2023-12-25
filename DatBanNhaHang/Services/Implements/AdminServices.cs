@@ -73,7 +73,8 @@ namespace DatBanNhaHang.Services.Implements
                     SDT = request.SDT,
                     QueQuan = request.QueQuan,
                     ParentID = id,
-                    RoleID = request.RoleID
+                    RoleID = request.RoleID,
+                    status = 1,
                 };
                 await contextDB.Admin.AddAsync(admin);
                 await contextDB.SaveChangesAsync();
@@ -306,13 +307,24 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị các tài khoản
         public async Task<PageResult<AdminDTOs>> GetAlls(int pageSize, int pageNumber)
         {
-            var list = contextDB.Admin.Select(x => converters.EntityToDTOs(x));
+            var list = contextDB.Admin.Where(y=>y.status==1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData<AdminDTOs>(list, pageSize, pageNumber);
             return result;
         }
+
+        public async Task<PageResult<AdminDTOs>> XoaTaiKhoan(int id)
+        {
+            var acc = contextDB.Admin.SingleOrDefault(x => x.id == id);
+            acc.status = 2;
+            contextDB.Update(acc);
+            await contextDB.SaveChangesAsync();
+            var result = contextDB.Admin.Where(x=>x.id==id&&x.status==2).Select(y=>converters.EntityToDTOs(y));
+            return  Pagintation.GetPagedData<AdminDTOs>(result,0,0);
+        }
+
         public IQueryable<AdminDTOs> GetAdminTheoId(int id)
         {
-            return contextDB.Admin.Where(x => x.id == id).Select(y => converters.EntityToDTOs(y));
+            return contextDB.Admin.Where(x => x.id == id&&x.status==1).Select(y => converters.EntityToDTOs(y));
         }
         #endregion
         #region Xử lý việc thay đổi quyền hạn của người dùng và xoá tài khoản chưa active
@@ -325,7 +337,8 @@ namespace DatBanNhaHang.Services.Implements
                 DateTime? next15P = t.ngayTao + TimeSpan.FromMinutes(15);
                 if (t.ngayTao < DateTime.Now)
                 {
-                    contextDB.Remove(t);
+                    t.status = 2;
+                    contextDB.Update(t);
                 }
             }
             contextDB.SaveChanges();
@@ -367,12 +380,13 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Định dạng Email không hợp lệ", null);
             }
-            admin.Email = request.Email == null ? admin.Email : request.Email;
-            admin.QueQuan = request.QueQuan == null ? admin.QueQuan : request.QueQuan;
-            admin.SDT = request.SDT == null ? admin.SDT : request.SDT;
-            admin.Name = request.Name == null ? admin.Name : request.Name;
-            admin.ngaysinh = request.ngaysinh == null ? admin.ngaysinh : request.ngaysinh;
-            admin.Gender = request.gioiTinh == null ? admin.Gender : request.gioiTinh;
+
+            admin.Email = request.Email ?? admin.Email; //: request.Email;
+            admin.QueQuan = request.QueQuan ??admin.QueQuan ;//: request.QueQuan;
+            admin.SDT = request.SDT ?? admin.SDT; ///: request.SDT;
+            admin.Name = request.Name  ?? admin.Name; //: request.Name;
+            admin.ngaysinh = request.ngaysinh ?? admin.ngaysinh; //: request.ngaysinh;
+            admin.Gender = request.gioiTinh?? admin.Gender;// : request.gioiTinh;
             contextDB.Update(admin);
             await contextDB.SaveChangesAsync();
             return responseObject.ResponseSuccess("đổi thông tin thành công", converters.EntityToDTOs(admin));

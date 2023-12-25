@@ -22,7 +22,8 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<NhanXetDTOs>> HienThiNhanXet(int nhanxetid, int pageSize, int pageNumber)
         {
-            var lstnx = nhanxetid != 0 ? contextDB.NhanXet.Where(y => y.id == nhanxetid).Select(x => converters.EntityToDTOs(x)) : contextDB.NhanXet.Select(x => converters.EntityToDTOs(x));
+            var lstnx = nhanxetid != 0 ? contextDB.NhanXet.Where(y => y.id == nhanxetid&& y.status == 1).Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.NhanXet.Where(y=> y.status == 1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstnx, pageSize, pageNumber);
             return result;
         }
@@ -66,6 +67,7 @@ namespace DatBanNhaHang.Services.Implements
                 ChuThich = request.ChuThich,
                 HoTen = request.HoTen,
                 NoiDung = request.NoiDung,
+                status = 1
             };
             await contextDB.AddAsync(newNhanXet);
             await contextDB.SaveChangesAsync();
@@ -95,7 +97,8 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại nhận xét này", null);
             }
-            contextDB.Remove(nhanxet);
+            nhanxet.status = 2;
+            contextDB.Update(nhanxet);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Xoá nhận xét thành công", converters.EntityToDTOs(nhanxet));
         }

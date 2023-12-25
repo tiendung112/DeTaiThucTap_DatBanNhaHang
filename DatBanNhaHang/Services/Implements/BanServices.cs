@@ -23,8 +23,8 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị và tìm kiếm bàn
         public async Task<PageResult<BanDTOs>> HienThiBan(int id, int pageSize, int pageNumber)
         {
-            var ban = id == 0 ? contextDB.Ban.Select(x => converters.EntityToDTOs(x))
-                : contextDB.Ban.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
+            var ban = id == 0 ? contextDB.Ban.Where(y=>y.status==1).Select(x => converters.EntityToDTOs(x))
+                : contextDB.Ban.Where(y => y.id == id&& y.status==1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(ban, pageSize, pageNumber);
             return result;
         }
@@ -40,10 +40,6 @@ namespace DatBanNhaHang.Services.Implements
             var lst = contextDB.Ban.OrderBy(y => y.ViTri).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
             return result;
-        }
-        public async Task<PageResult<BanDTOs>> TimkiemBan(string tenBan, int pageSize, int pageNumber)
-        {
-            throw new NotImplementedException();
         }
         #endregion
 
@@ -68,9 +64,8 @@ namespace DatBanNhaHang.Services.Implements
                 LoaiBanID = request.LoaiBanID,
                 SoNguoiToiDa = request.SoNguoiToiDa,
                 Mota = request.Mota,
-                TinhTrangHienTai = request.TinhTrangHienTai,
-
-
+                //TinhTrangHienTai = request.TinhTrangHienTai
+                status = 1,
             };
             contextDB.Ban.Add(newBan);
             await contextDB.SaveChangesAsync();
@@ -108,7 +103,7 @@ namespace DatBanNhaHang.Services.Implements
             ban.SoNguoiToiDa = !request.SoNguoiToiDa.HasValue ? ban.SoNguoiToiDa : request.SoNguoiToiDa;
             ban.GiaTien = request.GiaTien.HasValue ? request.GiaTien : ban.GiaTien;
             ban.LoaiBanID = !request.LoaiBanID.HasValue ? ban.LoaiBanID : request.LoaiBanID;
-            ban.TinhTrangHienTai = request.TinhTrangHienTai == null ? ban.TinhTrangHienTai : request.TinhTrangHienTai;
+            //ban.TinhTrangHienTai = request.TinhTrangHienTai == null ? ban.TinhTrangHienTai : request.TinhTrangHienTai;
             ban.Mota = request.Mota == null ? ban.Mota : request.Mota;
             int imageSize = 4344 * 5792;
             if (request.HinhAnhBanURL != null)
@@ -135,14 +130,21 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có bàn cần Xoá", null);
             }
+            ban.status = 2;
             var lstHD = contextDB.HoaDon.Where(x => x.BanID == ban.id).ToList();
-            foreach (var x in lstHD)
+            if(lstHD.Count > 0)
             {
-                var lstCTHD = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == x.id);
-                contextDB.ChiTietHoaDon.RemoveRange(lstCTHD);
+                foreach (var x in lstHD)
+                {
+                    x.status = 2;
+                    /*var lstCTHD = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == x.id);
+                    contextDB.ChiTietHoaDon.RemoveRange(lstCTHD);*/
+                }
+                contextDB.HoaDon.UpdateRange(lstHD);
+
             }
-            contextDB.HoaDon.RemoveRange(lstHD);
-            contextDB.Ban.Remove(ban);
+            contextDB.Ban.Update(ban);
+            await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Xoá bàn thành công", converters.EntityToDTOs(ban));
         }
         #endregion

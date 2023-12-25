@@ -24,8 +24,8 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị  và tìm kiếm danh sách đầu bếp
         public async Task<PageResult<DauBepDTOs>> GetDSDauBep(int id, int pageSize, int pageNumber)
         {
-            var lstDauBep = id == 0 ? context.DauBep.Select(x => converters.EntityToDTOs(x))
-                : context.DauBep.Where(y => y.id == id).Select(z => converters.EntityToDTOs(z));
+            var lstDauBep = id == 0 ? context.DauBep.Where(y => y.status == 1).Select(x => converters.EntityToDTOs(x))
+                : context.DauBep.Where(y => y.id == id && y.status == 1).Select(z => converters.EntityToDTOs(z));
             var result = Pagintation.GetPagedData(lstDauBep, pageSize, pageNumber);
             return result;
         }
@@ -39,7 +39,6 @@ namespace DatBanNhaHang.Services.Implements
                 || string.IsNullOrWhiteSpace(request.MoTa))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Bạn cần truyền vào đầy đủ thông tin", null);
-
             }
             else
             {
@@ -51,6 +50,7 @@ namespace DatBanNhaHang.Services.Implements
                     db.ngaySinh = request.ngaySinh;
                     db.SDT = request.SDT;
                     db.MoTa = request.MoTa;
+                    db.status = 1;
                     // db.AnhDauBepURl = request.AnhDauBepURl;
                     if (request.AnhDauBepURl != null)
                     {
@@ -64,12 +64,9 @@ namespace DatBanNhaHang.Services.Implements
                             db.AnhDauBepURl = avatarFile == "" ? "null" : avatarFile;
                         }
                     }
-
                     await contextDB.DauBep.AddAsync(db);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Thêm Đầu Bếp  thành công", converters.EntityToDTOs(db));
-
-
                 }
                 catch (Exception ex)
                 {
@@ -107,14 +104,11 @@ namespace DatBanNhaHang.Services.Implements
                     contextDB.DauBep.Update(daubep);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Sửa Đầu Bếp thành công", converters.EntityToDTOs(daubep));
-
-
                 }
                 catch (Exception ex)
                 {
                     return response.ResponseError(StatusCodes.Status500InternalServerError, ex.Message, null);
                 }
-
             }
         }
         public async Task<ResponseObject<DauBepDTOs>> XoaDauBep(int id)
@@ -122,13 +116,14 @@ namespace DatBanNhaHang.Services.Implements
             var daubep = context.DauBep.FirstOrDefault(x => x.id == id);
             if (daubep != null)
             {
-                context.DauBep.Remove(daubep);
+                daubep.status = 2;
+                context.DauBep.Update(daubep);
                 await context.SaveChangesAsync();
                 return response.ResponseSuccess("Xoá Đầu Bếp Thành công", converters.EntityToDTOs(daubep));
             }
             else
             {
-                return response.ResponseError(403, "không tồn tại đầu bếp này", null);
+                return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại đầu bếp này", null);
             }
         }
         #endregion

@@ -8,11 +8,11 @@ namespace DatBanNhaHang.Handler.Email
         private static readonly AppDbContext context = new AppDbContext();
         public static string GenerateNotificationBillEmail(HoaDon hoadon, string message = "")
         {
-            var khachhang = context.KhachHang.SingleOrDefault(x => x.id == hoadon.KhachHangID);
+            var khachhang = context.User.SingleOrDefault(x => x.id == hoadon.userId);
             string htmlContent = $@"
             <html>
             <head>
-                <style>
+                <style> 
                     body {{
                         font-family: Arial, sans-serif;
                     }}
@@ -51,8 +51,8 @@ namespace DatBanNhaHang.Handler.Email
                 <h2> Bàn : {hoadon.BanID} </h2>
                 <h2> Thời gian đặt  : {hoadon.ThoiGianDat} </h2>
                 <h2> Thời gian dự kiến bắt đầu : {hoadon.ThoiGianDuKienBatDau} </h2>
-                <h2> Tên khách hàng {khachhang.HoTen}  </h2>
-                <h2> Ngày sinh {khachhang.NgaySinh} </h2>
+                <h2> Tên khách hàng {khachhang.Name}  </h2>
+                <h2> Ngày sinh {khachhang.DateOfBirth} </h2>
                 
                 ";
             htmlContent += @"<h2>Chi tiết món ăn đã đặt</h2>
@@ -64,21 +64,21 @@ namespace DatBanNhaHang.Handler.Email
                         
                         <th>Giá</th>
                     </tr>";
-            int rowIndex = 1;
-            var orderdetail = context.ChiTietHoaDon.Where(x => x.HoaDonID == hoadon.id).ToList();
-            foreach (var item in orderdetail)
-            {
-                var sp = context.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
-                htmlContent += $@"
-                    <tr>
-                        <td>{rowIndex}</td>
-                        <td>{sp.TenMon}</td>
-                        <td>{item.SoLuong}</td>
+            //int rowIndex = 1;
+            //var orderdetail = context.ChiTietHoaDon.Where(x => x.HoaDonID == hoadon.id).ToList();
+            //foreach (var item in orderdetail)
+            //{
+            //    var sp = context.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+            //    htmlContent += $@"
+            //        <tr>
+            //            //<td>{rowIndex}</td>
+            //            //<td>{sp.TenMon}</td>
+            //            <td>{item.SoLuong}</td>
                         
-                        <td>{item.ThanhTien}</td>
-                    </tr>";
-                rowIndex++;
-            }
+            //            <td>{item.ThanhTien}</td>
+            //        </tr>";
+            //    //rowIndex++;
+            //}
 
             htmlContent += $@"
                        <tr>

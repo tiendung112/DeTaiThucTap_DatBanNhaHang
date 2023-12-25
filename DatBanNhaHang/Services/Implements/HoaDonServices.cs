@@ -92,43 +92,56 @@ namespace DatBanNhaHang.Services.Implements
             //                $"{newHoaDon.ThoiGianTao.Month}" +
             //                $"{newHoaDon.ThoiGianTao.Day}" +
             //                $"_{String.Format("{0:000}", lstHoaDon.Count() + 1)}";
-            string maGiaoDich = nt.ToString("yyyyMMdd") + $"T{ct.Count() + 1}";
+            string maGiaoDich =nt.ToString("dd/MM/yyyy") + $"T{ct.Count() + 1}";
             return maGiaoDich;
         }
+
         public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonUser(int userid, Request_ThemHoaDon_User request)
         {
-            if (await KiemTraBanTrong(request.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
+            if (!contextDB.Ban.Any(x => x.id == request.BanID))
             {
-                var kh = contextDB.KhachHang.SingleOrDefault(x => x.userID == userid);
-
-                if (!contextDB.Ban.Any(x => x.id == request.BanID))
+                return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại bàn này", null);
+            }
+            else
+            {
+                if (await KiemTraBanTrong(request.BanID, request.ThoiGianDuKienBatDau,
+                        request.ThoiGianDuKienBatDau.AddHours(1)) == true)
                 {
-                    return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại bàn này", null);
+                    var kh = contextDB.User.SingleOrDefault(x => x.id == userid);
+
+                    HoaDon newHoaDon = new HoaDon()
+                    {
+                        BanID = request.BanID,
+                        ThoiGianDat = DateTime.Now,
+                        TenHoaDon = $"Đặt Bàn {contextDB.Ban.SingleOrDefault(x => x.id == request.BanID).SoBan}" +
+                                    $" Thời Gian : {DateTime.Now.ToString("dd/MM/yyyy)")}",
+                        MaGiaoDich = TaoMaGiaoDich(request.ThoiGianDuKienBatDau,
+                            contextDB.HoaDon.Where(x => x.ThoiGianDat.Value.Date == DateTime.Now.Date)
+                                .ToList()),
+                        userId = kh.id,
+                        ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau,
+                        ThoiGianBatDauThucTe = request.ThoiGianDuKienBatDau,
+                        ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1),
+                        GhiChu = request.GhiChu,
+                        TrangThaiHoaDonID = 1,
+                        TongTien = contextDB.Ban.SingleOrDefault(x => x.id == request.BanID).GiaTien,
+                        status = 1,
+                    };
+                    await contextDB.AddAsync(newHoaDon);
+                    await contextDB.SaveChangesAsync();
+                    return response.ResponseSuccess("Bạn đã đặt bàn thành công", converters.EntityToDTOs(newHoaDon));
                 }
-                HoaDon newHoaDon = new HoaDon()
-                {
-                    BanID = request.BanID,
-                    ThoiGianDat = DateTime.Now,
-                    TenHoaDon = $"dat ban {contextDB.Ban.SingleOrDefault(x => x.id == request.BanID).SoBan} ngay{DateTime.Now}",
-                    MaGiaoDich = TaoMaGiaoDich(request.ThoiGianDuKienBatDau, contextDB.HoaDon.Where(x => x.ThoiGianDat.Value.Date == DateTime.Now.Date).ToList()),
-                    KhachHangID = kh.id,
-                    ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau,
-                    ThoiGianBatDauThucTe=request.ThoiGianDuKienBatDau,
-                    ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1),
-                    GhiChu = request.GhiChu,
-                    TrangThaiHoaDonID = 1,
-                };
-                await contextDB.AddAsync(newHoaDon);
-                await contextDB.SaveChangesAsync();
-
-                List<ChiTietHoaDon> chitiet = await ThemChiTietHoaDon(newHoaDon.id, request.ChiTietHoaDonDTOs.ToList());
-                newHoaDon.chiTietHoaDon = chitiet;
-                newHoaDon.TongTien = chitiet.Sum(x => x.ThanhTien);
-                contextDB.Update(newHoaDon);
-                await contextDB.SaveChangesAsync();
+                else
+                    return response.ResponseError(StatusCodes.Status404NotFound, "bàn không trống", null);
+            }
+            /* List<ChiTietHoaDon> chitiet = await ThemChiTietHoaDon(newHoaDon.id, request.ChiTietHoaDonDTOs.ToList());
+             newHoaDon.chiTietHoaDon = chitiet;
+             newHoaDon.TongTien = chitiet.Sum(x => x.ThanhTien);
+             contextDB.Update(newHoaDon);
+             await contextDB.SaveChangesAsync();*/
 
                 //xoá thông tin xác nhận email
-                var confrim = contextDB.XacNhanEmail.Where(x => x.UserID == userid);
+                /*var confrim = contextDB.XacNhanEmail.Where(x => x.UserID == userid);
                 contextDB.XacNhanEmail.RemoveRange(confrim);
                 await contextDB.SaveChangesAsync();
 
@@ -150,11 +163,10 @@ namespace DatBanNhaHang.Services.Implements
                 return response.ResponseSuccess
                     ("Bạn đã gửi yêu cầu đặt bàn ," +
                     $" vui lòng nhập mã xác nhận đã được gửi về email {contextDB.User.SingleOrDefault(x => x.id == kh.userID).Email}"
-                    , converters.EntityToDTOs(newHoaDon));
-            }
-            return response.ResponseError(StatusCodes.Status404NotFound, "bàn không trống", null);
+                    , converters.EntityToDTOs(newHoaDon));*/
+                
         }
-        private async Task<List<ChiTietHoaDon>> ThemChiTietHoaDon(int hoadonId, List<Request_ThemChiTietHoaDon> cthd)
+      /*  private async Task<List<ChiTietHoaDon>> ThemChiTietHoaDon(int hoadonId, List<Request_ThemChiTietHoaDon> cthd)
         {
             List<ChiTietHoaDon> chiTietHoaDon = new List<ChiTietHoaDon>();
             foreach (var item in cthd)
@@ -173,8 +185,8 @@ namespace DatBanNhaHang.Services.Implements
                 chiTietHoaDon.Add(newCT);
             }
             return chiTietHoaDon;
-        }
-        public async Task<string> XacNhanOrder(int id, int hoadonid, Request_ValidateRegister request)
+        }*/
+       /* public async Task<string> XacNhanOrder(int id, int hoadonid, Request_ValidateRegister request)
         {
             XacNhanEmail confirmEmail = await contextDB.XacNhanEmail
                 .Where(x => x.MaXacNhan.Equals(request.MaXacNhan))
@@ -205,117 +217,128 @@ namespace DatBanNhaHang.Services.Implements
             }
             return "huỷ bàn thất bại";
 
-        }
+        }*/
 
-        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDon(int userid, int hoadonid, int status, Request_SuaHoaDon_User request)
+        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDon(int userid, int hoadonid, Request_SuaHoaDon_User request)
         {
             var hoaDon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoadonid);
             if (hoaDon == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
             }
-            var khachHang = contextDB.KhachHang.SingleOrDefault(x => x.userID == userid);
-            if (khachHang.id == hoaDon.KhachHangID)
+
+            var kh = contextDB.User.SingleOrDefault(x => x.id == userid);
+            if (kh.id == hoaDon.userId)
             {
-                if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
+                if (await KiemTraBanTrong(request.BanID, request.ThoiGianDuKienBatDau,
+                        request.ThoiGianDuKienBatDau.AddHours(1)) == true)
                 {
-                    hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau;
-                    hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1);
-                    hoaDon.GhiChu = request.GhiChu;
+                    hoaDon.BanID = request.BanID;
+                    hoaDon.GhiChu =request.GhiChu?? hoaDon.GhiChu ;
                 }
-                if (hoaDon.TrangThaiHoaDonID == 2)
-                {
-                    return response.ResponseError(StatusCodes.Status404NotFound, "đơn đặt hàng đã được xác nhận không thể thay đổi ", converters.EntityToDTOs(hoaDon));
-                }
-                var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoadonid);
-                if (status == 0) //status =0 , thêm món
-                {
-                    foreach (var item in request.chitiet.ToList())
-                    {
-                        var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
-                        ChiTietHoaDon ct = new ChiTietHoaDon()
-                        {
-                            HoaDonID = hoadonid,
-                            MonAnID = item.MonAnID,
-                            SoLuong = item.SoLuong,
-
-                            ThanhTien = ma.GiaTien * item.SoLuong,
-                        };
-                        contextDB.ChiTietHoaDon.Add(ct);
-                        await contextDB.SaveChangesAsync();
-                    }
-                }
-                else if (status == 1) //bớt món
-                {
-                    // Xóa chi tiết hóa đơn không xuất hiện trong request
-                    var chiTietRequestIds = request.chitiet.Select(ct => ct.MonAnID).ToList();
-                    var chiTietToRemove = lstCTHd.Where(ct => !chiTietRequestIds.Contains(ct.MonAnID));
-                    contextDB.ChiTietHoaDon.RemoveRange(chiTietToRemove);
-
-                    // Cập nhật chi tiết hóa đơn còn lại
-                    foreach (var item in request.chitiet)
-                    {
-                        var chiTietExisting = lstCTHd.FirstOrDefault(ct => ct.MonAnID == item.MonAnID);
-                        if (chiTietExisting != null)
-                        {
-                            var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
-                            chiTietExisting.SoLuong = item.SoLuong;
-                            chiTietExisting.ThanhTien = ma.GiaTien * item.SoLuong;
-                            contextDB.ChiTietHoaDon.Update(chiTietExisting);
-                        }
-                    }
-                    await contextDB.SaveChangesAsync();
-                }
-                else //thêm lại món
-                {
-                    contextDB.ChiTietHoaDon.RemoveRange(lstCTHd);
-                    await contextDB.SaveChangesAsync();
-                    foreach (var item in request.chitiet.ToList())
-                    {
-                        var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
-                        ChiTietHoaDon ct = new ChiTietHoaDon()
-                        {
-                            HoaDonID = hoadonid,
-                            MonAnID = item.MonAnID,
-                            SoLuong = item.SoLuong,
-
-                            ThanhTien = ma.GiaTien * item.SoLuong,
-                        };
-                        contextDB.ChiTietHoaDon.Add(ct);
-                        await contextDB.SaveChangesAsync();
-                    }
-                }
-
-                var cthd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoadonid);
-                hoaDon.TongTien = cthd.Sum(x => x.ThanhTien);
-                contextDB.HoaDon.Update(hoaDon);
+                contextDB.Update(hoaDon);
                 await contextDB.SaveChangesAsync();
-                //xoá thông tin xác nhận email
-                var confrim = contextDB.XacNhanEmail.Where(x => x.UserID == userid);
-                contextDB.XacNhanEmail.RemoveRange(confrim);
-                await contextDB.SaveChangesAsync();
-
-                XacNhanEmail confrimEmail = new XacNhanEmail()
-                {
-                    UserID = userid,
-                    DaXacNhan = false,
-                    ThoiGianHetHan = DateTime.Now.AddMinutes(30),
-                    MaXacNhan = GenerateCodeActive().ToString(),
-                };
-                await contextDB.XacNhanEmail.AddAsync(confrimEmail);
-                await contextDB.SaveChangesAsync();
-                string mss = SendEmail(new EmailTo
-                {
-                    Mail = contextDB.User.SingleOrDefault(x => x.id == khachHang.userID).Email,
-                    Subject = "Nhận mã xác nhận để xác nhận đặt bàn: ",
-                    Content = $"Mã kích hoạt của bạn là: {confrimEmail.MaXacNhan}, mã này sẽ hết hạn sau 30 phút"
-                });
-                return response.ResponseSuccess
-                    ("Bạn đã gửi yêu cầu đặt bàn ," +
-                    $" vui lòng nhập mã xác nhận đã được gửi về email {contextDB.User.SingleOrDefault(x => x.id == khachHang.userID).Email}"
-                    , converters.EntityToDTOs(hoaDon));
+                return response.ResponseSuccess("Sửa đơn đặt bàn thành công", converters.EntityToDTOs(hoaDon));
             }
             return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
+            /*if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
+            {
+                hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau;
+                hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1);
+                hoaDon.GhiChu = request.GhiChu;
+            }
+            if (hoaDon.TrangThaiHoaDonID == 2)
+            {
+                return response.ResponseError(StatusCodes.Status404NotFound, "đơn đặt hàng đã được xác nhận không thể thay đổi ", converters.EntityToDTOs(hoaDon));
+            }
+            var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoadonid);
+            if (status == 0) //status =0 , thêm món
+            {
+                foreach (var item in request.chitiet.ToList())
+                {
+                    var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+                    ChiTietHoaDon ct = new ChiTietHoaDon()
+                    {
+                        HoaDonID = hoadonid,
+                        MonAnID = item.MonAnID,
+                        SoLuong = item.SoLuong,
+
+                        ThanhTien = ma.GiaTien * item.SoLuong,
+                    };
+                    contextDB.ChiTietHoaDon.Add(ct);
+                    await contextDB.SaveChangesAsync();
+                }
+            }
+            else if (status == 1) //bớt món
+            {
+                // Xóa chi tiết hóa đơn không xuất hiện trong request
+                var chiTietRequestIds = request.chitiet.Select(ct => ct.MonAnID).ToList();
+                var chiTietToRemove = lstCTHd.Where(ct => !chiTietRequestIds.Contains(ct.MonAnID));
+                contextDB.ChiTietHoaDon.RemoveRange(chiTietToRemove);
+
+                // Cập nhật chi tiết hóa đơn còn lại
+                foreach (var item in request.chitiet)
+                {
+                    var chiTietExisting = lstCTHd.FirstOrDefault(ct => ct.MonAnID == item.MonAnID);
+                    if (chiTietExisting != null)
+                    {
+                        var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+                        chiTietExisting.SoLuong = item.SoLuong;
+                        chiTietExisting.ThanhTien = ma.GiaTien * item.SoLuong;
+                        contextDB.ChiTietHoaDon.Update(chiTietExisting);
+                    }
+                }
+                await contextDB.SaveChangesAsync();
+            }
+            else //thêm lại món
+            {
+                contextDB.ChiTietHoaDon.RemoveRange(lstCTHd);
+                await contextDB.SaveChangesAsync();
+                foreach (var item in request.chitiet.ToList())
+                {
+                    var ma = contextDB.MonAn.SingleOrDefault(x => x.id == item.MonAnID);
+                    ChiTietHoaDon ct = new ChiTietHoaDon()
+                    {
+                        HoaDonID = hoadonid,
+                        MonAnID = item.MonAnID,
+                        SoLuong = item.SoLuong,
+
+                        ThanhTien = ma.GiaTien * item.SoLuong,
+                    };
+                    contextDB.ChiTietHoaDon.Add(ct);
+                    await contextDB.SaveChangesAsync();
+                }
+            }
+
+            var cthd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoadonid);
+            hoaDon.TongTien = cthd.Sum(x => x.ThanhTien);
+            contextDB.HoaDon.Update(hoaDon);
+            await contextDB.SaveChangesAsync();*/
+            //xoá thông tin xác nhận email
+            /*var confrim = contextDB.XacNhanEmail.Where(x => x.UserID == userid);
+            contextDB.XacNhanEmail.RemoveRange(confrim);
+            await contextDB.SaveChangesAsync();
+
+            XacNhanEmail confrimEmail = new XacNhanEmail()
+            {
+                UserID = userid,
+                DaXacNhan = false,
+                ThoiGianHetHan = DateTime.Now.AddMinutes(30),
+                MaXacNhan = GenerateCodeActive().ToString(),
+            };
+            await contextDB.XacNhanEmail.AddAsync(confrimEmail);
+            await contextDB.SaveChangesAsync();
+            string mss = SendEmail(new EmailTo
+            {
+                Mail = contextDB.User.SingleOrDefault(x => x.id == khachHang.userID).Email,
+                Subject = "Nhận mã xác nhận để xác nhận đặt bàn: ",
+                Content = $"Mã kích hoạt của bạn là: {confrimEmail.MaXacNhan}, mã này sẽ hết hạn sau 30 phút"
+            });
+            return response.ResponseSuccess
+                ("Bạn đã gửi yêu cầu đặt bàn ," +
+                $" vui lòng nhập mã xác nhận đã được gửi về email {contextDB.User.SingleOrDefault(x => x.id == khachHang.userID).Email}"
+                , converters.EntityToDTOs(hoaDon));*/
+
         }
         public async Task<ResponseObject<HoaDonDTO>> HuyHoaDon(int hoadonid, int userid)
         {
@@ -324,18 +347,23 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
             }
-            var khachHang = contextDB.KhachHang.SingleOrDefault(x => x.userID == userid);
-            if (khachHang.id == hoaDon.KhachHangID)
+            var khachHang = contextDB.User.SingleOrDefault(x => x.id == userid);
+            if (khachHang.id == hoaDon.userId)
             {
                 if (hoaDon.TrangThaiHoaDonID == 3)
                 {
-                    return response.ResponseError(StatusCodes.Status404NotFound, "đơn đặt hàng này đã hoàn thành ", null);
+                    return response.ResponseError(StatusCodes.Status410Gone, "đơn đặt bàn này đã hoàn thành ", null);
+                }
+                else if (hoaDon.TrangThaiHoaDonID==1)
+                {
+                    hoaDon.status = 2;
+                    return response.ResponseSuccess("Huỷ đơn đặt bàn thành công",converters.EntityToDTOs(hoaDon));
                 }
                 //xoá thông tin xác nhận email
                 var confrim = contextDB.XacNhanEmail.Where(x => x.UserID == userid);
                 contextDB.XacNhanEmail.RemoveRange(confrim);
                 await contextDB.SaveChangesAsync();
-
+                
                 XacNhanEmail confrimEmail = new XacNhanEmail()
                 {
                     UserID = userid,
@@ -347,15 +375,14 @@ namespace DatBanNhaHang.Services.Implements
                 await contextDB.SaveChangesAsync();
                 string mss = SendEmail(new EmailTo
                 {
-                    Mail = contextDB.User.SingleOrDefault(x => x.id == khachHang.userID).Email,
+                    Mail = contextDB.User.SingleOrDefault(x => x.id == khachHang.id).Email,
                     Subject = "Nhận mã xác nhận để xác nhận huỷ đặt bàn: ",
                     Content = $"Mã kích hoạt của bạn là: {confrimEmail.MaXacNhan}, mã này sẽ hết hạn sau 30 phút"
                 });
                 return response.ResponseSuccess
                     ("Bạn đã gửi yêu cầu huỷ đặt bàn ," +
-                    $" vui lòng nhập mã xác nhận đã được gửi về email {contextDB.User.SingleOrDefault(x => x.id == khachHang.userID).Email}"
+                    $" vui lòng nhập mã xác nhận đã được gửi về email {contextDB.User.SingleOrDefault(x => x.id == khachHang.id).Email}"
                     , converters.EntityToDTOs(hoaDon));
-
             }
             return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
         }
@@ -375,48 +402,65 @@ namespace DatBanNhaHang.Services.Implements
             }
             if (confirmEmail.UserID == id)
             {
-                var kh = contextDB.KhachHang.SingleOrDefault(x => x.userID == confirmEmail.UserID);
+                var kh = contextDB.User.SingleOrDefault(x => x.id == confirmEmail.UserID);
                 HoaDon hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoadonid);
                 hoadon.ThoiGianHuyDat = DateTime.Now;
                 hoadon.ThoiGianDuKienBatDau = null;
                 hoadon.ThoiGianDuKienKetThuc = null;
+                hoadon.status = 2;
                 contextDB.XacNhanEmail.Remove(confirmEmail);
                 contextDB.HoaDon.Update(hoadon);
                 await contextDB.SaveChangesAsync();
                 string mss = SendEmail(new EmailTo
                 {
-                    Mail = contextDB.User.SingleOrDefault(x => x.id == kh.userID).Email,
+                    Mail = contextDB.User.SingleOrDefault(x => x.id == kh.id).Email,
                     Subject = $"Đã huỷ đơn hàng {hoadon.id}",
                     Content = $"Bạn đã huỷ đơn hàng {hoadon.BanID}"
                 });
                 return "Xác nhận huỷ bàn thành công" + hoadon.id;
             }
             return "Xác nhận huỷ bàn thất bại";
-
         }
         #endregion
         #region hoá đơn by admin
         //lưu thông tin khách hàng đến và đi giờ nào cũng như thanh toán 
         public async Task<ResponseObject<HoaDonDTO>> CapNhatThongTinHoaDon(int id )
         {
-            
             var hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == id);
             if (hoadon == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại hoá đơn này", null);
             }
-            hoadon.ThoiGianKetThucThucTe = DateTime.Now;
-            hoadon.TrangThaiHoaDonID = 3;
-            contextDB.Update(hoadon);
-            await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("Cập nhật thông tin hoá đơn thành công", converters.EntityToDTOs(hoadon));
-
+            if (hoadon.TrangThaiHoaDonID == 1)
+            {
+                hoadon.TrangThaiHoaDonID = 2;
+                contextDB.Update(hoadon);
+                await contextDB.SaveChangesAsync();
+                string mss = SendEmail(new EmailTo
+                {
+                    Mail = contextDB.User.SingleOrDefault(x => x.id == hoadon.userId).Email,
+                    Subject = "Đặt bàn thành công tại nhà hàng ",
+                    
+                    Content = Handler.Email.HoaDonMail.GenerateNotificationBillEmail(hoadon, $"Bạn đã đặt bàn thành công bàn số {hoadon.BanID}")
+                });
+                return response.ResponseSuccess("Xác nhận đơn đặt bàn thành công",
+                    converters.EntityToDTOs(hoadon));
+            }
+            else 
+            {
+                hoadon.ThoiGianKetThucThucTe = DateTime.Now;
+                hoadon.TrangThaiHoaDonID = 3;
+                contextDB.Update(hoadon);
+                await contextDB.SaveChangesAsync();
+                return response.ResponseSuccess("Hoàn thành đơn đặt bàn",
+                    converters.EntityToDTOs(hoadon));
+            }
         }
-        public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonAdmin(Request_ThemHoaDon_Admin request)
+        /*public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonAdmin(Request_ThemHoaDon_Admin request)
         {
             if (await KiemTraBanTrong(request.BanID, DateTime.Now, DateTime.Now.AddHours(1)) == true)
             {
-                var kh = contextDB.KhachHang.SingleOrDefault(x => x.id == request.Khid);
+                var kh = contextDB.User.SingleOrDefault(x => x.id == request.Khid);
 
                 if (!contextDB.Ban.Any(x => x.id == request.BanID))
                 {
@@ -430,9 +474,9 @@ namespace DatBanNhaHang.Services.Implements
                 {
                     BanID = request.BanID,
                     ThoiGianDat = DateTime.Now,
-                    TenHoaDon = $"dat ban {contextDB.Ban.SingleOrDefault(x => x.id == request.BanID).SoBan} ngay{DateTime.Now}",
+                    TenHoaDon = $"Đặt Bàn {contextDB.Ban.SingleOrDefault(x => x.id == request.BanID).SoBan} ngay{DateTime.Now}",
                     MaGiaoDich = TaoMaGiaoDich(DateTime.Now, contextDB.HoaDon.Where(x => x.ThoiGianDat.Value.Date == DateTime.Now.Date).ToList()),
-                    KhachHangID = kh.id,
+                    userId = kh.id,
                     ThoiGianDuKienBatDau = DateTime.Now,
                     ThoiGianBatDauThucTe = DateTime.Now,
                     ThoiGianDuKienKetThuc = DateTime.Now.AddHours(1),
@@ -442,17 +486,17 @@ namespace DatBanNhaHang.Services.Implements
                 await contextDB.AddAsync(newHoaDon);
                 await contextDB.SaveChangesAsync();
 
-                List<ChiTietHoaDon> chitiet = await ThemChiTietHoaDon(newHoaDon.id, request.ChiTietHoaDonDTOs.ToList());
-                newHoaDon.chiTietHoaDon = chitiet;
-                newHoaDon.TongTien = chitiet.Sum(x => x.ThanhTien);
-                contextDB.Update(newHoaDon);
-                await contextDB.SaveChangesAsync();
+                //List<ChiTietHoaDon> chitiet = await ThemChiTietHoaDon(newHoaDon.id, request.ChiTietHoaDonDTOs.ToList());
+                //newHoaDon.chiTietHoaDon = chitiet;
+                //newHoaDon.TongTien = chitiet.Sum(x => x.ThanhTien);
+                //contextDB.Update(newHoaDon);
+                //await contextDB.SaveChangesAsync();
 
-                return response.ResponseSuccess("thêm hoá đơn thành công", converters.EntityToDTOs(newHoaDon));
+                return response.ResponseSuccess("Đặt bàn thành công", converters.EntityToDTOs(newHoaDon));
             }
             return response.ResponseError(StatusCodes.Status404NotFound, "bàn không trống", null);
 
-        }
+        }*/
         public async Task<string> XoaTatCaHoaDonChuaDuyet()
         {
             var thoiGianHienTai = DateTime.Now;
@@ -462,9 +506,13 @@ namespace DatBanNhaHang.Services.Implements
 
             if (hoaDonsQuaHan.Any())
             {
-                contextDB.HoaDon.RemoveRange(hoaDonsQuaHan);
-
+                foreach (var hd in (hoaDonsQuaHan))
+                {
+                    hd.status = 2;
+                    //contextDB.HoaDon.RemoveRange(hoaDonsQuaHan);
+                }
             }
+            contextDB.Update(hoaDonsQuaHan);
             await contextDB.SaveChangesAsync();
             return "đã xoá tất cả hoá đơn chưa duyệt ";
         }
@@ -476,15 +524,16 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tìm thấy đơn đặt hàng này", null);
             }
-            contextDB.Remove(hoaDon);
+            hoaDon.status = 2;
+            contextDB.Update(hoaDon);
             await contextDB.SaveChangesAsync();
 
             return response.ResponseSuccess("Xoá hoá đơn thành công", converters.EntityToDTOs(hoaDon));
         }
-        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDonAdmin(int hoaDonid, int status, Request_SuaHoaDon request)
+        public async Task<ResponseObject<HoaDonDTO>> SuaHoaDonAdmin(int hoaDonid, Request_SuaHoaDon request)
         {
-            if (string.IsNullOrWhiteSpace(request.GhiChu)
-                || request.chitiet.Count() == 0)
+            if (string.IsNullOrWhiteSpace(request.GhiChu))
+                //|| request.chitiet.Count() == 0)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Chưa điền đủ thông tin ", null);
             }
@@ -495,11 +544,12 @@ namespace DatBanNhaHang.Services.Implements
             }
             if (request.ThoiGianDuKienBatDau != null && await KiemTraBanTrong(hoaDon.BanID, request.ThoiGianDuKienBatDau, request.ThoiGianDuKienBatDau.AddHours(1)) == true)
             {
-                hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau;
-                hoaDon.ThoiGianDuKienKetThuc = request.ThoiGianDuKienBatDau.AddHours(1);
-                hoaDon.GhiChu = request.GhiChu;
+                hoaDon.TrangThaiHoaDonID = 2;
+                hoaDon.ThoiGianDuKienBatDau = request.ThoiGianDuKienBatDau ==null ? hoaDon.ThoiGianDuKienBatDau: request.ThoiGianDuKienBatDau;
+                hoaDon.ThoiGianDuKienKetThuc =request.ThoiGianDuKienBatDau ==null ? hoaDon.ThoiGianDuKienKetThuc: request.ThoiGianDuKienBatDau.AddHours(1);
+                hoaDon.GhiChu = request.GhiChu ?? hoaDon.GhiChu;
             }
-            var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
+            /*var lstCTHd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
             if (status == 0) //status =0 , thêm món
             {
                 foreach (var item in request.chitiet.ToList())
@@ -557,19 +607,18 @@ namespace DatBanNhaHang.Services.Implements
                     await contextDB.SaveChangesAsync();
                 }
             }
-
             var cthd = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDonid);
-            hoaDon.TongTien = cthd.Sum(x => x.ThanhTien);
+            hoaDon.TongTien = cthd.Sum(x => x.ThanhTien);*/
             contextDB.Update(hoaDon);
             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("sửa hoá đơn thành công", converters.EntityToDTOs(hoaDon));
+            return response.ResponseSuccess("sửa đơn đặt hàng thành công", converters.EntityToDTOs(hoaDon));
         }
 
         public async Task<PageResult<HoaDonDTO>> HienThiHoaDon(int hoadonid, int pageSize, int pageNumber)
         {
             var lsthoadon = hoadonid == 0 ?
                 contextDB.HoaDon.Select(x => converters.EntityToDTOs(x))
-                : contextDB.HoaDon.Where(x => x.id == hoadonid).Select(y => converters.EntityToDTOs(y));
+                : contextDB.HoaDon.Where(x => x.id == hoadonid&& x.status==1).Select(y => converters.EntityToDTOs(y));
             var result = Pagintation.GetPagedData(lsthoadon, pageSize, pageNumber);
             return result;
         }
@@ -577,16 +626,20 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaUser(int userid, int pageSize, int pageNumber)
         {
             var user = contextDB.User.SingleOrDefault(x => x.id == userid);
-            var kh = contextDB.KhachHang.SingleOrDefault(x => x.userID == user.id);
+            if (user==null)
+            {
+                return null;
+            }
+            //var kh = contextDB.User.SingleOrDefault(x => x.id == user.id);
             var lsthoadon = contextDB.HoaDon
-                .Where(x => x.KhachHangID == kh.id)
+                .Where(x => x.userId == user.id && x.status==1)
                 .OrderByDescending(z => z.ThoiGianKetThucThucTe)
                 .Select(y => converters.EntityToDTOs(y));
             var result = Pagintation.GetPagedData(lsthoadon, pageSize, pageNumber);
             return result;
         }
 
-        public async Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaKhachHang(int khid, int pageSize, int pageNumber)
+        /*public async Task<PageResult<HoaDonDTO>> HienThiHoaDonCuaKhachHang(int khid, int pageSize, int pageNumber)
         {
             var kh = contextDB.KhachHang.SingleOrDefault(x => x.userID == khid);
             var lsthoadon = contextDB.HoaDon
@@ -595,7 +648,7 @@ namespace DatBanNhaHang.Services.Implements
                 .Select(y => converters.EntityToDTOs(y));
             var result = Pagintation.GetPagedData(lsthoadon, pageSize, pageNumber);
             return result;
-        }
+        }*/
         #endregion
     }
 }

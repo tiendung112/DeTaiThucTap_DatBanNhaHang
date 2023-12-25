@@ -11,7 +11,5 @@ namespace DatBanNhaHang.Payloads.DTOs.NhaHang
         public string? MoTa { get; set; }
         public double? GiaTien { get; set; }
         public string? AnhMonAn1URL { get; set; }
-        public string? AnhMonAn2URL { get; set; }
-        public string? AnhMonAn3URL { get; set; }
     }
 }

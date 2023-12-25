@@ -13,8 +13,8 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
             {
                 HoaDonID = hoaDon.id,
                 BanID = hoaDon.BanID,
-                KhachHangID = hoaDon.KhachHangID,
-                TenKhachHang = contextDB.KhachHang.SingleOrDefault(x => x.id == hoaDon.KhachHangID).HoTen,
+                UserID = hoaDon.userId,
+                TenKhachHang = contextDB.User.SingleOrDefault(x => x.id == hoaDon.userId).Name,
                 MaGiaoDich = hoaDon.MaGiaoDich,
                 GhiChu = hoaDon.GhiChu,
                 TenHoaDon = hoaDon.TenHoaDon,
@@ -29,7 +29,7 @@ namespace DatBanNhaHang.Payloads.Converters.NhaHang
                 : hoaDon.TrangThaiHoaDonID == 2 ? "Chưa thanh toán"
                 : "Đã thanh toán",
                 SoBan = contextDB.Ban.SingleOrDefault(x=>x.id==hoaDon.BanID).SoBan.ToString(),
-                ChiTietHoaDonDTOs = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDon.id).Select(x => converters.EntityToDTOs(x))
+                //ChiTietHoaDonDTOs = contextDB.ChiTietHoaDon.Where(x => x.HoaDonID == hoaDon.id).Select(x => converters.EntityToDTOs(x))
             };
         }
 

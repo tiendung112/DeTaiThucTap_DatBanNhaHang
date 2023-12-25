@@ -24,8 +24,8 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<PageResult<LoaiMonAnDTOs>> HienThiLoaiMonAnKemMonAn(int id, int pageSize, int pageNumber)
         {
             var lstLMA = id == 0 ?
-                 contextDB.LoaiMonAn.Select(x => converters.entityTODTOs(x))
-                 : contextDB.LoaiMonAn.Where(y => y.id == id).Select(x => converters.entityTODTOs(x));
+                 contextDB.LoaiMonAn.Where(y => y.status == 1).Select(x => converters.entityTODTOs(x))
+                 : contextDB.LoaiMonAn.Where(y => y.id == id && y.status == 1).Select(x => converters.entityTODTOs(x));
             var res = Pagintation.GetPagedData(lstLMA, pageSize, pageNumber);
             return res;
         }
@@ -34,8 +34,8 @@ namespace DatBanNhaHang.Services.Implements
         {
 
             var lstLMA = id == 0 ?
-                contextDB.LoaiMonAn.Select(x => converters.EntitySingletoDTOs(x))
-                : contextDB.LoaiMonAn.Where(y => y.id == id).Select(x => converters.EntitySingletoDTOs(x));
+                contextDB.LoaiMonAn.Where(y => y.status == 1).Select(x => converters.EntitySingletoDTOs(x))
+                : contextDB.LoaiMonAn.Where(y => y.id == id && y.status == 1).Select(x => converters.EntitySingletoDTOs(x));
             var res = Pagintation.GetPagedData(lstLMA, pageSize, pageNumber);
             return res;
         }
@@ -53,13 +53,14 @@ namespace DatBanNhaHang.Services.Implements
             LoaiMonAn nma = new LoaiMonAn
             {
                 TenLoai = request.tenLoaiMonAn,
+                status = 1
             };
             contextDB.Add(nma);
             await contextDB.SaveChangesAsync();
             return res.ResponseSuccess("Thêm loại món ăn thành công", converters.entityTODTOs(nma));
         }
         //thêm loại món ăn kèm món ăn
-        public async Task<ResponseObject<LoaiMonAnDTOs>> ThemLoaiMonAnKemMonAn(Request_ThemLoaiMonAnKemMonAn request)
+        /*public async Task<ResponseObject<LoaiMonAnDTOs>> ThemLoaiMonAnKemMonAn(Request_ThemLoaiMonAnKemMonAn request)
         {
             LoaiMonAn nma = new LoaiMonAn
             {
@@ -71,9 +72,9 @@ namespace DatBanNhaHang.Services.Implements
             contextDB.Add(nma);
             await contextDB.SaveChangesAsync();
             return res.ResponseSuccess("Thêm loại món ăn thành công", converters.entityTODTOs(nma));
-        }
+        }*/
         //thêm lst món ăn
-        public async Task<List<MonAn>> ThemLstMonAn(int loaiMonAnID, List<Request_ThemMonAn> monAn)
+        /*public async Task<List<MonAn>> ThemLstMonAn(int loaiMonAnID, List<Request_ThemMonAn> monAn)
         {
             var lstLMA = contextDB.LoaiMonAn.SingleOrDefault(x => x.id == loaiMonAnID);
             if (lstLMA == null)
@@ -107,7 +108,7 @@ namespace DatBanNhaHang.Services.Implements
 
             return lst;
 
-        }
+        }*/
         //sửa
         public async Task<ResponseObject<LoaiMonAnDTOs>> SuaLoaiMonAn(int id, Request_SuaLoaiMonAn request)
         {
@@ -127,19 +128,28 @@ namespace DatBanNhaHang.Services.Implements
         //xoá
         public async Task<ResponseObject<LoaiMonAnDTOs>> XoaLoaiMonAn(int id)
         {
-            var lstLMA = contextDB.LoaiMonAn.SingleOrDefault(x => x.id == id);
-            if (lstLMA == null)
+            var LMA = contextDB.LoaiMonAn.SingleOrDefault(x => x.id == id);
+            if (LMA == null)
             {
                 return res.ResponseError(403, "không tồn tại loại món ăn này", null);
             }
             else
             {
-                var lstMA = contextDB.MonAn.Where(x => x.LoaiMonAnID == lstLMA.id).ToList();
-                //xoá tất cả các món ăn của loại này
-                contextDB.RemoveRange(lstMA);
-                contextDB.Remove(lstLMA);
+                LMA.status = 2;
+
+                var lstMA = contextDB.MonAn.Where(x => x.LoaiMonAnID == LMA.id).ToList();
+                if(lstMA.Count > 0)
+                {
+                    foreach(var item in lstMA)
+                    {
+                        item.status = 2;
+                        //xoá tất cả các món ăn của loại này
+                        contextDB.Update(lstMA);
+                    }
+                }
+                contextDB.Update(LMA);
                 await contextDB.SaveChangesAsync();
-                return res.ResponseSuccess("đã xoá thành công loại món ăn này", converters.entityTODTOs(lstLMA));
+                return res.ResponseSuccess("đã xoá thành công loại món ăn này", converters.entityTODTOs(LMA));
             }
         }
 

@@ -1,9 +1,11 @@
-﻿namespace DatBanNhaHang.Entities.NhaHang
+﻿using DatBanNhaHang.Entities.NguoiDung;
+
+namespace DatBanNhaHang.Entities.NhaHang
 {
     public class HoaDon : BaseEntity
     {
-        public int KhachHangID { get; set; }
-        public KhachHang? KhachHang { get; set; }
+        public int userId { get; set; }
+        public User? KhachHang { get; set; }
         public int? BanID { get; set; }
         public Ban? Ban { get; set; }
         public int? TrangThaiHoaDonID { get; set; }
@@ -20,7 +22,5 @@
         public DateTime? ThoiGianHuyDat { get; set; } // Thời gian hủy đặt bàn (nullable)
         public string? GhiChu { get; set; }
         public double? TongTien { get; set; }
-
-        public IList<ChiTietHoaDon>? chiTietHoaDon { get; set; }
     }
 }

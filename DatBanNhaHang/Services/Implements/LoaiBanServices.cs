@@ -23,19 +23,19 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<PageResult<SingleLoaiBanDTOs>> HienThiLoaiBan(int id, int pageSize, int pageNumber)
         {
             var lst = id == 0 ?
-                contextDB.LoaiBan.Select(x => converters.EntitySingleLoaiBanToDTOs(x))
-                : contextDB.LoaiBan.Where(y => y.id == id).Select(x => converters.EntitySingleLoaiBanToDTOs(x));
+                contextDB.LoaiBan.Where(y=>y.status==1).Select(x => converters.EntitySingleLoaiBanToDTOs(x))
+                : contextDB.LoaiBan.Where(y => y.id == id&& y.status==1).Select(x => converters.EntitySingleLoaiBanToDTOs(x));
             var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
             return result;
         }
 
         public async Task<PageResult<LoaiBanDTOs>> HienThiLoaiBanKemBan(int id, int pageSize, int pageNumber)
         {
-            var lst = id == 0 ? contextDB.LoaiBan.Select(x => converters.EntityToDTOs(x)) : contextDB.LoaiBan.Where(y => y.id == id).Select(x => converters.EntityToDTOs(x));
+            var lst = id == 0 ? contextDB.LoaiBan.Where(y=>y.status==1).Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.LoaiBan.Where(y => y.id == id&& y.status==1).Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lst, pageSize, pageNumber);
             return result;
         }
-
         #endregion
 
         #region  thêm, sửa , xoá loại bàn
@@ -48,6 +48,7 @@ namespace DatBanNhaHang.Services.Implements
             LoaiBan loaiBan = new LoaiBan()
             {
                 TenLoaiBan = request.TenLoaiBan,
+                status = 1
             };
             contextDB.Add(loaiBan);
             await contextDB.SaveChangesAsync();
@@ -77,19 +78,40 @@ namespace DatBanNhaHang.Services.Implements
                     {
                         return response.ResponseError(StatusCodes.Status404NotFound, "Không có loại bàn cần xoá ", null);
                     }
+
+                    lb.status = 2;
+                    
                     var ban = contextDB.Ban.Where(x => x.LoaiBanID == lb.id).ToList();
-                    foreach (var b in ban)
+
+                    if (ban.Count() > 0)
                     {
-                        var lsthd = contextDB.HoaDon.Where(y => y.BanID == b.id).ToList();
-                        foreach (var hd in lsthd)
+                        foreach (var b in ban)
                         {
-                            var lstCTHD = contextDB.ChiTietHoaDon.Where(z => z.HoaDonID == hd.id);
-                            contextDB.RemoveRange(lstCTHD);
+                            b.status = 2;
+                            var lsthd = contextDB.HoaDon.Where(y => y.BanID == b.id).ToList();
+                            /*foreach (var hd in lsthd)
+                            {
+                                var lstCTHD = contextDB.ChiTietHoaDon.Where(z => z.HoaDonID == hd.id);
+                                contextDB.RemoveRange(lstCTHD);
+                            }*/
+                            if(lsthd.Count() > 0)
+                            {
+                                foreach (var hd in lsthd)
+                                {
+                                    hd.status = 2;
+                                }
+                                contextDB.Update(lsthd);
+                            } 
+                            //contextDB.RemoveRange(lsthd);
                         }
-                        contextDB.RemoveRange(lsthd);
+                        contextDB.Ban.UpdateRange(ban);
                     }
-                    contextDB.RemoveRange(ban);
-                    contextDB.Remove(lb);
+                    //contextDB.RemoveRange(ban);
+                    //contextDB.Remove(lb);
+                    
+                    
+                    contextDB.Update(lb);
+                    
                     await contextDB.SaveChangesAsync();
                     trans.Commit();
                     return response.ResponseSuccess("Xoá loại bàn thành công ", converters.EntityToDTOs(lb));

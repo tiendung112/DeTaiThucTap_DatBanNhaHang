@@ -21,7 +21,7 @@ namespace DatBanNhaHang.Entities.NguoiDung
         public bool? IsActive { get; set; } = false;
         public IEnumerable<RefreshToken>? RefreshTokens { get; set; }
         public IEnumerable<XacNhanEmail>? xacNhanEmails { get; set; }
-        public IEnumerable<KhachHang> khachHangs { get; set; }
+        //public IEnumerable<KhachHang> khachHangs { get; set; }
 
     }
 }
