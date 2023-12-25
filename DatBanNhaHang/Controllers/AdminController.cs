@@ -156,7 +156,8 @@ namespace DatBanNhaHang.Controllers
             var res = ADMservices.RemoveTKNotActive();
             return Ok(res);
 
-        }[HttpDelete]
+        }
+        [HttpDelete]
         [Route("/api/Admin/XoaTaiKhoan/{id}")]
         [Authorize(Roles = "ADMIN,MOD")]
         public IActionResult XoaTaiKhoan([FromRoute]int id )

@@ -312,14 +312,15 @@ namespace DatBanNhaHang.Services.Implements
             return result;
         }
 
-        public async Task<PageResult<AdminDTOs>> XoaTaiKhoan(int id)
+        public async Task<ResponseObject<AdminDTOs>> XoaTaiKhoan(int id)
         {
-            var acc = contextDB.Admin.SingleOrDefault(x => x.id == id);
+            var acc = contextDB.Admin.SingleOrDefault(x => x.id == id && x.status==2);
             acc.status = 2;
+            acc.Email = acc.Email+"Đã Xoá";
             contextDB.Update(acc);
             await contextDB.SaveChangesAsync();
             var result = contextDB.Admin.Where(x=>x.id==id&&x.status==2).Select(y=>converters.EntityToDTOs(y));
-            return  Pagintation.GetPagedData<AdminDTOs>(result,0,0);
+            return responseObject.ResponseSuccess("đã xoá thành công tài khoản",converters.EntityToDTOs(acc));
         }
 
         public IQueryable<AdminDTOs> GetAdminTheoId(int id)
