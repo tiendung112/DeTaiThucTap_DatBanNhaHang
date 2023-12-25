@@ -16,6 +16,7 @@ namespace DatBanNhaHang.Payloads.Converters.NguoiDung
                 DateOfBirth = user.DateOfBirth,
                 Name = user.Name,
                 Gender = user.Gender,
+                UserID=user.id
             };
         }
     }

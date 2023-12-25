@@ -128,7 +128,7 @@ namespace DatBanNhaHang.Services.Implements
         //xoá
         public async Task<ResponseObject<LoaiMonAnDTOs>> XoaLoaiMonAn(int id)
         {
-            var LMA = contextDB.LoaiMonAn.SingleOrDefault(x => x.id == id);
+            var LMA = contextDB.LoaiMonAn.SingleOrDefault(x => x.id == id&&x.status==1);
             if (LMA == null)
             {
                 return res.ResponseError(403, "không tồn tại loại món ăn này", null);
@@ -144,7 +144,7 @@ namespace DatBanNhaHang.Services.Implements
                     {
                         item.status = 2;
                         //xoá tất cả các món ăn của loại này
-                        contextDB.Update(lstMA);
+                        contextDB.Update(item);
                     }
                 }
                 contextDB.Update(LMA);

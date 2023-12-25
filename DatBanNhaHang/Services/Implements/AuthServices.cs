@@ -134,11 +134,11 @@ namespace DatBanNhaHang.Services.Implements
             XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.MaXacNhan)).FirstOrDefaultAsync();
             if (confirmEmail is null)
             {
-                _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác nhận không chính xác", null);
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác nhận không chính xác", null);
             }
             if (confirmEmail.ThoiGianHetHan < DateTime.Now)
             {
-                _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác nhận đã hết hạn", null);
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mã xác nhận đã hết hạn", null);
             }
             User user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID);
             user.IsActive = true;
@@ -325,12 +325,12 @@ namespace DatBanNhaHang.Services.Implements
             await contextDB.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Đối mật khẩu thành công", _userConverter.EntityToDTO(user));
         }
-        public async Task<string> ForgotPassword(Request_ForgotPassword request)
+        public async Task<ResponseObject<UserDTO>> ForgotPassword(Request_ForgotPassword request)
         {
             User user = await contextDB.User.FirstOrDefaultAsync(x => x.Email.Equals(request.Email));
             if (user is null)
             {
-                return "Email không tồn tại trong hệ thống";
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Email không tồn tại trong hệ thống",null);
             }
             else
             {
@@ -352,7 +352,7 @@ namespace DatBanNhaHang.Services.Implements
                     Subject = "Nhận mã xác nhận để tạo mật khẩu mới từ đây: ",
                     Content = $"Mã kích hoạt của bạn là: {confirmEmail.MaXacNhan}, mã này sẽ hết hạn sau 5 phút"
                 });
-                return "Gửi mã xác nhận về email thành công, vui lòng kiểm tra email";
+                return _responseObject.ResponseSuccess("Gửi mã xác nhận về email thành công, vui lòng kiểm tra email",_userConverter.EntityToDTO(user));
             }
         }
         public async Task<ResponseObject<UserDTO>> CreateNewPassword(Request_ConfirmCreateNewPassword request)
