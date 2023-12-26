@@ -393,9 +393,8 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<UserDTO>> GetAlls(int id, int pageSize, int pageNumber)
         {
-            var list = id == 0 ?
-                contextDB.User.Where(y => y.status == 1 && y.id == id).Select(x => _userConverter.EntityToDTO(x))
-                : contextDB.User.Where(y => y.status == 1).Select(x => _userConverter.EntityToDTO(x));
+            var list = id == 0 ? contextDB.User.Where(y => y.status == 1).Select(x => _userConverter.EntityToDTO(x)) :
+            contextDB.User.Where(y => y.status == 1 && y.id == id).Select(x => _userConverter.EntityToDTO(x));
             var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
             return result;
         }
