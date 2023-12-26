@@ -46,16 +46,18 @@ namespace DatBanNhaHang.Handler.Email
                 </style>
             </head>
             <body>
-                <h1>Thông tin hóa đơn đã đặt {hoadon.MaGiaoDich}</h1>
-                <h2 style=""color: red; font-size: 20px; font-weight: bold;"">{(string.IsNullOrEmpty(message) ? "" : message)}</h2>
+                <h1>Thông tin hóa Đơn</h1>
+                
+                <h2 style=""color: red; font-size: 20px; font-weight: bold;"">
+                {(string.IsNullOrEmpty(message) ? "" : message)}</h2>
+                <h2>Mã Giao Dịch : {hoadon.MaGiaoDich}</h2>                
                 <h2> Bàn : {hoadon.BanID} </h2>
-                <h2> Thời gian đặt  : {hoadon.ThoiGianDat} </h2>
-                <h2> Thời gian dự kiến bắt đầu : {hoadon.ThoiGianDuKienBatDau} </h2>
+                <h2> Thời gian đặt bàn : {hoadon.ThoiGianDuKienBatDau} </h2>
                 <h2> Tên khách hàng {khachhang.Name}  </h2>
-                <h2> Ngày sinh {khachhang.DateOfBirth} </h2>
+                <h2> Email {khachhang.Email} </h2>
                 
                 ";
-            htmlContent += @"<h2>Chi tiết món ăn đã đặt</h2>
+            /*htmlContent += @"<h2>Chi tiết món ăn đã đặt</h2>
                 <table>
                     <tr>
                         <th style=""text-align: center;"">{STT}</th>
@@ -63,7 +65,7 @@ namespace DatBanNhaHang.Handler.Email
                         <th>Số lượng</th>
                         
                         <th>Giá</th>
-                    </tr>";
+                    </tr>";*/
             //int rowIndex = 1;
             //var orderdetail = context.ChiTietHoaDon.Where(x => x.HoaDonID == hoadon.id).ToList();
             //foreach (var item in orderdetail)
@@ -82,14 +84,14 @@ namespace DatBanNhaHang.Handler.Email
 
             htmlContent += $@"
                        <tr>
-                        <td style=""text-align: center;"">Tổng tiền</td>
+                        <td style=""text-align: center;"">Tổng tiền Bàn </td>
                         <td colspan=""3"" style=""text-align: right;"">{hoadon.TongTien}</td>
                     </tr>
                 </table>
                 
-                <h2> Ghi chú {hoadon.GhiChu} </h2>
+                <h2> Ghi chú : {hoadon.GhiChu} </h2>
                 <div class=""footer"">
-                    <p>Trân trọng bạn đã tin tưởng nhà hàng chúng tôi</p>
+                    <p>Trân trọng bạn đã tin tưởng nhà hàng chúng tôi, Mọi Thông tin xin liên hệ hotline của nhà hàng</p>
                     <p></p>
                 </div>
             </body>

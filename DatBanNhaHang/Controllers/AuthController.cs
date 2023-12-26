@@ -88,7 +88,6 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpGet]
         [Route("/api/auth/ThongTinUser")]
-        [Authorize(Roles = "ADMIN")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ThongTinUser()
         {

@@ -12,6 +12,7 @@ using DatBanNhaHang.Payloads.Responses;
 using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -28,11 +29,6 @@ namespace DatBanNhaHang.Services.Implements
             banConverters = new BanConverters();
             responseBan = new ResponseObject<List<BanDTOs>>();
         }
-        public Task<ResponseObject<HoaDonDTO>> SuaHoaDon()
-        {
-            throw new NotImplementedException();
-        }
-
         #region tìm bàn trống , hiển thị bàn trống
 
         public async Task<ResponseObject<List<BanDTOs>>> TimBanTrong(Request_timBanTrong request)
@@ -78,9 +74,18 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<bool> KiemTraBanTrong(int? banId, DateTime thoiGianBatDauDuKien, DateTime thoiGianKetThucDuKien)
         {
+            if (thoiGianBatDauDuKien < DateTime.Now )
+            {
+                return false;
+            }
+            if (thoiGianBatDauDuKien > thoiGianKetThucDuKien)
+            {
+                return false;
+            }
+
             var hoaDons = await contextDB.HoaDon
                                 .Where(hd => hd.BanID == banId
-                                             && hd.TrangThaiHoaDonID == 2 ||hd.TrangThaiHoaDonID==3 && hd.status==1)
+                                             /*&& hd.TrangThaiHoaDonID == 2 ||hd.TrangThaiHoaDonID==3*/ && hd.status==1)
                                 .ToListAsync();
             foreach (var hoaDon in hoaDons)
             {
@@ -111,6 +116,10 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<HoaDonDTO>> ThemHoaDonUser(int userid, Request_ThemHoaDon_User request)
         {
+            if(request.ThoiGianDuKienBatDau < DateTime.Today)
+            {
+                return response.ResponseError(StatusCodes.Status400BadRequest, "Nhập thời gian đặt ở quá khứ ", null);
+            }
             if (!contextDB.Ban.Any(x => x.id == request.BanID && x.status==1))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại bàn này", null);
@@ -235,6 +244,10 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<HoaDonDTO>> SuaHoaDon(int userid, int hoadonid, Request_SuaHoaDon_User request)
         {
+            if(request.ThoiGianDuKienBatDau < DateTime.Now)
+            {
+                return response.ResponseError(StatusCodes.Status400BadRequest, "Xem lại thời gian đặt", null);
+            }
             var hoaDon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoadonid && x.status==1);
             if (hoaDon == null)
             {
@@ -402,7 +415,7 @@ namespace DatBanNhaHang.Services.Implements
                 await contextDB.SaveChangesAsync();
                 string mss = SendEmail(new EmailTo
                 {
-                    Mail = contextDB.User.SingleOrDefault(x => x.id == khachHang.id).Email,
+                    Mail = contextDB.User.SingleOrDefault(x => x.id == khachHang.id && x.status == 1).Email,
                     Subject = "Nhận mã xác nhận để xác nhận huỷ đặt bàn: ",
                     Content = $"Mã kích hoạt của bạn là: {confrimEmail.MaXacNhan}, mã này sẽ hết hạn sau 30 phút"
                 });
@@ -429,8 +442,8 @@ namespace DatBanNhaHang.Services.Implements
             }
             if (confirmEmail.UserID == id)
             {
-                var kh = contextDB.User.SingleOrDefault(x => x.id == confirmEmail.UserID);
-                HoaDon hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoadonid);
+                var kh = contextDB.User.SingleOrDefault(x => x.id == confirmEmail.UserID && x.status==1);
+                HoaDon hoadon = contextDB.HoaDon.SingleOrDefault(x => x.id == hoadonid && x.status==1);
                 hoadon.ThoiGianHuyDat = DateTime.Now;
                 hoadon.ThoiGianDuKienBatDau = null;
                 hoadon.ThoiGianDuKienKetThuc = null;
@@ -656,7 +669,7 @@ namespace DatBanNhaHang.Services.Implements
             //var kh = contextDB.User.SingleOrDefault(x => x.id == user.id);
             var lsthoadon = contextDB.HoaDon
                 .Where(x => x.userId == user.id && x.status==1)
-                .OrderByDescending(z => z.ThoiGianKetThucThucTe)
+                .OrderBy(z => z.ThoiGianBatDauThucTe)
                 .Select(y => converters.EntityToDTOs(y));
             var result = Pagintation.GetPagedData(lsthoadon, pageSize, pageNumber);
             return result;
