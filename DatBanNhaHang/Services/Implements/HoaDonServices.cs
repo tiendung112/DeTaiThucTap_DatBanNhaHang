@@ -55,7 +55,7 @@ namespace DatBanNhaHang.Services.Implements
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
             }
-            return responseBan.ResponseSuccess("các bàn trống", banTrong);
+            return responseBan.ResponseSuccess($"các bàn trống ở {request.thoiGianBatDau.ToString("dd/MM/yyyy HH:mm")} đến {request.thoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")} ", banTrong);
         }
         public async Task<ResponseObject<List<BanDTOs>>> HienThiBanTrong()
         {
@@ -69,7 +69,7 @@ namespace DatBanNhaHang.Services.Implements
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
             }
-            return responseBan.ResponseSuccess("các bàn trống", banTrong);
+            return responseBan.ResponseSuccess("các bàn trống ở thời điểm hiện tại", banTrong);
         }
 
         public async Task<bool> KiemTraBanTrong(int? banId, DateTime thoiGianBatDauDuKien, DateTime thoiGianKetThucDuKien)
