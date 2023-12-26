@@ -174,7 +174,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/datBan/SuaHoaDon/{hoadonid}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> SuaHoaDon([FromRoute] int hoadonid, [FromForm] Request_SuaHoaDon_User request, int status)
+        public async Task<IActionResult> SuaHoaDon([FromRoute] int hoadonid, [FromForm] Request_SuaHoaDon_User request)
         {
             int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
             return Ok(await hoadonServices.SuaHoaDon(id, hoadonid, request));
