@@ -58,7 +58,7 @@ namespace DatBanNhaHang.Services.Implements
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
             }
-            return responseBan.ResponseSuccess($"các bàn trống ở{gio} {thoiGianBatDau.ToString("dd/MM/yyyy HH:mm")} đến {thoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")} ", banTrong);
+            return responseBan.ResponseSuccess($"các bàn trống ở {thoiGianBatDau.ToString("dd/MM/yyyy HH:mm")} đến {thoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")} ", banTrong);
         }
         public async Task<ResponseObject<List<BanDTOs>>> HienThiBanTrong()
         {
