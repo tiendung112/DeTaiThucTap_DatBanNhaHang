@@ -42,9 +42,13 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Lỗi nhập ngày kết thúc bé hơn ngày bắt đầu",null);
             }
-            if(request.thoiGianBatDau.Day<DateTime.Now.Day|| request.thoiGianKetThuc.Day < DateTime.Now.Day)
+            if(request.thoiGianBatDau <= DateTime.Now)
             {
-                return responseBan.ResponseError(StatusCodes.Status404NotFound, "Bạn đã đặt về quá khứ", null);
+                return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Thời gian bắt đầu phải lớn hơn thời gian hiện tại", null);
+            }
+            if(request.thoiGianKetThuc <= request.thoiGianBatDau)
+            {
+                return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Thời gian kết thúc phải lớn hơn thời gian bắt đầu", null);
             }
             var banTrong = new List<BanDTOs>();
            
@@ -90,7 +94,6 @@ namespace DatBanNhaHang.Services.Implements
                     return false; // Có xung đột thời gian, bàn không trống
                 }
             }
-
             return true; // Không có xung đột, bàn trống
         }
 
