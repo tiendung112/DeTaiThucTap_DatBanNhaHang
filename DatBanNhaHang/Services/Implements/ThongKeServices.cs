@@ -78,8 +78,9 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<ThongKeSLBanTrongDTOs> ThongKeBanDangConSuDung()
         {
             HoaDonServices hoaDonServices = new HoaDonServices();
-            int lstBanTrong = hoaDonServices.HienThiBanTrong().Result.Count();
-            if (lstBanTrong == 0)
+            var lstBanTrong = hoaDonServices.HienThiBanTrong();
+            int soLuongBan = lstBanTrong.Result.Data.Count();
+            if (soLuongBan == 0)
             {
                 return new ThongKeSLBanTrongDTOs()
                 {
@@ -90,7 +91,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return new ThongKeSLBanTrongDTOs()
                 {
-                    soLuongBan = lstBanTrong
+                    soLuongBan = soLuongBan
                 };
             }
         }
