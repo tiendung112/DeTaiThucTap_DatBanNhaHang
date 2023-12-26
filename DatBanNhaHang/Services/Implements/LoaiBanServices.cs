@@ -56,12 +56,12 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<LoaiBanDTOs>> SuaLoaiBan(int id, Request_SuaLoaiBan request)
         {
-            var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == id);
+            var lb = contextDB.LoaiBan.SingleOrDefault(x => x.id == id && x.status==1);
             if (lb == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có loại bàn cần sửa ", null);
             }
-            lb.TenLoaiBan = request.TenLoaiBan == null ? lb.TenLoaiBan : request.TenLoaiBan;
+            lb.TenLoaiBan = request.TenLoaiBan  ?? lb.TenLoaiBan;
             contextDB.Update(lb);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("Sửa loại bàn thành công ", converters.EntityToDTOs(lb));

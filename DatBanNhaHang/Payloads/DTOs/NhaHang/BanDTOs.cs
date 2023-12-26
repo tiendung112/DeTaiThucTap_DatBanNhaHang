@@ -11,6 +11,6 @@
         public string? TenLoaiBan { get; set; }
         public string? Mota { get; set; }
         public string? HinhAnhBanURL { get; set; }
-        public string? TinhTrangHienTai { get; set; }
+        //public string? TinhTrangHienTai { get; set; }
     }
 }

@@ -175,7 +175,6 @@ namespace DatBanNhaHang.Controllers
             return Ok(await ADMservices.SuaThongTin(id, request));
         }
 
-        
         #endregion
         #region đầu bếp 
         [HttpPost]
@@ -272,6 +271,63 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> HienThiLoaiBanKemBan(int id)
         {
             return Ok(await LoaiBanservices.HienThiLoaiBanKemBan(id, 0, 0));
+        }
+        #endregion
+        #region bàn
+        [HttpGet]
+        [Route("/api/Ban/HienThiBan/{id}")]
+        public async Task<IActionResult> HienThiBan([FromRoute] int id)
+        {
+            return Ok(await banServices.HienThiBan(id, 0, 0));
+        }
+        [HttpGet]
+        [Route("/api/Ban/HienThiBan")]
+        public async Task<IActionResult> HienThiBan(int pageSize, int pageNumber)
+        {
+            return Ok(await banServices.HienThiBan(0, pageSize, pageNumber));
+        }
+
+
+        [HttpGet]
+        [Route("/api/Ban/HienThiBanTheoViTri")]
+        public async Task<IActionResult> HienThiBanTheoViTri(int pageSize, int pageNumber)
+        {
+            return Ok(await banServices.HienThiBanTheoViTri(pageSize, pageNumber));
+        }
+
+        [HttpGet]
+        [Route("/api/Ban/HienThiBanTheoLoaiBan/{lbid}")]
+        public async Task<IActionResult> HienThiBanTheoLoaiBan([FromRoute] int lbid, int pageSize, int pageNumber)
+        {
+            return Ok(await banServices.HienThiBanTheoLoaiBan(lbid, pageSize, pageNumber));
+        }
+
+        [HttpPost]
+        [Route("/api/Ban/ThemBan")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> ThemBan([FromForm] Request_ThemBan request)
+        {
+            var result = await banServices.ThemBan(request);
+            return Ok(result);
+
+        }
+
+        [HttpPut]
+        [Route("/api/Ban/SuaBan/{id}")]
+        //[Authorize(Roles = "ADMIN,MOD")]
+        public async Task<IActionResult> SuaBan([FromRoute] int id, [FromForm] Request_SuaBan request)
+        {
+            var result = await banServices.SuaBan(id, request);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("/api/Ban/XoaBan/{id}")]
+        //[Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> XoaBan([FromRoute] int id)
+        {
+            var result = await banServices.XoaBan(id);
+            return Ok(result);
         }
         #endregion
         #region loại món ăn
@@ -388,63 +444,7 @@ namespace DatBanNhaHang.Controllers
             return Ok(await MonAnservices.TimKiemMonAn(tenMonAn, 0, 0));
         }
         #endregion
-        #region bàn
-        [HttpGet]
-        [Route("/api/Ban/HienThiBan/{id}")]
-        public async Task<IActionResult> HienThiBan([FromRoute] int id)
-        {
-            return Ok(await banServices.HienThiBan(id, 0, 0));
-        }
-        [HttpGet]
-        [Route("/api/Ban/HienThiBan")]
-        public async Task<IActionResult> HienThiBan(int pageSize, int pageNumber)
-        {
-            return Ok(await banServices.HienThiBan(0, pageSize, pageNumber));
-        }
-
-
-        [HttpGet]
-        [Route("/api/Ban/HienThiBanTheoViTri")]
-        public async Task<IActionResult> HienThiBanTheoViTri(int pageSize, int pageNumber)
-        {
-            return Ok(await banServices.HienThiBanTheoViTri(pageSize, pageNumber));
-        }
-
-        [HttpGet]
-        [Route("/api/Ban/HienThiBanTheoLoaiBan/{lbid}")]
-        public async Task<IActionResult> HienThiBanTheoLoaiBan([FromRoute] int lbid, int pageSize, int pageNumber)
-        {
-            return Ok(await banServices.HienThiBanTheoLoaiBan(lbid, pageSize, pageNumber));
-        }
-
-        [HttpPost]
-        [Route("/api/Ban/ThemBan")]
-        //[Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> ThemBan([FromForm] Request_ThemBan request)
-        {
-            var result = await banServices.ThemBan(request);
-            return Ok(result);
-
-        }
-
-        [HttpPut]
-        [Route("/api/Ban/SuaBan/{id}")]
-        //[Authorize(Roles = "ADMIN,MOD")]
-        public async Task<IActionResult> SuaBan([FromRoute] int id, [FromForm] Request_SuaBan request)
-        {
-            var result = await banServices.SuaBan(id, request);
-            return Ok(result);
-        }
-
-        [HttpDelete]
-        [Route("/api/Ban/XoaBan/{id}")]
-        //[Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> XoaBan([FromRoute] int id)
-        {
-            var result = await banServices.XoaBan(id);
-            return Ok(result);
-        }
-        #endregion
+      
         //#region khách hàng 
 
         //[HttpGet]
@@ -746,7 +746,6 @@ namespace DatBanNhaHang.Controllers
             return Ok(await thongKeServices.ThongKeBanDangConSuDung());
         }
         #endregion
-
         #region nhận xét
         [HttpGet]
         [Route("/api/NhanXet/HienThiNhanXet")]

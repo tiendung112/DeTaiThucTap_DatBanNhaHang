@@ -22,15 +22,18 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<PageResult<NhanXetDTOs>> HienThiNhanXet(int nhanxetid, int pageSize, int pageNumber)
         {
-            var lstnx = nhanxetid != 0 ? contextDB.NhanXet.Where(y => y.id == nhanxetid&& y.status == 1).Select(x => converters.EntityToDTOs(x)) 
-                : contextDB.NhanXet.Where(y=> y.status == 1).Select(x => converters.EntityToDTOs(x));
+            var lstnx = nhanxetid != 0 ? 
+                contextDB.NhanXet.Where(y => y.id == nhanxetid&& y.status == 1)
+                    .Select(x => converters.EntityToDTOs(x)) 
+                : contextDB.NhanXet.Where(y=> y.status == 1)
+                    .Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData(lstnx, pageSize, pageNumber);
             return result;
         }
 
         public async Task<ResponseObject<NhanXetDTOs>> SuaNhanXet(int nhanxetid, Request_SuaNhanXet request)
         {
-            var nhanxet = contextDB.NhanXet.SingleOrDefault(x => x.id == nhanxetid);
+            var nhanxet = contextDB.NhanXet.SingleOrDefault(x => x.id == nhanxetid && x.status==1);
             if (nhanxet == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại nhận xét này", null);
@@ -48,9 +51,9 @@ namespace DatBanNhaHang.Services.Implements
                     nhanxet.AnhURL = avatarFile == "" ? nhanxet.AnhURL : avatarFile;
                 }
             }
-            nhanxet.ChuThich = request.ChuThich == null ? nhanxet.ChuThich : request.ChuThich;
-            nhanxet.HoTen = request.HoTen == null ? nhanxet.HoTen : request.HoTen;
-            nhanxet.NoiDung = request.NoiDung == null ? nhanxet.NoiDung : request.NoiDung;
+            nhanxet.ChuThich = request.ChuThich ?? nhanxet.ChuThich;
+            nhanxet.HoTen = request.HoTen ?? nhanxet.HoTen ;
+            nhanxet.NoiDung = request.NoiDung?? nhanxet.NoiDung;
             contextDB.Update(nhanxet);
             await contextDB.SaveChangesAsync();
             return response.ResponseSuccess("sửa nhận xét thành công", converters.EntityToDTOs(nhanxet));
@@ -92,7 +95,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<NhanXetDTOs>> XoaNhanXet(int nhanxetid)
         {
-            var nhanxet = contextDB.NhanXet.SingleOrDefault(x => x.id == nhanxetid);
+            var nhanxet = contextDB.NhanXet.SingleOrDefault(x => x.id == nhanxetid && x.status==1);
             if (nhanxet == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại nhận xét này", null);

@@ -56,7 +56,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<LienHeDTOs>> XacNhanLienHe(int LienHeId)
         {
-            var LienHe = contextDB.LienHe.SingleOrDefault(x => x.id == LienHeId);
+            var LienHe = contextDB.LienHe.SingleOrDefault(x => x.id == LienHeId && x.status==1);
             if (LienHe == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại LienHe này", null);
@@ -70,7 +70,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<LienHeDTOs>> XoaLienHe(int LienHeId)
         {
-            var LienHe = contextDB.LienHe.SingleOrDefault(x => x.id == LienHeId);
+            var LienHe = contextDB.LienHe.SingleOrDefault(x => x.id == LienHeId && x.status==1);
             if (LienHe == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại LienHe này", null);
@@ -85,7 +85,11 @@ namespace DatBanNhaHang.Services.Implements
         {
             DateTime quahan = DateTime.Now;
             List<LienHeDTOs> lh = new List<LienHeDTOs>();
-            var LienHe = contextDB.LienHe.Select(x => x).ToList();
+            var LienHe = contextDB.LienHe.Where(x=> x.status==1).ToList();
+            if (LienHe==null)
+            {
+                return null;
+            }
             foreach (var item in LienHe)
             {
                 if (item.ThoiGianGui.Value.AddDays(15) < quahan && item.ThoiGianTraLoi == null)

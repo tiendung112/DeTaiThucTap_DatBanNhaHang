@@ -24,7 +24,8 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị  và tìm kiếm danh sách đầu bếp
         public async Task<PageResult<DauBepDTOs>> GetDSDauBep(int id, int pageSize, int pageNumber)
         {
-            var lstDauBep = id == 0 ? context.DauBep.Where(y => y.status == 1).Select(x => converters.EntityToDTOs(x))
+            var lstDauBep = id == 0 ?
+                context.DauBep.Where(y => y.status == 1).Select(x => converters.EntityToDTOs(x))
                 : context.DauBep.Where(y => y.id == id && y.status == 1).Select(z => converters.EntityToDTOs(z));
             var result = Pagintation.GetPagedData(lstDauBep, pageSize, pageNumber);
             return result;
@@ -76,7 +77,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<DauBepDTOs>> SuaDauBep(int id, Request_SuaDauBep request)
         {
-            var daubep = context.DauBep.FirstOrDefault(x => x.id == id);
+            var daubep = context.DauBep.FirstOrDefault(x => x.id == id && x.status==1);
             if (daubep == null)
                 return response.ResponseError(403, "Không tồn tại đầu bếp này", null);
             else
@@ -113,7 +114,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<DauBepDTOs>> XoaDauBep(int id)
         {
-            var daubep = context.DauBep.FirstOrDefault(x => x.id == id);
+            var daubep = context.DauBep.FirstOrDefault(x => x.id == id && x.status==1);
             if (daubep != null)
             {
                 daubep.status = 2;

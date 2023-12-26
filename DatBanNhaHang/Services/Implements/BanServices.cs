@@ -52,7 +52,7 @@ namespace DatBanNhaHang.Services.Implements
                 return response.ResponseError(StatusCodes.Status404NotFound, "chưa điền đầy đủ thông tin ", null);
             }
 
-            if (!contextDB.LoaiBan.Any(x => x.id == request.LoaiBanID))
+            if (!contextDB.LoaiBan.Any(x => x.id == request.LoaiBanID && x.status==1))
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
             }
@@ -88,12 +88,12 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<BanDTOs>> SuaBan(int id, Request_SuaBan request)
         {
-            if (!contextDB.Ban.Any(x => x.LoaiBanID == request.LoaiBanID) && request.LoaiBanID != null)
+            if (!contextDB.Ban.Any(x => x.LoaiBanID == request.LoaiBanID && x.status==1) && request.LoaiBanID != null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại bàn này", null);
             }
 
-            var ban = contextDB.Ban.SingleOrDefault(x => x.id == id);
+            var ban = contextDB.Ban.SingleOrDefault(x => x.id == id && x.status==1);
             if (ban == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có bàn cần sửa", null);
@@ -125,7 +125,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<BanDTOs>> XoaBan(int id)
         {
-            var ban = contextDB.Ban.SingleOrDefault(x => x.id == id);
+            var ban = contextDB.Ban.SingleOrDefault(x => x.id == id && x.status==1);
             if (ban == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không có bàn cần Xoá", null);
