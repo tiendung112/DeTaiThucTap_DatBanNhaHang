@@ -48,6 +48,9 @@ namespace DatBanNhaHang.Services.Implements
             }
             var banTrong = new List<BanDTOs>();
            
+
+
+
             foreach (var ban in tatCaBan)
             {
                 if (await KiemTraBanTrong(ban.id, thoiGianBatDau, thoiGianKetThuc))
