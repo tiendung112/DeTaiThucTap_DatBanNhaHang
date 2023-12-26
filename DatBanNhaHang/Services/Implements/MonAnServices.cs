@@ -87,7 +87,7 @@ namespace DatBanNhaHang.Services.Implements
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại loại món ăn này", null);
             else
             {
-                var ma = contextDB.MonAn.SingleOrDefault(x => x.id == id);
+                var ma = contextDB.MonAn.SingleOrDefault(x => x.id == id && x.status==1);
                 if (ma == null)
                 {
                     return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại món ăn này ", null);
@@ -96,10 +96,10 @@ namespace DatBanNhaHang.Services.Implements
                 try
                 {
 
-                    ma.TenMon = request.TenMon == null ? ma.TenMon : request.TenMon;
-                    ma.GiaTien = request.GiaTien == null ? ma.GiaTien : request.GiaTien;
-                    ma.MoTa = request.MoTa == null ? ma.MoTa : request.MoTa;
-                    ma.LoaiMonAnID = request.LoaiMonAnID == null ? ma.LoaiMonAnID : request.LoaiMonAnID;
+                    ma.TenMon = request.TenMon ?? ma.TenMon ;
+                    ma.GiaTien = request.GiaTien ?? ma.GiaTien ;
+                    ma.MoTa = request.MoTa ?? ma.MoTa;
+                    ma.LoaiMonAnID = request.LoaiMonAnID == 0 ? ma.LoaiMonAnID : request.LoaiMonAnID;
                     if (request.AnhMonAn1URL != null)
                     {
                         if (!HandleImage.IsImage(request.AnhMonAn1URL, imageSize))
@@ -112,8 +112,6 @@ namespace DatBanNhaHang.Services.Implements
                             ma.AnhMonAn1URL = avatarFile;
                         }
                     }
-
-
                     contextDB.MonAn.Update(ma);
                     await contextDB.SaveChangesAsync();
                     return response.ResponseSuccess("Sửa Món Ăn thành công", converters.EntityToDTOs(ma));
@@ -126,12 +124,11 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<MonAnDTOs>> XoaMonAn(int id)
         {
-            var ma = contextDB.MonAn.SingleOrDefault(x => x.id == id);
+            var ma = contextDB.MonAn.SingleOrDefault(x => x.id == id && x.status==1);
             if (ma == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại món ăn này ", null);
             }
-
             ma.status = 2;
             //var lstchitiethoadon = contextDB.ChiTietHoaDon.Where(x => x.MonAnID == ma.id).ToList();
             /*foreach (var item in lstchitiethoadon)

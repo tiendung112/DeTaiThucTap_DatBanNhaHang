@@ -2,7 +2,7 @@
 {
     public class Request_SuaLoaiMonAn
     {
-        public String TenLoai {  get; set; }
+        public String? TenLoai {  get; set; }
 
     }
 }

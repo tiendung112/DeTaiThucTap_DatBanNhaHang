@@ -8,7 +8,7 @@ namespace DatBanNhaHang.Handler.Email
         private static readonly AppDbContext context = new AppDbContext();
         public static string GenerateNotificationBillEmail(HoaDon hoadon, string message = "")
         {
-            var khachhang = context.User.SingleOrDefault(x => x.id == hoadon.userId);
+            var khachhang = context.User.SingleOrDefault(x => x.id == hoadon.userId && x.status == 1);
             string htmlContent = $@"
             <html>
             <head>

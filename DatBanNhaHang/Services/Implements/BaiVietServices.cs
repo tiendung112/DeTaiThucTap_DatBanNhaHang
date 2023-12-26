@@ -30,7 +30,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<BaiVietDTOs>> SuaBaiViet(int blogid, int adminid, Request_SuaBaiViet request)
         {
-            var baiviet = contextDB.BaiViet.SingleOrDefault(x => x.id == blogid);
+            var baiviet = contextDB.BaiViet.SingleOrDefault(x => x.id == blogid && x.status==1);
             if (baiviet == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại bài viết này", null);
@@ -55,7 +55,7 @@ namespace DatBanNhaHang.Services.Implements
             }
             contextDB.Update(baiviet);
             await contextDB.SaveChangesAsync();
-            return response.ResponseSuccess("sửa bài viết thành công", converters.EntityToDTOs(baiviet));
+            return response.ResponseSuccess("Sửa bài viết thành công", converters.EntityToDTOs(baiviet));
         }
 
         public async Task<ResponseObject<BaiVietDTOs>> ThemBaiViet(int admid, Request_ThemBaiViet request)
@@ -96,7 +96,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<BaiVietDTOs>> XoaBaiViet(int blogid)
         {
-            var baiviet = contextDB.BaiViet.SingleOrDefault(x => x.id == blogid);
+            var baiviet = contextDB.BaiViet.SingleOrDefault(x => x.id == blogid && x.status==1);
             if (baiviet == null)
             {
                 return response.ResponseError(StatusCodes.Status404NotFound, "không tồn tại bài viết này", null);

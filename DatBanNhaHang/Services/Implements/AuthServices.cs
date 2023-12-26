@@ -11,6 +11,7 @@ using DatBanNhaHang.Services.Implements.DatBanNhaHang.Service.Implements;
 using DatBanNhaHang.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -174,7 +175,7 @@ namespace DatBanNhaHang.Services.Implements
                     /*new Claim("Roleid", user.Roleid.ToString()),
                     new Claim(ClaimTypes.Role,decentralization?.RoleName ?? "")*/
                 }),
-                Expires = DateTime.UtcNow.AddDays(5),
+                Expires = DateTime.UtcNow.AddDays(900),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = jwtTokenHandler.CreateToken(tokenDescription);
@@ -184,7 +185,7 @@ namespace DatBanNhaHang.Services.Implements
             RefreshToken rf = new RefreshToken
             {
                 Token = refreshToken,
-                ExpiredTime = DateTime.UtcNow.AddDays(6),
+                ExpiredTime = DateTime.UtcNow.AddDays(901),
                 UserID = user.id
             };
 
@@ -220,7 +221,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return _responseObjectToken.ResponseError(StatusCodes.Status404NotFound, "Tên tài khoản không tồn tại", null);
             }
-            else if (user.IsActive == false)
+            else if (user.IsActive == false || user.status==2)
             {
                 return _responseObjectToken.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản chưa kích hoạt", null);
             }
@@ -315,7 +316,7 @@ namespace DatBanNhaHang.Services.Implements
         #region Xử lý việc đổi mật khẩu và quên mật khẩu
         public async Task<ResponseObject<UserDTO>> ChangePassword(int UserID, Request_ChangePassword request)
         {
-            var user = await contextDB.User.FirstOrDefaultAsync(x => x.id == UserID);
+            var user = await contextDB.User.FirstOrDefaultAsync(x => x.id == UserID&&x.status==1);
             if (!BCryptNet.Verify(request.OldPassword, user.Password))
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Mật khẩu cũ không chính xác", null);
@@ -327,7 +328,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<UserDTO>> ForgotPassword(Request_ForgotPassword request)
         {
-            User user = await contextDB.User.FirstOrDefaultAsync(x => x.Email.Equals(request.Email));
+            User user = await contextDB.User.FirstOrDefaultAsync(x => x.Email.Equals(request.Email) &&x.status==1);
             if (user is null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Email không tồn tại trong hệ thống",null);
@@ -357,7 +358,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<UserDTO>> CreateNewPassword(Request_ConfirmCreateNewPassword request)
         {
-            XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.CodeActive)).FirstOrDefaultAsync();
+            XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.CodeActive)&&x.status==1).FirstOrDefaultAsync();
             if (confirmEmail is null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Mã xác nhận không chính xác", null);
@@ -366,7 +367,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Mã xác nhận đã hết hạn", null);
             }
-            User user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID);
+            User user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID && x.status == 1);
             user.Password = BCryptNet.HashPassword(request.NewPassword);
             contextDB.XacNhanEmail.Remove(confirmEmail);
             contextDB.User.Update(user);
@@ -376,11 +377,19 @@ namespace DatBanNhaHang.Services.Implements
         }
         #endregion
 
-        public async Task<PageResult<UserDTO>> XoaTaiKhoan(int id)
+        public async Task<ResponseObject<UserDTO>> XoaTaiKhoan(int id)
         {
-            var kh = contextDB.User.Where(x => x.id == id && x.status == 1)
-                .Select(y => _userConverter.EntityToDTO(y));
-            return Pagintation.GetPagedData<UserDTO>(kh, 0, 0);
+            var acc = contextDB.User.SingleOrDefault(x => x.id == id && x.status == 1);
+            if (acc == null)
+            {
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound,"Không tồn tại tài khoản này",null);
+            }
+            acc.UserName = acc.Name + " đã xoá";
+            acc.status = 2;
+            acc.Email = acc.Email + " Đã Xoá";
+            contextDB.Update(acc);
+            await contextDB.SaveChangesAsync();
+            return _responseObject.ResponseSuccess("đã xoá thành công tài khoản", _userConverter.EntityToDTO(acc));
         }
         public async Task<PageResult<UserDTO>> GetAlls(int id, int pageSize, int pageNumber)
         {
@@ -394,7 +403,7 @@ namespace DatBanNhaHang.Services.Implements
         #region thay đổi thông tin , email 
         public async Task<ResponseObject<UserDTO>> ThayDoiThongTin(int id, Request_UpdateInfor request)
         {
-            var user = contextDB.User.SingleOrDefault(x => x.id == id);
+            var user = contextDB.User.SingleOrDefault(x => x.id == id&&x.status==1);
             if (user == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tồn tại tài khoản này ", null);
@@ -417,10 +426,10 @@ namespace DatBanNhaHang.Services.Implements
             }
             user.SDT = request.SDT == null ? user.SDT : request.SDT;
             user.address = request.address == null ? user.address : request.address;
-            Request_NangCapThongTinKhachHang kh = new Request_NangCapThongTinKhachHang()
+            /*Request_NangCapThongTinKhachHang kh = new Request_NangCapThongTinKhachHang()
             {
                 UserId = user.id,
-            };
+            };*/
             //await khachHangServices.NangCapThongTinKhachHangACC(kh);
             //khachHangServices.NangCapThongTinKhachHangACC(kh);
             contextDB.User.Update(user);
@@ -430,13 +439,11 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<string> ThayDoiEmail(int id)
         {
-            var user = contextDB.User.SingleOrDefault(x => x.id == id);
+            var user = contextDB.User.SingleOrDefault(x => x.id == id && x.status == 1);
             if (user == null)
             {
                 return "Không tồn tại tài khoản này ";
             }
-
-
             XacNhanEmail confrimEmail = new XacNhanEmail()
             {
                 UserID = user.id,
@@ -460,7 +467,7 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<string> XacNhanDoiEmail(Request_NewMail request)
         {
-            XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.MaXacNhan)).FirstOrDefaultAsync();
+            XacNhanEmail confirmEmail = await contextDB.XacNhanEmail.Where(x => x.MaXacNhan.Equals(request.MaXacNhan) && x.status == 1).FirstOrDefaultAsync();
             if (confirmEmail is null)
             {
                 return "Mã xác nhận không chính xác";
@@ -469,7 +476,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return "Mã xác nhận đã hết hạn";
             }
-            var user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID);
+            var user = contextDB.User.FirstOrDefault(x => x.id == confirmEmail.UserID && x.status == 1);
             if (contextDB.User.Any(x => x.Email == request.newMail && x.Email != user.Email))
             {
                 return "đã tồn tại email này ";

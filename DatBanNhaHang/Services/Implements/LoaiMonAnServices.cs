@@ -24,8 +24,10 @@ namespace DatBanNhaHang.Services.Implements
         public async Task<PageResult<LoaiMonAnDTOs>> HienThiLoaiMonAnKemMonAn(int id, int pageSize, int pageNumber)
         {
             var lstLMA = id == 0 ?
-                 contextDB.LoaiMonAn.Where(y => y.status == 1).Select(x => converters.entityTODTOs(x))
-                 : contextDB.LoaiMonAn.Where(y => y.id == id && y.status == 1).Select(x => converters.entityTODTOs(x));
+                 contextDB.LoaiMonAn.Where(y => y.status == 1)
+                     .Select(x => converters.entityTODTOs(x))
+                 : contextDB.LoaiMonAn.Where(y => y.id == id && y.status == 1)
+                     .Select(x => converters.entityTODTOs(x));
             var res = Pagintation.GetPagedData(lstLMA, pageSize, pageNumber);
             return res;
         }
@@ -34,8 +36,10 @@ namespace DatBanNhaHang.Services.Implements
         {
 
             var lstLMA = id == 0 ?
-                contextDB.LoaiMonAn.Where(y => y.status == 1).Select(x => converters.EntitySingletoDTOs(x))
-                : contextDB.LoaiMonAn.Where(y => y.id == id && y.status == 1).Select(x => converters.EntitySingletoDTOs(x));
+                contextDB.LoaiMonAn.Where(y => y.status == 1)
+                    .Select(x => converters.EntitySingletoDTOs(x))
+                : contextDB.LoaiMonAn.Where(y => y.id == id && y.status == 1)
+                    .Select(x => converters.EntitySingletoDTOs(x));
             var res = Pagintation.GetPagedData(lstLMA, pageSize, pageNumber);
             return res;
         }
@@ -112,14 +116,14 @@ namespace DatBanNhaHang.Services.Implements
         //sửa
         public async Task<ResponseObject<LoaiMonAnDTOs>> SuaLoaiMonAn(int id, Request_SuaLoaiMonAn request)
         {
-            var lMAcanSua = contextDB.LoaiMonAn.FirstOrDefault(x => x.id == id);
+            var lMAcanSua = contextDB.LoaiMonAn.FirstOrDefault(x => x.id == id && x.status==1);
             if (lMAcanSua == null)
             {
                 return res.ResponseError(403, "Không tồn tại loại món ăn này", null);
             }
             else
             {
-                lMAcanSua.TenLoai = request.TenLoai == null ? lMAcanSua.TenLoai : request.TenLoai;
+                lMAcanSua.TenLoai = request.TenLoai  ?? lMAcanSua.TenLoai;
                 contextDB.Update(lMAcanSua);
                 await contextDB.SaveChangesAsync();
                 return res.ResponseSuccess("Sửa loại món ăn thành công ", converters.entityTODTOs(lMAcanSua));
@@ -137,7 +141,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 LMA.status = 2;
 
-                var lstMA = contextDB.MonAn.Where(x => x.LoaiMonAnID == LMA.id).ToList();
+                var lstMA = contextDB.MonAn.Where(x => x.LoaiMonAnID == LMA.id && x.status==1).ToList();
                 if(lstMA.Count > 0)
                 {
                     foreach(var item in lstMA)

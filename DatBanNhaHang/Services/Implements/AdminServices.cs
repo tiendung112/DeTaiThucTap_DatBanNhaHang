@@ -14,7 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using BCryptNet = BCrypt.Net.BCrypt;
+using BCryptNet = BCrypt.Net.BCrypt;    
 
 namespace DatBanNhaHang.Services.Implements
 {
@@ -104,7 +104,7 @@ namespace DatBanNhaHang.Services.Implements
                     new Claim("Roleid", adm.RoleID.ToString()),
                     new Claim(ClaimTypes.Role,decentralization?.RoleName ?? "")
                 }),
-                Expires = DateTime.UtcNow.AddDays(90),
+                Expires = DateTime.UtcNow.AddDays(900),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = jwtTokenHandler.CreateToken(tokenDescription);
@@ -114,7 +114,7 @@ namespace DatBanNhaHang.Services.Implements
             RefreshToken rf = new RefreshToken
             {
                 Token = refreshToken,
-                ExpiredTime = DateTime.UtcNow.AddDays(91),
+                ExpiredTime = DateTime.UtcNow.AddDays(901),
                 AdminID = adm.id
             };
 
@@ -145,7 +145,7 @@ namespace DatBanNhaHang.Services.Implements
                 return responseToken.ResponseError(StatusCodes.Status400BadRequest, "Vui lòng điền đầy đủ thông tin", null);
             }
 
-            var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.AdminName.Equals(request.UserName));
+            var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.AdminName.Equals(request.UserName)&&x.status==1);
             if (admin is null)
             {
                 return responseToken.ResponseError(StatusCodes.Status404NotFound, "Tên tài khoản không tồn tại", null);
@@ -241,7 +241,7 @@ namespace DatBanNhaHang.Services.Implements
         #region Xử lý việc đổi mật khẩu và quên mật khẩu
         public async Task<ResponseObject<AdminDTOs>> ChangePassword(int AdminID, Request_AdminChangePassword request)
         {
-            var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.id == AdminID);
+            var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.id == AdminID&& x.status==1);
             if (!BCryptNet.Verify(request.OldPassword, admin.password))
             {
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Mật khẩu cũ không chính xác", null);
@@ -264,7 +264,7 @@ namespace DatBanNhaHang.Services.Implements
             {
                 return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Mã xác nhận đã hết hạn", null);
             }
-            Admin admin = contextDB.Admin.FirstOrDefault(x => x.id == confirmEmail.AdminID);
+            Admin admin = contextDB.Admin.FirstOrDefault(x => x.id == confirmEmail.AdminID&&x.status==1);
             admin.password = BCryptNet.HashPassword(request.NewPassword);
             contextDB.XacNhanEmail.Remove(confirmEmail);
             contextDB.Admin.Update(admin);
@@ -274,7 +274,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<AdminDTOs>> ForgotPassword(Request_AdminForgotPassword request)
         {
-            Admin admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.Email.Equals(request.Email));
+            Admin admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.Email.Equals(request.Email)&&x.status==1);
             if (admin is null)
             {
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "Email không tồn tại ", null);
@@ -307,19 +307,20 @@ namespace DatBanNhaHang.Services.Implements
         #region hiển thị các tài khoản
         public async Task<PageResult<AdminDTOs>> GetAlls(int pageSize, int pageNumber)
         {
-            var list = contextDB.Admin.Where(y=>y.status==1).Select(x => converters.EntityToDTOs(x));
+            var list = contextDB.Admin.Where(y=>y.status==1)
+                .Select(x => converters.EntityToDTOs(x));
             var result = Pagintation.GetPagedData<AdminDTOs>(list, pageSize, pageNumber);
             return result;
         }
 
         public async Task<ResponseObject<AdminDTOs>> XoaTaiKhoan(int id)
         {
-            var acc = contextDB.Admin.SingleOrDefault(x => x.id == id && x.status==2);
+            var acc = contextDB.Admin.SingleOrDefault(x => x.id == id && x.status==1);
             acc.status = 2;
-            acc.Email = acc.Email+"Đã Xoá";
+            acc.AdminName = acc.AdminName + "Đã xóa ";
+            acc.Email = acc.Email+" Đã Xoá";
             contextDB.Update(acc);
             await contextDB.SaveChangesAsync();
-            var result = contextDB.Admin.Where(x=>x.id==id&&x.status==2).Select(y=>converters.EntityToDTOs(y));
             return responseObject.ResponseSuccess("đã xoá thành công tài khoản",converters.EntityToDTOs(acc));
         }
 
@@ -332,7 +333,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public string RemoveTKNotActive()
         {
-            var lstUSer = contextDB.User.Where(x => x.IsActive == false);
+            var lstUSer = contextDB.User.Where(x => x.IsActive == false&&x.status==1);
             foreach (var t in lstUSer)
             {
                 DateTime? next15P = t.ngayTao + TimeSpan.FromMinutes(15);
@@ -348,7 +349,7 @@ namespace DatBanNhaHang.Services.Implements
 
         public async Task<ResponseObject<AdminDTOs>> ThayDoiQuyenHan(Request_AdminThayDoiQuyen request)
         {
-            var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.id == request.AdminID);
+            var admin = await contextDB.Admin.FirstOrDefaultAsync(x => x.id == request.AdminID&& x.status==1);
 
             if (admin == null)
             {
@@ -368,12 +369,12 @@ namespace DatBanNhaHang.Services.Implements
         }
         public async Task<ResponseObject<AdminDTOs>> SuaThongTin(int id, Request_AdminUpdateInfor request)
         {
-            var admin = contextDB.Admin.SingleOrDefault(x => x.id == id);
+            var admin = contextDB.Admin.SingleOrDefault(x => x.id == id&&x.status==1);
             if (admin == null)
             {
                 return responseObject.ResponseError(StatusCodes.Status404NotFound, "không tồn tại tài khoản này", null);
             }
-            if (await contextDB.User.FirstOrDefaultAsync(x => x.Email.Equals(request.Email)) != null)
+            if (await contextDB.User.FirstOrDefaultAsync(x => x.Email.Equals(request.Email)&& !x.Email.Equals(admin.Email)) != null)
             {
                 return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Email đã tồn tại trên hệ thống", null);
             }
