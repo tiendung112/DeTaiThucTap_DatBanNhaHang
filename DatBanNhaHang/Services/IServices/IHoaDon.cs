@@ -13,8 +13,8 @@ namespace DatBanNhaHang.Services.IServices
         Task<ResponseObject<HoaDonDTO>> HuyHoaDon(int hoadonid, int userid);
         //Task<string> XacNhanOrder(int id, int hoadonid, Request_ValidateRegister request);
         Task<string> XacNhanHuyOrder(int id, int hoadonid, Request_ValidateRegister request);
-        Task<List<BanDTOs>> TimBanTrong(Request_timBanTrong request);
-        Task<List<BanDTOs>> HienThiBanTrong();
+        Task<ResponseObject<List<BanDTOs>>> TimBanTrong(Request_timBanTrong request);
+        Task<ResponseObject<List<BanDTOs>>> HienThiBanTrong();
         Task<ResponseObject<HoaDonDTO>> CapNhatThongTinHoaDon(int id );
         //Task<ResponseObject<HoaDonDTO>> ThemHoaDonAdmin(Request_ThemHoaDon_Admin request);
         Task<ResponseObject<HoaDonDTO>> XoaHoaDonAdmin(int HoaDonid);

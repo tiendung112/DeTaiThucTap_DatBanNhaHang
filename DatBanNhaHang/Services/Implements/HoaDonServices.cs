@@ -20,11 +20,13 @@ namespace DatBanNhaHang.Services.Implements
         private readonly ResponseObject<HoaDonDTO> response;
         private readonly HoaDonConverters converters;
         private readonly BanConverters banConverters;
+        private readonly ResponseObject<List<BanDTOs>> responseBan;
         public HoaDonServices()
         {
             response = new ResponseObject<HoaDonDTO>();
             converters = new HoaDonConverters();
             banConverters = new BanConverters();
+            responseBan = new ResponseObject<List<BanDTOs>>();
         }
         public Task<ResponseObject<HoaDonDTO>> SuaHoaDon()
         {
@@ -33,11 +35,19 @@ namespace DatBanNhaHang.Services.Implements
 
         #region tìm bàn trống , hiển thị bàn trống
 
-        public async Task<List<BanDTOs>> TimBanTrong(Request_timBanTrong request)
+        public async Task<ResponseObject<List<BanDTOs>>> TimBanTrong(Request_timBanTrong request)
         {
             var tatCaBan = await contextDB.Ban.ToListAsync();
+            if (request.thoiGianKetThuc < request.thoiGianBatDau)
+            {
+                return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Lỗi nhập ngày kết thúc bé hơn ngày bắt đầu",null);
+            }
+            if(request.thoiGianBatDau.Day<DateTime.Now.Day|| request.thoiGianKetThuc.Day < DateTime.Now.Day)
+            {
+                return responseBan.ResponseError(StatusCodes.Status404NotFound, "Bạn đã đặt về quá khứ", null);
+            }
             var banTrong = new List<BanDTOs>();
-
+           
             foreach (var ban in tatCaBan)
             {
                 if (await KiemTraBanTrong(ban.id, request.thoiGianBatDau, request.thoiGianKetThuc))
@@ -45,9 +55,9 @@ namespace DatBanNhaHang.Services.Implements
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
             }
-            return banTrong;
+            return responseBan.ResponseSuccess("các bàn trống", banTrong);
         }
-        public async Task<List<BanDTOs>> HienThiBanTrong()
+        public async Task<ResponseObject<List<BanDTOs>>> HienThiBanTrong()
         {
             var tatCaBan = await contextDB.Ban.ToListAsync();
             var banTrong = new List<BanDTOs>();
@@ -59,7 +69,7 @@ namespace DatBanNhaHang.Services.Implements
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
             }
-            return banTrong;
+            return responseBan.ResponseSuccess("các bàn trống", banTrong);
         }
 
         public async Task<bool> KiemTraBanTrong(int? banId, DateTime thoiGianBatDauDuKien, DateTime thoiGianKetThucDuKien)
