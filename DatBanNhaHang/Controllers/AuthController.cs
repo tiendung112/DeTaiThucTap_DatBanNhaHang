@@ -197,9 +197,9 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpGet]
         [Route("/api/datBan/HienThiBanTrong")]
-        public async Task<IActionResult> HienThiBanTrong([FromForm] Request_timBanTrong request)
+        public async Task<IActionResult> HienThiBanTrong(DateTime thoiGianBatDau, DateTime thoiGianKetThuc)
         {
-            return Ok(await hoadonServices.TimBanTrong(request));
+            return Ok(await hoadonServices.TimBanTrong(thoiGianBatDau,thoiGianKetThuc));
         }
         [HttpGet]
         [Route("/api/datBan/LichSuHoaDon")]

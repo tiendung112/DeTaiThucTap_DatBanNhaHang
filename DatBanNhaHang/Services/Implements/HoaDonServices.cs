@@ -31,18 +31,18 @@ namespace DatBanNhaHang.Services.Implements
         }
         #region tìm bàn trống , hiển thị bàn trống
 
-        public async Task<ResponseObject<List<BanDTOs>>> TimBanTrong(Request_timBanTrong request)
+        public async Task<ResponseObject<List<BanDTOs>>> TimBanTrong(DateTime thoiGianBatDau, DateTime thoiGianKetThuc)
         {
             var tatCaBan = await contextDB.Ban.ToListAsync();
-            if (request.thoiGianKetThuc < request.thoiGianBatDau)
+            if (thoiGianKetThuc < thoiGianBatDau)
             {
                 return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Lỗi nhập ngày kết thúc bé hơn ngày bắt đầu",null);
             }
-            if(request.thoiGianBatDau <= DateTime.Now)
+            if(thoiGianBatDau <= DateTime.Now)
             {
                 return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Thời gian bắt đầu phải lớn hơn thời gian hiện tại", null);
             }
-            if(request.thoiGianKetThuc <= request.thoiGianBatDau)
+            if(thoiGianKetThuc <= thoiGianBatDau)
             {
                 return responseBan.ResponseError(StatusCodes.Status400BadRequest, "Thời gian kết thúc phải lớn hơn thời gian bắt đầu", null);
             }
@@ -50,12 +50,12 @@ namespace DatBanNhaHang.Services.Implements
            
             foreach (var ban in tatCaBan)
             {
-                if (await KiemTraBanTrong(ban.id, request.thoiGianBatDau, request.thoiGianKetThuc))
+                if (await KiemTraBanTrong(ban.id, thoiGianBatDau, thoiGianKetThuc))
                 {
                     banTrong.Add(banConverters.EntityToDTOs(ban));
                 }
             }
-            return responseBan.ResponseSuccess($"các bàn trống ở {request.thoiGianBatDau.ToString("dd/MM/yyyy HH:mm")} đến {request.thoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")} ", banTrong);
+            return responseBan.ResponseSuccess($"các bàn trống ở{gio} {thoiGianBatDau.ToString("dd/MM/yyyy HH:mm")} đến {thoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")} ", banTrong);
         }
         public async Task<ResponseObject<List<BanDTOs>>> HienThiBanTrong()
         {
