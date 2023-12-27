@@ -127,14 +127,14 @@ namespace DatBanNhaHang.Controllers
         #region thay đổi quyền hạn , xoá acc, laythongtin
         [HttpPut]
         [Route("/api/Admin/ThayDoiQuyenHan")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThayDoiQuyenHan([FromForm] Request_AdminThayDoiQuyen request)
         {
             return Ok(await ADMservices.ThayDoiQuyenHan(request));
         }
         [HttpGet]
         [Route("/api/Admin/LayTatCaThongTinADMin")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> LayTatCaThongTinADMin(int pageSize, int pageNumber)
         {
             return Ok(await ADMservices.GetAlls(pageSize, pageNumber));
@@ -146,7 +146,7 @@ namespace DatBanNhaHang.Controllers
         public async Task<IActionResult> ThongTinAdmin()
         {
             int id = Convert.ToInt32(HttpContext.User.FindFirst("Id").Value);
-            return Ok(ADMservices.GetAdminTheoId(id));
+            return Ok(await ADMservices.GetAdminTheoId(id));
         }
         [HttpDelete]
         [Route("/api/Admin/XoaTKChuaKichHoat")]
@@ -155,7 +155,6 @@ namespace DatBanNhaHang.Controllers
         {
             var res = ADMservices.RemoveTKNotActive();
             return Ok(res);
-
         }
         [HttpDelete]
         [Route("/api/Admin/XoaTaiKhoan/{id}")]
@@ -179,7 +178,7 @@ namespace DatBanNhaHang.Controllers
         #region đầu bếp 
         [HttpPost]
         [Route("/api/DauBep/ThemDauBep")]
-        //[Authorize(Roles ="ADMIN,MOD")]
+        [Authorize(Roles ="ADMIN,MOD")]
         public async Task<IActionResult> ThemDauBep([FromForm] Request_ThemDauBep request)
         {
             var result = await daubepservices.ThemDauBep(request);
@@ -189,7 +188,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPut]
         [Route("/api/DauBep/SuaDauBep/{id}")]
-        //[Authorize(Roles = "ADMIN , MOD")]
+        [Authorize(Roles = "ADMIN , MOD")]
         public async Task<IActionResult> SuaDauBep(int id, [FromForm] Request_SuaDauBep request)
         {
             var result = await daubepservices.SuaDauBep(id, request);
@@ -198,7 +197,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("/api/DauBep/XoaDauBep/{id}")]
-        //[Authorize(Roles ="ADMIN , MOD")]
+        [Authorize(Roles ="ADMIN , MOD")]
         public async Task<IActionResult> XoaDauBep([FromRoute] int id)
         {
             var result = await daubepservices.XoaDauBep(id);
@@ -224,7 +223,7 @@ namespace DatBanNhaHang.Controllers
         #region Loại bàn 
         [HttpPost]
         [Route("/api/LoaiBan/ThemLoaiBan")]
-        //[Authorize(Roles ="ADMIN")]
+        [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> ThemLoaiBan([FromForm] Request_ThemLoaiBan request)
         {
             var result = await LoaiBanservices.ThemLoaiBan(request);
@@ -232,7 +231,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpPut]
         [Route("api/LoaiBan/SuaLoaiBan/{id}")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> SuaLoaiBan([FromRoute] int id, [FromForm] Request_SuaLoaiBan request)
         {
             var result = await LoaiBanservices.SuaLoaiBan(id, request);
@@ -241,7 +240,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("api/LoaiBan/XoaLoaiBan/{id}")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaLoaiBan([FromRoute] int id)
         {
             var result = await LoaiBanservices.XoaLoaiBan(id);
@@ -304,7 +303,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPost]
         [Route("/api/Ban/ThemBan")]
-        //[Authorize(Roles = "ADMIN,MOD")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> ThemBan([FromForm] Request_ThemBan request)
         {
             var result = await banServices.ThemBan(request);
@@ -314,7 +313,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPut]
         [Route("/api/Ban/SuaBan/{id}")]
-        //[Authorize(Roles = "ADMIN,MOD")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> SuaBan([FromRoute] int id, [FromForm] Request_SuaBan request)
         {
             var result = await banServices.SuaBan(id, request);
@@ -323,7 +322,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("/api/Ban/XoaBan/{id}")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaBan([FromRoute] int id)
         {
             var result = await banServices.XoaBan(id);
@@ -333,6 +332,7 @@ namespace DatBanNhaHang.Controllers
         #region loại món ăn
         [HttpPost]
         [Route("/api/LoaiMonAn/ThemLoaiMonAn")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThemLoaiMonAn([FromForm] Request_ThemLoaiMonAn request)
         {
             var result = await loaiMonAnservices.ThemLoaiMonAn(request);
@@ -350,7 +350,7 @@ namespace DatBanNhaHang.Controllers
 */
         [HttpPut]
         [Route("/api/LoaiMonAn/SuaLoaiMonAn/{id}")]
-        //[Authorize(Roles = "ADMIN,MOD")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> SuaLoaiMonAn([FromRoute] int id, [FromForm] Request_SuaLoaiMonAn request)
         {
             var result = await loaiMonAnservices.SuaLoaiMonAn(id, request);
@@ -359,7 +359,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("/api/LoaiMonAn/XoaLoaiMonAn/{id}")]
-        //[Authorize(Roles = "ADMIN,MOD")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> XoaLoaiMonAn([FromRoute] int id)
         {
             var result = await loaiMonAnservices.XoaLoaiMonAn(id);
@@ -400,6 +400,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpPost]
         [Route("/api/MonAn/ThemMonAn")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ThemMonAn([FromForm] Request_ThemMonAn request)
         {
             var result = await MonAnservices.ThemMonAn(request);
@@ -408,6 +409,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpPut]
         [Route("/api/MonAn/SuaMonAn/{id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> SuaMonAn([FromRoute] int id, [FromForm] Request_SuaMonAn request)
         {
             var result = await MonAnservices.SuaMonAn(id, request);
@@ -416,6 +418,7 @@ namespace DatBanNhaHang.Controllers
         }
         [HttpDelete]
         [Route("/api/MonAn/XoaMonAn/{id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaMonAn([FromRoute] int id)
         {
             var result = await MonAnservices.XoaMonAn(id);
@@ -556,14 +559,14 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/HoaDonAdmin/CapNhatThongTinHoaDonAdmin/{id}")]
 
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> CapNhatThongTinHoaDonAdmin([FromRoute] int id )
         {
             return Ok(await hoaDonServices.CapNhatThongTinHoaDon(id));
         }
         [HttpPut]
         [Route("/api/HoaDonAdmin/SuaHoaDonAdmin/{id}")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,MOD")]
         public async Task<IActionResult> SuaHoaDon([FromRoute] int id, [FromBody] Request_SuaHoaDon request)
         {
             return Ok(await hoaDonServices.SuaHoaDonAdmin(id, request));
@@ -571,14 +574,14 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("/api/HoaDonAdmin/XoaHoaDon/{id}")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaHoaDon([FromRoute] int id)
         {
             return Ok(await hoaDonServices.XoaHoaDonAdmin(id));
         }
         [HttpDelete]
         [Route("/api/HoaDonAdmin/XoaHoaDonChuaDuyet")]
-        // [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> XoaHoaDonChuaDuyet()
         {
             return Ok(await hoaDonServices.XoaTatCaHoaDonChuaDuyet());
@@ -617,7 +620,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPost]
         [Route("/api/BaiViet/ThemBaiViet")]
         [Authorize(Roles = "ADMIN")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ThemBaiViet([FromForm] Request_ThemBaiViet request)
         {
             int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
@@ -627,7 +630,7 @@ namespace DatBanNhaHang.Controllers
         [HttpPut]
         [Route("/api/BaiViet/SuaBaiViet/{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        // [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> SuaBaiViet([FromRoute] int id, [FromForm] Request_SuaBaiViet request)
         {
             int admid = int.Parse(HttpContext.User.FindFirst("Id").Value);
@@ -636,7 +639,7 @@ namespace DatBanNhaHang.Controllers
 
         [HttpDelete]
         [Route("/api/BaiViet/XoaBaiViet/{id}")]
-        //[Authorize(Roles ="ADMIN")]
+        [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> XoaBaiViet([FromRoute] int id)
         {
             return Ok(await BaiVietServices.XoaBaiViet(id));

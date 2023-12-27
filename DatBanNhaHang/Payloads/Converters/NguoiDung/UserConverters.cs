@@ -19,5 +19,20 @@ namespace DatBanNhaHang.Payloads.Converters.NguoiDung
                 UserID=user.id
             };
         }
+        public ProfileUserDTOs EntityToProfileUserDTOs(User user)
+        {
+            return new ProfileUserDTOs
+            {
+                address = user.address,
+                AvatarUrl = user.AvatarUrl,
+                DateOfBirth = user.DateOfBirth,
+                Email = user.Email,
+                Gender = user.Gender,
+                Name = user.Name,
+                SDT = user.SDT,
+                UserID = user.id,
+                UserName= user.UserName
+            };
+        }
     }
 }

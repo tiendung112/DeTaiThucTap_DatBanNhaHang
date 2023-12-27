@@ -391,11 +391,11 @@ namespace DatBanNhaHang.Services.Implements
             await contextDB.SaveChangesAsync();
             return _responseObject.ResponseSuccess("đã xoá thành công tài khoản", _userConverter.EntityToDTO(acc));
         }
-        public async Task<PageResult<UserDTO>> GetAlls(int id, int pageSize, int pageNumber)
+        public async Task<PageResult<ProfileUserDTOs>> GetAlls(int id, int pageSize, int pageNumber)
         {
-            var list = id == 0 ? contextDB.User.Where(y => y.status == 1).Select(x => _userConverter.EntityToDTO(x)) :
-            contextDB.User.Where(y => y.status == 1 && y.id == id).Select(x => _userConverter.EntityToDTO(x));
-            var result = Pagintation.GetPagedData<UserDTO>(list, pageSize, pageNumber);
+            var list = id == 0 ? contextDB.User.Where(y => y.status == 1).Select(x => _userConverter.EntityToProfileUserDTOs(x)) :
+            contextDB.User.Where(y => y.status == 1 && y.id == id).Select(x => _userConverter.EntityToProfileUserDTOs(x));
+            var result = Pagintation.GetPagedData<ProfileUserDTOs>(list, pageSize, pageNumber);
             return result;
         }
 
