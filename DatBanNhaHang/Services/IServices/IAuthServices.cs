@@ -14,7 +14,7 @@ namespace DatBanNhaHang.Services.IServices
         ResponseObject<TokenDTO> RenewAccessToken(TokenDTO request);
         Task<ResponseObject<TokenDTO>> Login(Request_Login request);
         Task<ResponseObject<UserDTO>> RegisterRequest(Request_Register request);
-        Task<PageResult<UserDTO>> GetAlls(int id ,int pageSize, int pageNumber);
+        Task<PageResult<ProfileUserDTOs>> GetAlls(int id ,int pageSize, int pageNumber);
         Task<ResponseObject<UserDTO>> XoaTaiKhoan(int id);
         Task<ResponseObject<UserDTO>> ChangePassword(int UserID, Request_ChangePassword request);
         string SendEmail(EmailTo emailTo);
